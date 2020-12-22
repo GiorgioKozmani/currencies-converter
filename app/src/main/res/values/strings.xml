@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">CurrencyConverter</string>
+    <string name="aud_full">Australian Dollar</string>
+    <string name="bgn_full">Bulgarian Lev</string>
+    <string name="brl_full">Real</string>
+    <string name="cad_full">Dollar</string>
+    <string name="chf_full">Franc</string>
+    <string name="cny_full">Renminbi Yuan</string>
+    <string name="czk_full">Koruna</string>
+    <string name="dkk_full">Danish Krone</string>
+    <string name="eur_full">Euro</string>
+    <string name="gbp_full">Pound Sterling</string>
+    <string name="hkd_full">Hong Kong Dollar</string>
+    <string name="hrk_full">Kuna</string>
+    <string name="huf_full">Forint</string>
+    <string name="idr_full">Rupiah</string>
+    <string name="ils_full">New Shekel</string>
+    <string name="inr_full">Rupee</string>
+    <string name="isk_full">Krona</string>
+    <string name="jpy_full">Yen</string>
+    <string name="krw_full">Won</string>
+    <string name="mxn_full">New Peso</string>
+    <string name="myr_full">Ringgit</string>
+    <string name="nok_full">Norwegian Krone</string>
+    <string name="nzd_full">N.Z. Dollar</string>
+    <string name="php_full">Peso</string>
+    <string name="pln_full">Polish Zloty</string>
+    <string name="ron_full">Romanian Leu</string>
+    <string name="rub_full">Russian Ruble</string>
+    <string name="sek_full">Krona</string>
+    <string name="sgd_full">Dollar</string>
+    <string name="thb_full">Baht</string>
+    <string name="usd_full">Dollar</string>
+    <string name="zar_full">Rand</string>
+
+    <string name="format_error">Format error</string>
+    <string name="main_page_title">Rates</string>
+    <string name="empty_amount_placeholder">0</string>
+</resources>

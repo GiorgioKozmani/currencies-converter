@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="currencyItem"
+            type="com.mieszko.currencyconverter.data.model.CurrencyModel" />
+
+        <variable
+            name="viewModel"
+            type="com.mieszko.currencyconverter.viewmodel.CurrenciesViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/country_flag"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/currency_short_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@{currencyItem.currency.fullName}"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/currency_full_name"
+            app:layout_constraintStart_toEndOf="@+id/country_flag"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/currency_full_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="@{currencyItem.currency.fullName}"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/currency_short_name"
+            app:layout_constraintTop_toBottomOf="@+id/currency_short_name" />
+
+        <!--        Below syntax for text two way data binding is both:
+        - properly converting Double to String
+        - handling potentially invalid input, by not updating a value (for example user tries paste in a string)-->
+        <!--        android:text="@={`` + currencyItem.amount}"-->
+        <!--        android:text="@={EditTextDoubleConverter.toString(currencyItem.amount)}"-->
+
+        <EditText
+            android:id="@+id/currency_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/empty_amount_placeholder"
+            android:inputType="numberDecimal"
+            android:text="@{String.valueOf(currencyItem.amount)}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
