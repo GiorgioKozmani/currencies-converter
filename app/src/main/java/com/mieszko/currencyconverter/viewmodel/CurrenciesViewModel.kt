@@ -28,8 +28,7 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
     private val lastUpdatedLiveData: MutableLiveData<Resource<Date>> =
         MutableLiveData()
 
-    private var currenciesList =
-        mutableListOf<CurrencyModel>()
+    private var currenciesList = mutableListOf<CurrencyModel>()
 
     //Exposing only LiveData
     fun getCurrenciesLiveDate(): LiveData<Resource<List<CurrencyListItemModel>>> =
@@ -63,6 +62,17 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
         baseCurrencyModel = currenciesList.find { it.currency == newBaseCurrency }!!
         moveBaseCurrencyTop()
         emitLiveData()
+    }
+
+    fun moveItem(from: Int, to: Int) {
+        val fromItem = currenciesList[from]
+        currenciesList.removeAt(from)
+        if (to < from) {
+            currenciesList.add(to, fromItem)
+        } else {
+            currenciesList.add(to - 1, fromItem)
+        }
+        emitCurrencies()
     }
 
     private fun moveBaseCurrencyTop() {

@@ -3,7 +3,6 @@ package com.mieszko.currencyconverter.util
 import androidx.annotation.StringRes
 import com.mieszko.currencyconverter.R
 
-@Suppress("EnumEntryName")
 enum class SupportedCurrency(@StringRes val fullName: Int, val flagUrl: String) {
     AUD(R.string.aud_full, "https://img.freeflagicons.com/thumb/round_icon/australia/australia_64.png"),
     BGN(R.string.bgn_full, "https://img.freeflagicons.com/thumb/round_icon/bulgaria/bulgaria_64.png"),
@@ -35,9 +34,7 @@ enum class SupportedCurrency(@StringRes val fullName: Int, val flagUrl: String) 
     SEK(R.string.sek_full, "https://img.freeflagicons.com/thumb/round_icon/sweden/sweden_64.png"),
     SGD(R.string.sgd_full, "https://img.freeflagicons.com/thumb/round_icon/sudan/sudan_64.png"),
     THB(R.string.thb_full, "https://img.freeflagicons.com/thumb/round_icon/thailand/thailand_64.png"),
+    TRY(R.string.thb_full, "https://img.freeflagicons.com/thumb/round_icon/turkey/turkey_64.png"),
     USD(R.string.usd_full, "https://img.freeflagicons.com/thumb/round_icon/united_states_of_america/united_states_of_america_64.png"),
     ZAR(R.string.zar_full, "https://img.freeflagicons.com/thumb/round_icon/south_africa/south_africa_64.png"),
-
-//I decided not to handle these for now
-//    unknown(-1, "")
 }

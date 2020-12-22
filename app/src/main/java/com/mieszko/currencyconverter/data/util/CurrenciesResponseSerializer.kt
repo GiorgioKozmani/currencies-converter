@@ -9,30 +9,20 @@ import java.lang.reflect.Type
 class CurrenciesResponseSerializer : JsonDeserializer<CurrenciesResponse>,
     JsonSerializer<CurrenciesResponse> {
 
-    private val baseCurrencyKey = "base"
-    private val ratesKey = "rates"
-
     @Throws(JsonParseException::class)
     override fun deserialize(
         element: JsonElement,
         type: Type?,
         context: JsonDeserializationContext
     ): CurrenciesResponse {
-        val obj = element.asJsonObject
-        val baseCurrency = obj.get(baseCurrencyKey).asString
-        val rates = obj.get(ratesKey).asJsonObject
+        val rates = element.asJsonObject
+            .get(RATES_KEY).asJsonObject
             .entrySet()
             .map { singleCur ->
-                SingleCurrencyNetwork(
-                    singleCur.key,
-                    singleCur.value.asDouble
-                )
+                SingleCurrencyNetwork(singleCur.key, singleCur.value.asDouble)
             }.toMutableList()
 
-        return CurrenciesResponse(
-            baseCurrency,
-            rates
-        )
+        return CurrenciesResponse(rates)
     }
 
     override fun serialize(
@@ -41,17 +31,17 @@ class CurrenciesResponseSerializer : JsonDeserializer<CurrenciesResponse>,
         context: JsonSerializationContext?
     ): JsonElement {
         return JsonObject().apply {
-            addProperty(baseCurrencyKey, "EUR")
-
             val ratesObj = JsonObject()
                 .apply {
-                    src
-                        .rates
-                        .forEach {
-                                 addProperty(it.shortName, it.ratioToBase) }
-                        }
+                    src.rates
+                        .forEach { addProperty(it.shortName, it.ratioToBase) }
+                }
 
-            add(ratesKey, ratesObj)
+            add(RATES_KEY, ratesObj)
         }
+    }
+
+    companion object {
+        private const val RATES_KEY = "rates"
     }
 }

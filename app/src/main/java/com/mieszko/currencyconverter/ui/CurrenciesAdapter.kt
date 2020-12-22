@@ -3,14 +3,13 @@ package com.mieszko.currencyconverter.ui
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.mieszko.currencyconverter.viewmodel.CurrenciesViewModel
 import com.mieszko.currencyconverter.data.model.CurrencyListItemModel
 import com.mieszko.currencyconverter.ui.viewholder.CurrencyViewHolder
+import com.mieszko.currencyconverter.viewmodel.CurrenciesViewModel
 
 class CurrenciesAdapter(
     private val viewModel: CurrenciesViewModel
-) :
-    RecyclerView.Adapter<CurrencyViewHolder>() {
+) : RecyclerView.Adapter<CurrencyViewHolder>() {
 
     private val listData = mutableListOf<CurrencyListItemModel>()
 
@@ -60,6 +59,16 @@ class CurrenciesAdapter(
 
     override fun getItemCount(): Int {
         return listData.size
+    }
+
+    fun moveItem(from: Int, to: Int) {
+        val fromItem = listData[from]
+        listData.removeAt(from)
+        if (to < from) {
+            listData.add(to, fromItem)
+        } else {
+            listData.add(to - 1, fromItem)
+        }
     }
 
     class CurrenciesDiffCallback(

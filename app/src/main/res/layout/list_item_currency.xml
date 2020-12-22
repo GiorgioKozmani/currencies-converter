@@ -50,12 +50,6 @@
             app:layout_constraintStart_toStartOf="@+id/currency_short_name"
             app:layout_constraintTop_toBottomOf="@+id/currency_short_name" />
 
-        <!--        Below syntax for text two way data binding is both:
-        - properly converting Double to String
-        - handling potentially invalid input, by not updating a value (for example user tries paste in a string)-->
-        <!--        android:text="@={`` + currencyItem.amount}"-->
-        <!--        android:text="@={EditTextDoubleConverter.toString(currencyItem.amount)}"-->
-
         <EditText
             android:id="@+id/currency_amount"
             android:layout_width="wrap_content"

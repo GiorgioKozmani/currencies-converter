@@ -7,6 +7,8 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ItemTouchHelper.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mieszko.currencyconverter.R
@@ -20,7 +22,6 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    //todo interface
     private var rvAdapter: CurrenciesAdapter? = null
     private val viewModel by viewModel<CurrenciesViewModel>()
 
@@ -49,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         rvAdapter = CurrenciesAdapter(viewModel)
             .apply { setHasStableIds(true) }
 
-        currencies_list?.run {
+        currencies_rv?.run {
             layoutManager = LinearLayoutManager(context)
             adapter = rvAdapter
             setHasFixedSize(true)
@@ -61,6 +62,8 @@ class MainActivity : AppCompatActivity() {
                 }
             })
         }
+
+        itemTouchHelper.attachToRecyclerView(currencies_rv)
     }
 
     private fun handleNewResults(response: Resource<List<CurrencyListItemModel>>) {
@@ -106,4 +109,56 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val itemTouchHelper by lazy {
+        val simpleItemTouchCallback = object : ItemTouchHelper.SimpleCallback(
+            UP or
+                    DOWN or
+                    START or
+                    END, 0
+        ) {
+
+            override fun onSelectedChanged(
+                viewHolder: RecyclerView.ViewHolder?,
+                actionState: Int
+            ) {
+                super.onSelectedChanged(viewHolder, actionState)
+
+                if (actionState == ACTION_STATE_DRAG) {
+                    viewHolder?.itemView?.alpha = 0.5f
+                }
+            }
+
+            override fun clearView(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder
+            ) {
+                super.clearView(recyclerView, viewHolder)
+                viewHolder.itemView.alpha = 1.0f
+            }
+
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+
+                recyclerView.adapter as CurrenciesAdapter
+                val from = viewHolder.adapterPosition
+                val to = target.adapterPosition
+
+                viewModel.moveItem(from, to)
+
+                return true
+            }
+
+            override fun onSwiped(
+                viewHolder: RecyclerView.ViewHolder,
+                direction: Int
+            ) {
+                //    ItemTouchHelper handles horizontal swipe as well, but
+                //    it is not relevant with reordering. Ignoring here.
+            }
+        }
+        ItemTouchHelper(simpleItemTouchCallback)
+    }
 }
