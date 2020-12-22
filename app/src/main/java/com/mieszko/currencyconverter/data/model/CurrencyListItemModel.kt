@@ -1,6 +1,6 @@
 package com.mieszko.currencyconverter.data.model
 
-import com.mieszko.currencyconverter.util.SupportedCurrency
+import com.mieszko.currencyconverter.common.SupportedCurrency
 
 data class CurrencyListItemModel(
     val currency: SupportedCurrency,

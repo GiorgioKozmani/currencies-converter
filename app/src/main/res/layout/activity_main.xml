@@ -19,19 +19,21 @@
 
     <TextView
         android:id="@+id/last_updated"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColor="@android:color/darker_gray"
         android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/currencies_list_title"
         app:layout_constraintTop_toBottomOf="@+id/currencies_list_title" />
 
     <TextView
         android:id="@+id/error_message"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColor="@android:color/holo_red_dark"
         android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/last_updated"
         app:layout_constraintTop_toBottomOf="@+id/last_updated" />
 
@@ -40,12 +42,11 @@
         android:id="@+id/currencies_rv"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="12dp"
         android:descendantFocusability="beforeDescendants"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/last_updated">
+        app:layout_constraintTop_toBottomOf="@+id/error_message">
 
     </androidx.recyclerview.widget.RecyclerView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,7 +6,6 @@ import android.text.format.DateFormat
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.*
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,12 +34,12 @@ class MainActivity : AppCompatActivity() {
     private fun observeViewModel() {
         with(viewModel) {
             getCurrenciesLiveDate()
-                .observe(this@MainActivity, Observer() {
+                .observe(this@MainActivity, {
                     handleNewResults(it)
                 })
 
             getLastUpdatedLiveData()
-                .observe(this@MainActivity, Observer() {
+                .observe(this@MainActivity, {
                     handleNewDate(it)
                 })
         }

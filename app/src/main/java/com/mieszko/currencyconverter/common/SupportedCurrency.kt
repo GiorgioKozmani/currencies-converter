@@ -1,4 +1,4 @@
-package com.mieszko.currencyconverter.util
+package com.mieszko.currencyconverter.common
 
 import androidx.annotation.StringRes
 import com.mieszko.currencyconverter.R

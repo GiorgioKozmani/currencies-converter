@@ -9,7 +9,7 @@ import com.mieszko.currencyconverter.data.model.CurrencyModel
 import com.mieszko.currencyconverter.data.model.Resource
 import com.mieszko.currencyconverter.data.persistance.SharedPrefs
 import com.mieszko.currencyconverter.data.repository.ICurrenciesRepository
-import com.mieszko.currencyconverter.util.SupportedCurrency
+import com.mieszko.currencyconverter.common.SupportedCurrency
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -120,7 +120,6 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
                             )
                     },
                     { t ->
-                        Log.d("dupa", t.toString())
                         emitError(t)
                     }
                 )

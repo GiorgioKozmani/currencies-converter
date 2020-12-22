@@ -11,13 +11,14 @@ class CurrenciesRepository(
 ) : ICurrenciesRepository {
 
     override fun loadCurrencies(): Observable<CurrenciesResponse> {
+        //todo redesign the cache
         return Observable
             .concatArrayEagerDelayError(
                 cache
                     .getCurrencies()
                     .toObservable(),
                 currenciesApi
-                    .getCurrencies("EUR")
+                    .getCurrencies()
                     .doOnSuccess() { cache.saveCurrencies(it) }
                     .toObservable()
             )
