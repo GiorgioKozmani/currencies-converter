@@ -1,47 +1,40 @@
 package com.mieszko.currencyconverter.data.util
 
 import com.google.gson.*
-import com.mieszko.currencyconverter.data.api.CurrenciesResponse
 import com.mieszko.currencyconverter.data.api.SingleCurrencyNetwork
 import java.lang.reflect.Type
 
 
-class CurrenciesResponseSerializer : JsonDeserializer<CurrenciesResponse>,
-    JsonSerializer<CurrenciesResponse> {
+class CurrenciesResponseSerializer : JsonDeserializer<SingleCurrencyNetwork>
+//    , JsonSerializer<SingleCurrencyNetwork>
+{
 
     @Throws(JsonParseException::class)
     override fun deserialize(
         element: JsonElement,
         type: Type?,
         context: JsonDeserializationContext
-    ): CurrenciesResponse {
-        val rates = element.asJsonObject
-            .get(RATES_KEY).asJsonObject
-            .entrySet()
-            .map { singleCur ->
-                SingleCurrencyNetwork(singleCur.key, singleCur.value.asDouble)
-            }.toMutableList()
+    ): SingleCurrencyNetwork {
+        val obj = element.asJsonObject
+        val shortName = obj.get("cc").asString
+        val rate = element.asJsonObject.get("rate").asDouble
 
-        return CurrenciesResponse(rates)
+        return SingleCurrencyNetwork(shortName = shortName, ratioToUAH = rate)
     }
 
-    override fun serialize(
-        src: CurrenciesResponse,
-        typeOfSrc: Type?,
-        context: JsonSerializationContext?
-    ): JsonElement {
-        return JsonObject().apply {
-            val ratesObj = JsonObject()
-                .apply {
-                    src.rates
-                        .forEach { addProperty(it.shortName, it.ratioToBase) }
-                }
+//    override fun serialize(
+//        src: SingleCurrencyNetwork,
+//        typeOfSrc: Type?,
+//        context: JsonSerializationContext?
+//    ): JsonElement {
+//        return JsonObject().apply {
+//            val ratesObj = JsonObject()
+//                .apply {
+//                    src.forEach { addProperty(it.shortName, it.ratioToUAH) }
+//                }
+//
+//            add(RATES_KEY, ratesObj)
+//        }
+//    }
 
-            add(RATES_KEY, ratesObj)
-        }
-    }
-
-    companion object {
-        private const val RATES_KEY = "rates"
-    }
 }

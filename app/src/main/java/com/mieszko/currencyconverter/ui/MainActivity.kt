@@ -18,7 +18,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
-
 class MainActivity : AppCompatActivity() {
 
     private var rvAdapter: CurrenciesAdapter? = null

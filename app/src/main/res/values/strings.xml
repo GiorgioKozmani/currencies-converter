@@ -33,6 +33,7 @@
     <string name="try_full">Turkish Lira</string>
     <string name="usd_full">Dollar</string>
     <string name="zar_full">Rand</string>
+    <string name="uah_full">Ukrainian Hryvnia</string>
 
     <string name="format_error">Format error</string>
     <string name="main_page_title">Rates</string>

@@ -1,6 +1,5 @@
 package com.mieszko.currencyconverter.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -41,7 +40,7 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
 
     init {
         setupSupportedCurrencies()
-        setBaseCurrency(SupportedCurrency.EUR)
+        setBaseCurrency(SupportedCurrency.UAH)
         startUpdatingRates()
     }
 
@@ -93,13 +92,12 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
                             .subscribe(
                                 { currenciesResponse ->
                                     currenciesResponse
-                                        .rates
                                         .forEach { singleCurrencyResponse ->
                                             //I have to do all below as we need to associate the hardcoded flagUrl and currencyName with api response items
                                             currenciesList
                                                 .find { it.currency.name == singleCurrencyResponse.shortName }
                                                 ?.apply {
-                                                    toEuroRatio = singleCurrencyResponse.ratioToBase
+                                                    toUAHRatio = singleCurrencyResponse.ratioToUAH
                                                     if (this != baseCurrencyModel) {
                                                         amount = calculateCurrencyAmount(this)
                                                     }
@@ -107,7 +105,7 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
                                         }
 
                                     currenciesList
-                                        .find { it.currency == SupportedCurrency.EUR }
+                                        .find { it.currency == SupportedCurrency.UAH }
                                         ?.apply {
                                             amount = calculateCurrencyAmount(this)
                                         }
@@ -142,7 +140,7 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
     }
 
     private fun calculateCurrencyAmount(supportedCurrency: CurrencyModel) =
-        (supportedCurrency.toEuroRatio / baseCurrencyModel.toEuroRatio * baseCurrencyModel.amount)
+        (supportedCurrency.toUAHRatio / baseCurrencyModel.toUAHRatio * baseCurrencyModel.amount)
             .roundTo2Decimals()
 
     // Handled in the background thread, in order to avoid blocking UI thread by the mapping,
@@ -188,8 +186,8 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
             .mapTo(currenciesList) { currency ->
                 CurrencyModel(currency)
                     .apply {
-                        if (currency == SupportedCurrency.EUR) {
-                            toEuroRatio = 1.0; amount = 100.0
+                        if (currency == SupportedCurrency.UAH) {
+                            toUAHRatio = 1.0; amount = 100.0
                         }
                     }
             }

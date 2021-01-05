@@ -2,7 +2,7 @@ package com.mieszko.currencyconverter.data.util
 
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import com.mieszko.currencyconverter.data.api.CurrenciesResponse
+import com.mieszko.currencyconverter.data.api.SingleCurrencyNetwork
 import okhttp3.OkHttpClient
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -35,7 +35,7 @@ class RetrofitService {
     private fun createGsonConverter(typeAdapter: Any): Converter.Factory {
         val gson = GsonBuilder()
             .apply {
-                registerTypeAdapter(CurrenciesResponse::class.java, typeAdapter)
+                registerTypeAdapter(SingleCurrencyNetwork::class.java, typeAdapter)
             }.create()
         return GsonConverterFactory.create(gson)
     }
