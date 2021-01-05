@@ -37,4 +37,6 @@
     <string name="format_error">Format error</string>
     <string name="main_page_title">Rates</string>
     <string name="empty_amount_placeholder">0</string>
+    <string name="nav_bar_currencies">Currencies</string>
+    <string name="nav_bar_settings">Settings</string>
 </resources>

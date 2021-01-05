@@ -12,22 +12,21 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.mieszko.currencyconverter.viewmodel.CurrenciesViewModel
 import com.mieszko.currencyconverter.R
 import com.mieszko.currencyconverter.data.model.CurrencyListItemModel
+import com.mieszko.currencyconverter.viewmodel.CurrenciesViewModel
 
 class CurrencyViewHolder private constructor(
     itemView: View,
     private val viewModel: CurrenciesViewModel
-) :
-    RecyclerView.ViewHolder(itemView) {
+) : RecyclerView.ViewHolder(itemView) {
 
     private val amountET = itemView.findViewById<EditText>(R.id.currency_amount)
 
     fun bind(currencyItem: CurrencyListItemModel) {
         setupFocusChangeListener(itemView)
 
-        with(currencyItem){
+        with(currencyItem) {
             setShortNameText(this)
             setFullNameText(this)
             setAmountText(this)
@@ -37,8 +36,9 @@ class CurrencyViewHolder private constructor(
     }
 
     fun updateAmount(newAmount: Double) {
-        if (!amountET.isFocused)
+        if (!amountET.isFocused) {
             amountET.setText(newAmount.toString())
+        }
     }
 
 
