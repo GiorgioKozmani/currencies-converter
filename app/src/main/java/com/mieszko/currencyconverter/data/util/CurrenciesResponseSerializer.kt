@@ -1,13 +1,14 @@
 package com.mieszko.currencyconverter.data.util
 
-import com.google.gson.*
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.JsonParseException
 import com.mieszko.currencyconverter.data.api.SingleCurrencyNetwork
 import java.lang.reflect.Type
 
 
-class CurrenciesResponseSerializer : JsonDeserializer<SingleCurrencyNetwork>
-//    , JsonSerializer<SingleCurrencyNetwork>
-{
+class CurrenciesResponseSerializer : JsonDeserializer<SingleCurrencyNetwork> {
 
     @Throws(JsonParseException::class)
     override fun deserialize(
@@ -21,20 +22,4 @@ class CurrenciesResponseSerializer : JsonDeserializer<SingleCurrencyNetwork>
 
         return SingleCurrencyNetwork(shortName = shortName, ratioToUAH = rate)
     }
-
-//    override fun serialize(
-//        src: SingleCurrencyNetwork,
-//        typeOfSrc: Type?,
-//        context: JsonSerializationContext?
-//    ): JsonElement {
-//        return JsonObject().apply {
-//            val ratesObj = JsonObject()
-//                .apply {
-//                    src.forEach { addProperty(it.shortName, it.ratioToUAH) }
-//                }
-//
-//            add(RATES_KEY, ratesObj)
-//        }
-//    }
-
 }

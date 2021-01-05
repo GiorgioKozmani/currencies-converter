@@ -3,6 +3,8 @@ package com.mieszko.currencyconverter.common
 import androidx.annotation.StringRes
 import com.mieszko.currencyconverter.R
 
+//TODO IMPORTANT NOTE! WHEN THE APP ENABLES MONETIZATION, I MIGHT NEED TO BUY LICENCE FOR THESE! IT'S 1$/EACH, AND IT'D LOAD IMMEDIATELY SO IT'S WORTH IT IMO
+// or just search for free ones, like https://www.flaticon.com/packs/countrys-flags/
 enum class SupportedCurrency(@StringRes val fullName: Int, val flagUrl: String) {
     AUD(R.string.aud_full, "https://img.freeflagicons.com/thumb/round_icon/australia/australia_64.png"),
     BGN(R.string.bgn_full, "https://img.freeflagicons.com/thumb/round_icon/bulgaria/bulgaria_64.png"),
@@ -35,10 +37,33 @@ enum class SupportedCurrency(@StringRes val fullName: Int, val flagUrl: String) 
     USD(R.string.usd_full, "https://img.freeflagicons.com/thumb/round_icon/united_states_of_america/united_states_of_america_64.png"),
     ZAR(R.string.zar_full, "https://img.freeflagicons.com/thumb/round_icon/south_africa/south_africa_64.png"),
     UAH(R.string.uah_full, "https://img.freeflagicons.com/thumb/round_icon/ukraine/ukraine_64.png"),
-
-    //TODO THIS IS NOT SUPPORTED WITH UKRAINIAN :<
-    ISK(R.string.isk_full, "https://img.freeflagicons.com/thumb/round_icon/iceland/iceland_64.png"),
     IDR(R.string.idr_full, "https://img.freeflagicons.com/thumb/round_icon/indonesia/indonesia_64.png"),
-    PHP(R.string.php_full, "https://img.freeflagicons.com/thumb/round_icon/philippines/philippines_64.png")
+    KZT(R.string.kzt_full, "https://img.freeflagicons.com/thumb/round_icon/kazakhstan/kazakhstan_64.png"),
+    MDL(R.string.mdl_full, "https://img.freeflagicons.com/thumb/round_icon/moldova/moldova_64.png"),
+    SAR(R.string.sar_full, "https://img.freeflagicons.com/thumb/round_icon/saudi_arabia/saudi_arabia_64.png"),
+    EGP(R.string.egp_full, "https://img.freeflagicons.com/thumb/round_icon/egypt/egypt_64.png"),
+    BYN(R.string.byn_full, "https://img.freeflagicons.com/thumb/round_icon/belarus/belarus_64.png"),
+    AZN(R.string.azn_full, "https://img.freeflagicons.com/thumb/round_icon/azerbaijan/azerbaijan_64.png"),
+    DZD(R.string.dzd_full, "https://img.freeflagicons.com/thumb/round_icon/algeria/algeria_64.png"),
+    BDT(R.string.bdt_full, "https://img.freeflagicons.com/thumb/round_icon/bangladesh/bangladesh_64.png"),
+    AMD(R.string.amd_full, "https://img.freeflagicons.com/thumb/round_icon/armenia/armenia_64.png"),
+    KGS(R.string.kgs_full, "https://img.freeflagicons.com/thumb/round_icon/kyrgyzstan/kyrgyzstan_64.png"),
+    LBP(R.string.lbp_full, "https://img.freeflagicons.com/thumb/round_icon/lebanon/lebanon_64.png"),
+    LYD(R.string.lyd_full, "https://img.freeflagicons.com/thumb/round_icon/libya/libya_64.png"),
+    VND(R.string.vnd_full, "https://img.freeflagicons.com/thumb/round_icon/vietnam/vietnam_64.png"),
+    AED(R.string.aed_full, "https://img.freeflagicons.com/thumb/round_icon/united_arab_emirates/united_arab_emirates_64.png"),
+    TND(R.string.tnd_full, "https://img.freeflagicons.com/thumb/round_icon/tunisia/tunisia_64.png"),
+    UZS(R.string.uzs_full, "https://img.freeflagicons.com/thumb/round_icon/uzbekistan/uzbekistan_64.png"),
+    TWD(R.string.twd_full, "https://img.freeflagicons.com/thumb/round_icon/republic_of_china/republic_of_china_64.png"),
+    GHS(R.string.ghs_full, "https://img.freeflagicons.com/thumb/round_icon/ghana/ghana_64.png"),
+    RSD(R.string.rsd_full, "https://img.freeflagicons.com/thumb/round_icon/serbia/serbia_64.png"),
+    TJS(R.string.tjs_full, "https://img.freeflagicons.com/thumb/round_icon/tajikistan/tajikistan_64.png"),
+    GEL(R.string.gel_full, "https://img.freeflagicons.com/thumb/round_icon/georgia/georgia_64.png")
+//    //TODO THIS IS NOT SUPPORTED WITH UKRAINIAN :< consider what to do with these as they ARE available in the european bank
+//    ISK(R.string.isk_full, "https://img.freeflagicons.com/thumb/round_icon/iceland/iceland_64.png"),
+//    PHP(R.string.php_full, "https://img.freeflagicons.com/thumb/round_icon/philippines/philippines_64.png")
 
+    // TODO CONSIDER WHAT TO DO WITH THESE
+//    XAU(R.string.gold_full, "https://img.freeflagicons.com/thumb/round_icon/georgia/georgia_64.png"),
+//    XAG(R.string.silver_full, "https://img.freeflagicons.com/thumb/round_icon/georgia/georgia_64.png"),
 }

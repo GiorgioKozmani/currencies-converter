@@ -12,10 +12,11 @@ import kotlin.NoSuchElementException
 class CurrenciesCache : ICurrenciesCache {
     private val type: Type = object : TypeToken<List<SingleCurrencyNetwork>>() {}.type
     private val gson = GsonBuilder().registerTypeAdapter(
-        SingleCurrencyNetwork::class.java, CurrenciesResponseSerializer()
+        SingleCurrencyNetwork::class.java,
+        //todo this could get injected
+        CurrenciesResponseSerializer()
     ).create()
 
-    //TODO FIX THE IMPLEMENTATION, AS NOW IM TRYING TO SAVE CURRENCY AGAIN WHEN IT'S FETCHED FROM CACHE
     override fun getCurrencies(): Single<List<SingleCurrencyNetwork>> {
         val savedJson = SharedPrefs.getString(SharedPrefs.Key.SavedCurrencies)
         val savedCurrenciesResponse: List<SingleCurrencyNetwork>? = gson.fromJson(savedJson, type)
