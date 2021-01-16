@@ -1,49 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/currency_item_root_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/country_flag"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/currency_full_name"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:layout_marginStart="16dp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/this_to_base"
+        app:layout_constraintStart_toEndOf="@+id/country_flag"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="CURRENCY NAME" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/country_flag"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/this_to_base"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toTopOf="@+id/base_to_this"
+        app:layout_constraintStart_toStartOf="@+id/currency_full_name"
+        app:layout_constraintTop_toBottomOf="@+id/currency_full_name"
+        tools:text="1 pln : 5 eur" />
 
-        <TextView
-            android:id="@+id/currency_short_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:fontFamily="sans-serif-medium"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/currency_full_name"
-            app:layout_constraintStart_toEndOf="@+id/country_flag"
-            app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/base_to_this"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/country_flag"
+        app:layout_constraintTop_toBottomOf="@+id/this_to_base"
+        tools:text="1 eur = 5 pln" />
 
-        <TextView
-            android:id="@+id/currency_full_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-medium"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/currency_short_name"
-            app:layout_constraintTop_toBottomOf="@+id/currency_short_name" />
+    <EditText
+        android:id="@+id/currency_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/empty_amount_placeholder"
+        android:inputType="numberDecimal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <EditText
-            android:id="@+id/currency_amount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="@string/empty_amount_placeholder"
-            android:inputType="numberDecimal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

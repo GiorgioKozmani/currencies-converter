@@ -36,7 +36,7 @@ class CurrenciesAdapter(
     }
 
     override fun onBindViewHolder(holder: CurrencyViewHolder, position: Int) {
-        holder.bind(listData[position])
+        holder.bind(listData[position], position == 0)
     }
 
     override fun onBindViewHolder(
@@ -44,10 +44,22 @@ class CurrenciesAdapter(
         position: Int,
         payloads: MutableList<Any>
     ) {
+        //TODO FOR BASE CURRENCY:
+        // - HIDE SUBTEXTS
+        // - INCREASE TEXT SIZE
         if (payloads.isNotEmpty()) {
-            (payloads.firstOrNull() as Double?)
-                ?.run {
-                    holder.updateAmount(this)
+            holder.setItemType(position == 0)
+            (payloads.first() as CurrencyChangePayload)
+                .run {
+                    amount?.let {
+                        holder.updateAmount(it.toString())
+                    }
+                    thisToBaseText?.let {
+                        holder.setThisToBaseText(it)
+                    }
+                    baseToThisText?.let {
+                        holder.setBaseToThisText(it)
+                    }
                 }
         } else
             super.onBindViewHolder(holder, position, payloads)
@@ -61,16 +73,6 @@ class CurrenciesAdapter(
         return listData.size
     }
 
-    fun moveItem(from: Int, to: Int) {
-        val fromItem = listData[from]
-        listData.removeAt(from)
-        if (to < from) {
-            listData.add(to, fromItem)
-        } else {
-            listData.add(to - 1, fromItem)
-        }
-    }
-
     class CurrenciesDiffCallback(
         private val oldList: List<CurrencyListItemModel>,
         private val newList: List<CurrencyListItemModel>
@@ -79,20 +81,36 @@ class CurrenciesAdapter(
         override fun getNewListSize(): Int = newList.size
 
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            // items represent the same currency
             return oldList[oldItemPosition].currency == newList[newItemPosition].currency
         }
 
         override fun areContentsTheSame(oldPosition: Int, newPosition: Int): Boolean {
-            return oldList[oldPosition].amount == newList[newPosition].amount
+            return oldList[oldPosition] == newList[newPosition]
         }
 
-        override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
+        override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any {
             val oldObj = oldList[oldItemPosition]
             val newObj = newList[newItemPosition]
-            return if (newObj.amount != oldObj.amount) {
-                newObj.amount
-            } else
-                null
+
+            return CurrencyChangePayload().apply {
+                if (oldObj.amount != newObj.amount) {
+                    amount = newObj.amount
+                }
+                if (oldObj.thisToBase != newObj.thisToBase) {
+                    thisToBaseText = newObj.thisToBase
+                }
+                if (oldObj.baseToThis != newObj.baseToThis) {
+                    baseToThisText = newObj.baseToThis
+                }
+            }
         }
     }
+
+    // null represents NO CHANGE state
+    data class CurrencyChangePayload(
+        var amount: Double? = null,
+        var thisToBaseText: String? = null,
+        var baseToThisText: String? = null
+    )
 }

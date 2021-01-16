@@ -100,6 +100,7 @@ class MainActivity : AppCompatActivity() {
 
             }
             is Resource.Success -> {
+                //todo if today / yesterday then think of using these strings instead of full day
                 last_updated.text = DateFormat.format("yyyy-MM-dd hh:mm:ss a", updateDate.data)
             }
             is Resource.Error -> {
@@ -108,55 +109,51 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val itemTouchHelper by lazy {
-        val simpleItemTouchCallback = object : ItemTouchHelper.SimpleCallback(
-            UP or
-                    DOWN or
-                    START or
-                    END, 0
-        ) {
+        val simpleItemTouchCallback =
+            object : ItemTouchHelper.SimpleCallback(UP or DOWN or START or END, 0) {
 
-            override fun onSelectedChanged(
-                viewHolder: RecyclerView.ViewHolder?,
-                actionState: Int
-            ) {
-                super.onSelectedChanged(viewHolder, actionState)
+                override fun onSelectedChanged(
+                    viewHolder: RecyclerView.ViewHolder?,
+                    actionState: Int
+                ) {
+                    super.onSelectedChanged(viewHolder, actionState)
 
-                if (actionState == ACTION_STATE_DRAG) {
-                    viewHolder?.itemView?.alpha = 0.5f
+                    if (actionState == ACTION_STATE_DRAG) {
+                        viewHolder?.itemView?.alpha = 0.5f
+                    }
+                }
+
+                override fun clearView(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder
+                ) {
+                    super.clearView(recyclerView, viewHolder)
+                    viewHolder.itemView.alpha = 1.0f
+                }
+
+                override fun onMove(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
+                ): Boolean {
+
+                    recyclerView.adapter as CurrenciesAdapter
+                    val from = viewHolder.adapterPosition
+                    val to = target.adapterPosition
+
+                    viewModel.moveItem(from, to)
+
+                    return true
+                }
+
+                override fun onSwiped(
+                    viewHolder: RecyclerView.ViewHolder,
+                    direction: Int
+                ) {
+                    //    ItemTouchHelper handles horizontal swipe as well, but
+                    //    it is not relevant with reordering. Ignoring here.
                 }
             }
-
-            override fun clearView(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder
-            ) {
-                super.clearView(recyclerView, viewHolder)
-                viewHolder.itemView.alpha = 1.0f
-            }
-
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-
-                recyclerView.adapter as CurrenciesAdapter
-                val from = viewHolder.adapterPosition
-                val to = target.adapterPosition
-
-                viewModel.moveItem(from, to)
-
-                return true
-            }
-
-            override fun onSwiped(
-                viewHolder: RecyclerView.ViewHolder,
-                direction: Int
-            ) {
-                //    ItemTouchHelper handles horizontal swipe as well, but
-                //    it is not relevant with reordering. Ignoring here.
-            }
-        }
         ItemTouchHelper(simpleItemTouchCallback)
     }
 }

@@ -3,15 +3,15 @@ package com.mieszko.currencyconverter.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.mieszko.currencyconverter.common.SupportedCurrency
 import com.mieszko.currencyconverter.data.model.CurrencyListItemModel
 import com.mieszko.currencyconverter.data.model.CurrencyModel
 import com.mieszko.currencyconverter.data.model.Resource
 import com.mieszko.currencyconverter.data.persistance.SharedPrefs
 import com.mieszko.currencyconverter.data.repository.ICurrenciesRepository
-import com.mieszko.currencyconverter.common.SupportedCurrency
-import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import java.net.UnknownHostException
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -49,8 +49,7 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
         currenciesList
             .forEach { supportedCurrency ->
                 if (supportedCurrency != baseCurrencyModel) {
-                    supportedCurrency.amount =
-                        calculateCurrencyAmount(supportedCurrency)
+                    supportedCurrency.amount = calculateCurrencyAmount(supportedCurrency)
                 }
             }
         emitLiveData()
@@ -71,6 +70,8 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
         } else {
             currenciesList.add(to - 1, fromItem)
         }
+        // after move reset base and emit
+        baseCurrencyModel = currenciesList[0]
         emitCurrencies()
     }
 
@@ -91,23 +92,18 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
                         dataRepository.loadCurrencies()
                             .subscribe(
                                 { currenciesResponse ->
+                                    //todo simplify it, it might be better to do this other way around, and eliminate nulls
                                     currenciesResponse
                                         .forEach { singleCurrencyResponse ->
-                                            //I have to do all below as we need to associate the hardcoded flagUrl and currencyName with api response items
                                             currenciesList
                                                 .find { it.currency.name == singleCurrencyResponse.shortName }
                                                 ?.apply {
-                                                    toUAHRatio = singleCurrencyResponse.ratioToUAH
                                                     if (this != baseCurrencyModel) {
+                                                        toUAHRatio =
+                                                            singleCurrencyResponse.ratioToUAH
                                                         amount = calculateCurrencyAmount(this)
                                                     }
                                                 }
-                                        }
-
-                                    currenciesList
-                                        .find { it.currency == SupportedCurrency.UAH }
-                                        ?.apply {
-                                            amount = calculateCurrencyAmount(this)
                                         }
 
                                     emitLiveData()
@@ -140,7 +136,7 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
     }
 
     private fun calculateCurrencyAmount(supportedCurrency: CurrencyModel) =
-        (supportedCurrency.toUAHRatio / baseCurrencyModel.toUAHRatio * baseCurrencyModel.amount)
+        (baseCurrencyModel.toUAHRatio / supportedCurrency.toUAHRatio * baseCurrencyModel.amount)
             .roundTo2Decimals()
 
     // Handled in the background thread, in order to avoid blocking UI thread by the mapping,
@@ -159,28 +155,36 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
             if (dateLong != (-1).toLong()) {
                 Resource.Success(Date(dateLong))
             } else {
-                Resource.Error<Date>("Never updated")
+                Resource.Error("Never updated")
             }
         lastUpdatedLiveData.postValue(dateResource)
     }
 
     private fun emitCurrencies() {
-        currenciesLiveData.postValue(
-            Resource.Success(getListItemModels())
-        )
+        currenciesLiveData.postValue(Resource.Success(getListItemModels()))
     }
 
     private fun getListItemModels(): List<CurrencyListItemModel> {
         return currenciesList
             .map { currencyModel ->
                 CurrencyListItemModel(
-                    currencyModel.currency,
-                    currencyModel.amount
+                    currency = currencyModel.currency,
+                    amount = currencyModel.amount,
+                    thisToBase = makeRatioString(baseCurrencyModel, currencyModel),
+                    baseToThis = makeRatioString(currencyModel, baseCurrencyModel)
                 )
             }
     }
 
+    private fun makeRatioString(firstCurrency: CurrencyModel, secondCurrency: CurrencyModel) =
+        if (secondCurrency.toUAHRatio != 0.0) {
+            "1 ${firstCurrency.currency.name} = ${(firstCurrency.toUAHRatio / secondCurrency.toUAHRatio).roundTo2Decimals()} ${secondCurrency.currency.name}"
+        } else {
+            ""
+        }
+
     private fun setupSupportedCurrencies() {
+        //todo change ordering here?
         SupportedCurrency
             .values()
             .mapTo(currenciesList) { currency ->
