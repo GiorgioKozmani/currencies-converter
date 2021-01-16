@@ -4,7 +4,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.mieszko.currencyconverter.data.api.SingleCurrencyNetwork
 import com.mieszko.currencyconverter.data.util.CurrenciesResponseSerializer
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import java.lang.reflect.Type
 import java.util.*
 import kotlin.NoSuchElementException

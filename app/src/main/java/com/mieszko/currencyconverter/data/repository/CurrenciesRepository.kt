@@ -3,7 +3,7 @@ package com.mieszko.currencyconverter.data.repository
 import com.mieszko.currencyconverter.data.api.SingleCurrencyNetwork
 import com.mieszko.currencyconverter.data.persistance.ICurrenciesCache
 import com.mieszko.currencyconverter.data.util.CurrenciesApi
-import io.reactivex.Observable
+import io.reactivex.rxjava3.core.Observable
 
 class CurrenciesRepository(
     private val currenciesApi: CurrenciesApi,
@@ -19,7 +19,7 @@ class CurrenciesRepository(
                     .toObservable(),
                 currenciesApi
                     .getCurrencies()
-                    .doOnSuccess() { cache.saveCurrencies(it) }
+                    .doOnSuccess { cache.saveCurrencies(it) }
                     .toObservable()
             )
     }

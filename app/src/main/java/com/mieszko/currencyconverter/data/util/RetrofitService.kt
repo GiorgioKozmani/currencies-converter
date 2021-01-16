@@ -1,11 +1,11 @@
 package com.mieszko.currencyconverter.data.util
 
 import com.google.gson.GsonBuilder
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.mieszko.currencyconverter.data.api.SingleCurrencyNetwork
 import okhttp3.OkHttpClient
 import retrofit2.Converter
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
@@ -19,7 +19,7 @@ class RetrofitService {
         return Retrofit.Builder()
             .baseUrl(CurrenciesApi.BASE_URL)
             .client(createHttpClient())
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
             .addConverterFactory(createGsonConverter(CurrenciesResponseSerializer()))
             .build()
     }
