@@ -1,5 +1,6 @@
 package com.mieszko.currencyconverter.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,11 +11,13 @@ import com.mieszko.currencyconverter.data.model.Resource
 import com.mieszko.currencyconverter.data.persistance.SharedPrefs
 import com.mieszko.currencyconverter.data.repository.ICurrenciesRepository
 import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.net.UnknownHostException
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.math.pow
 import kotlin.math.roundToLong
 
@@ -110,38 +113,38 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
 
     private fun startUpdatingRates() {
         disposeBag.add(
-            //todo as this is updated once in a day at 16, this would be nice to have it added as a (?) button, together with refresh button but don't update it every second
+//            //todo as this is updated once in a day at 16, this would be nice to have it added as a (?) button, together with refresh button but don't update it every second
 //            Observable.interval(5, TimeUnit.SECONDS)
 //                // Thanks to liveData.postValue, we can move whole flow to the background thread.
 //                .observeOn(Schedulers.io())
 //                .retry()
 //                .subscribe(
 //                    {
-            dataRepository
-                .loadCurrencies()
-                .subscribeOn(Schedulers.io())
-                .subscribe(
-                    { currenciesResponse ->
-                        //todo simplify it, it might be better to do this other way around, and eliminate nulls
-                        currenciesResponse
-                            .forEach { singleCurrencyResponse ->
-                                currenciesDataList
-                                    .find { it.currency.name == singleCurrencyResponse.shortName }
-                                    ?.apply {
-                                        if (this != baseCurrencyDataModel) {
-                                            toUAHRatio =
-                                                singleCurrencyResponse.ratioToUAH
-                                            amount = calculateCurrencyAmount(this)
+                        dataRepository
+                            .loadCurrencies()
+                            .subscribeOn(Schedulers.io())
+                            .subscribe(
+                                { currenciesResponse ->
+                                    //todo simplify it, it might be better to do this other way around, and eliminate nulls
+                                    currenciesResponse
+                                        .forEach { singleCurrencyResponse ->
+                                            currenciesDataList
+                                                .find { it.currency.name == singleCurrencyResponse.shortName }
+                                                ?.apply {
+                                                    if (this != baseCurrencyDataModel) {
+                                                        toUAHRatio =
+                                                            singleCurrencyResponse.ratioToUAH
+                                                        amount = calculateCurrencyAmount(this)
+                                                    }
+                                                }
                                         }
-                                    }
-                            }
 
-                        emitLiveData()
-                    },
-                    { t ->
-                        emitError(t)
-                    }
-                )
+                                    emitLiveData()
+                                },
+                                { t ->
+                                    emitError(t)
+                                }
+                            )
 //                    },
 //                    { t ->
 //                        emitError(t)
@@ -190,8 +193,7 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
         getListItemModels()
             .subscribeOn(Schedulers.io())
             .subscribe { values ->
-                currenciesListModelsLiveData.postValue(Resource.Success(values))
-            }
+                currenciesListModelsLiveData.postValue(Resource.Success(values)) }
     }
 
     private fun getListItemModels(): Single<List<CurrencyListItemModel>> {

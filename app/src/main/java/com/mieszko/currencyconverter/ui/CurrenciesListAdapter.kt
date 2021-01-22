@@ -6,36 +6,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mieszko.currencyconverter.data.model.CurrencyListItemModel
 import com.mieszko.currencyconverter.ui.viewholder.CurrencyViewHolder
 import com.mieszko.currencyconverter.viewmodel.CurrenciesViewModel
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.schedulers.Schedulers
-import io.reactivex.rxjava3.subjects.PublishSubject
 
 
-class CurrenciesListAdapter(private val viewModel: CurrenciesViewModel) : RecyclerView.Adapter<CurrencyViewHolder>() {
+class CurrenciesListAdapter(private val viewModel: CurrenciesViewModel) :
+    RecyclerView.Adapter<CurrencyViewHolder>() {
 
-    private val listData = mutableListOf<CurrencyListItemModel>()
-    val dataObservable: PublishSubject<List<CurrencyListItemModel>> = PublishSubject.create()
+    private val currentListData = mutableListOf<CurrencyListItemModel>()
 
-    init {
-        val initialPair: Pair<List<CurrencyListItemModel>, DiffUtil.DiffResult?> = Pair(arrayListOf(), null)
-        //todo unsubscribe from this
-        dataObservable.scan(initialPair,
-            { t1, oldItems ->
-                val callback = CurrenciesDiffCallback(t1.first, oldItems)
-                val calculatedDiff = DiffUtil.calculateDiff(callback)
-                Pair(oldItems, calculatedDiff)
-            })
-            .skip(1)
-            .subscribeOn(Schedulers.computation())
-            .doOnNext { refreshList(it.first) }
-            .map { it.second }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ diffResult -> diffResult?.dispatchUpdatesTo(this) }, {})
+    fun updateCurrencies(currencies: List<CurrencyListItemModel>) {
+        DiffUtil.calculateDiff(CurrenciesDiffCallback(currentListData, currencies))
+            .dispatchUpdatesTo(this)
+        refreshList(currencies)
     }
 
     private fun refreshList(newResultsItems: List<CurrencyListItemModel>) {
-        listData.clear()
-        listData.addAll(newResultsItems)
+        currentListData.clear()
+        currentListData.addAll(newResultsItems)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyViewHolder {
@@ -43,7 +29,7 @@ class CurrenciesListAdapter(private val viewModel: CurrenciesViewModel) : Recycl
     }
 
     override fun onBindViewHolder(holder: CurrencyViewHolder, position: Int) {
-        val currencyModel = listData[position]
+        val currencyModel = currentListData[position]
         val isBase = position == 0
         val clickAction = if (isBase) {
             // base currency has no click effect
@@ -67,7 +53,7 @@ class CurrenciesListAdapter(private val viewModel: CurrenciesViewModel) : Recycl
         position: Int,
         payloads: MutableList<Any>
     ) {
-        val currency = listData[position]
+        val currency = currentListData[position]
         val isBase = position == 0
         val clickAction = if (isBase) {
             // base currency has no click effect
@@ -102,11 +88,11 @@ class CurrenciesListAdapter(private val viewModel: CurrenciesViewModel) : Recycl
     }
 
     override fun getItemId(position: Int): Long {
-        return listData[position].currency.ordinal.toLong()
+        return currentListData[position].currency.ordinal.toLong()
     }
 
     override fun getItemCount(): Int {
-        return listData.size
+        return currentListData.size
     }
 
     class CurrenciesDiffCallback(

@@ -12,6 +12,7 @@ import com.mieszko.currencyconverter.R
 import com.mieszko.currencyconverter.data.model.CurrencyListItemModel
 import com.mieszko.currencyconverter.data.model.Resource
 import com.mieszko.currencyconverter.viewmodel.CurrenciesViewModel
+import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
@@ -19,8 +20,13 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     private var rvAdapter: CurrenciesListAdapter? = null
+    private val recyclerView: RecyclerView by lazy { findViewById(R.id.currencies_rv) }
     private val rvManager: LinearLayoutManager by lazy { LinearLayoutManager(this) }
     private val viewModel by viewModel<CurrenciesViewModel>()
+
+    //todo remake
+    private val dataObservable: PublishSubject<List<CurrencyListItemModel>> =
+        PublishSubject.create()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,27 +50,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        val recyclerView = currencies_rv
         val adapter = CurrenciesListAdapter(viewModel)
         rvAdapter = adapter
-        if (recyclerView != null) {
-            recyclerView.layoutManager = rvManager
-            recyclerView.adapter = adapter
-            itemTouchHelper.attachToRecyclerView(recyclerView)
+        recyclerView.layoutManager = rvManager
+        recyclerView.adapter = adapter
+        itemTouchHelper.attachToRecyclerView(recyclerView)
 
-            adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-                override fun onItemRangeMoved(
-                    fromPosition: Int,
-                    toPosition: Int,
-                    itemCount: Int
-                ) {
-                    super.onItemRangeMoved(fromPosition, toPosition, itemCount)
-                    if (!isUserDraggingItem || toPosition == 0) {
+        adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeMoved(
+                fromPosition: Int,
+                toPosition: Int,
+                itemCount: Int
+            ) {
+                super.onItemRangeMoved(fromPosition, toPosition, itemCount)
+                if (!isUserDraggingItem || toPosition == 0) {
+                    recyclerView.post {
                         recyclerView.scrollToPosition(0)
                     }
                 }
-            })
-        }
+            }
+        })
     }
 
     private fun handleNewResults(response: Resource<List<CurrencyListItemModel>>) {
@@ -94,7 +99,7 @@ class MainActivity : AppCompatActivity() {
                 rvManager.getDecoratedTop(firstView) - rvManager.getTopDecorationHeight(firstView)
         }
 
-        rvAdapter?.dataObservable?.onNext(response.data)
+        rvAdapter?.updateCurrencies(response.data ?: listOf())
 
         if (firstPos >= 0) {
             rvManager.scrollToPositionWithOffset(firstPos, offsetTop)
