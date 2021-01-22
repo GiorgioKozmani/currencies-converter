@@ -1,10 +1,8 @@
 package com.mieszko.currencyconverter.ui
 
-import android.app.Activity
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.*
@@ -20,7 +18,8 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private var rvAdapter: CurrenciesAdapter? = null
+    private var rvAdapter: CurrenciesListAdapter? = null
+    private val rvManager: LinearLayoutManager by lazy { LinearLayoutManager(this) }
     private val viewModel by viewModel<CurrenciesViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,23 +44,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        rvAdapter = CurrenciesAdapter(viewModel)
-            .apply { setHasStableIds(true) }
+        val recyclerView = currencies_rv
+        val adapter = CurrenciesListAdapter(viewModel)
+        rvAdapter = adapter
+        if (recyclerView != null) {
+            recyclerView.layoutManager = rvManager
+            recyclerView.adapter = adapter
+            itemTouchHelper.attachToRecyclerView(recyclerView)
 
-        currencies_rv?.run {
-            layoutManager = LinearLayoutManager(context)
-            adapter = rvAdapter
-            setHasFixedSize(true)
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    super.onScrollStateChanged(recyclerView, newState)
-                    (getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager)
-                        .hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+            adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+                override fun onItemRangeMoved(
+                    fromPosition: Int,
+                    toPosition: Int,
+                    itemCount: Int
+                ) {
+                    super.onItemRangeMoved(fromPosition, toPosition, itemCount)
+                    if (!isUserDraggingItem || toPosition == 0) {
+                        recyclerView.scrollToPosition(0)
+                    }
                 }
             })
         }
-
-        itemTouchHelper.attachToRecyclerView(currencies_rv)
     }
 
     private fun handleNewResults(response: Resource<List<CurrencyListItemModel>>) {
@@ -79,9 +82,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //todo step away from synthetics, go for viewbinding
     private fun updateListData(response: Resource<List<CurrencyListItemModel>>) {
-        response.data?.let { newItems ->
-            rvAdapter?.refreshData(newItems)
+        // this is a workaround for issue with dragging 1st item of the list
+        // https://issuetracker.google.com/issues/37018279
+        val firstPos = rvManager.findFirstCompletelyVisibleItemPosition()
+        var offsetTop = 0
+        if (firstPos >= 0) {
+            val firstView = rvManager.findViewByPosition(firstPos)!!
+            offsetTop =
+                rvManager.getDecoratedTop(firstView) - rvManager.getTopDecorationHeight(firstView)
+        }
+
+        rvAdapter?.dataObservable?.onNext(response.data)
+
+        if (firstPos >= 0) {
+            rvManager.scrollToPositionWithOffset(firstPos, offsetTop)
         }
     }
 
@@ -108,6 +124,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    var isUserDraggingItem = false
+
     private val itemTouchHelper by lazy {
         val simpleItemTouchCallback =
             object : ItemTouchHelper.SimpleCallback(UP or DOWN or START or END, 0) {
@@ -116,19 +134,22 @@ class MainActivity : AppCompatActivity() {
                     viewHolder: RecyclerView.ViewHolder?,
                     actionState: Int
                 ) {
-                    super.onSelectedChanged(viewHolder, actionState)
-
-                    if (actionState == ACTION_STATE_DRAG) {
-                        viewHolder?.itemView?.alpha = 0.5f
+                    when (actionState) {
+                        ACTION_STATE_DRAG -> {
+                            isUserDraggingItem = true
+                            viewHolder?.itemView?.alpha = 0.5f
+                        }
                     }
+                    super.onSelectedChanged(viewHolder, actionState)
                 }
 
                 override fun clearView(
                     recyclerView: RecyclerView,
                     viewHolder: RecyclerView.ViewHolder
                 ) {
-                    super.clearView(recyclerView, viewHolder)
                     viewHolder.itemView.alpha = 1.0f
+                    isUserDraggingItem = false
+                    super.clearView(recyclerView, viewHolder)
                 }
 
                 override fun onMove(
@@ -137,7 +158,6 @@ class MainActivity : AppCompatActivity() {
                     target: RecyclerView.ViewHolder
                 ): Boolean {
 
-                    recyclerView.adapter as CurrenciesAdapter
                     val from = viewHolder.adapterPosition
                     val to = target.adapterPosition
 

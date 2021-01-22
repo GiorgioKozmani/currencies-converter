@@ -6,7 +6,7 @@ import com.mieszko.currencyconverter.common.SupportedCurrency
 data class CurrencyListItemModel(
     val currency: SupportedCurrency,
     var amount: Double = 0.0,
-    var thisToBase: String = "",
-    var baseToThis: String = ""
+    var baseToThisText: String = "",
+    var thisToBaseText: String = ""
 )
 
