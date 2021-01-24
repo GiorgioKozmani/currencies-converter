@@ -24,10 +24,6 @@ class MainActivity : AppCompatActivity() {
     private val rvManager: LinearLayoutManager by lazy { LinearLayoutManager(this) }
     private val viewModel by viewModel<CurrenciesViewModel>()
 
-    //todo remake
-    private val dataObservable: PublishSubject<List<CurrencyListItemModel>> =
-        PublishSubject.create()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)

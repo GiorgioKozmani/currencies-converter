@@ -1,7 +1,6 @@
 package com.mieszko.currencyconverter.ui.viewholder
 
 import android.annotation.SuppressLint
-import android.graphics.drawable.ColorDrawable
 import android.text.TextWatcher
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -10,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.StringRes
-import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -21,10 +19,11 @@ import com.mieszko.currencyconverter.ui.util.fadeInText
 import de.hdodenhof.circleimageview.CircleImageView
 import java.text.DecimalFormat
 
+
 class CurrencyViewHolder private constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
     //todo bug, now some random keboard is showing when scrolling
 
-    private val rootContainer = itemView.findViewById<ViewGroup>(R.id.currency_item_root_container)
+    private val baseBackgroundOverlay = itemView.findViewById<View>(R.id.base_background_overlay)
     private val amountET = itemView.findViewById<EditText>(R.id.currency_amount)
     private val fullNameTV = itemView.findViewById<TextView>(R.id.currency_full_name)
     private val baseToThisTV = itemView.findViewById<TextView>(R.id.base_to_this)
@@ -81,8 +80,10 @@ class CurrencyViewHolder private constructor(itemView: View) : RecyclerView.View
 
             //todo fade in, don't just set color
             //todo gradient?
-            rootContainer.background =
-                ColorDrawable(ContextCompat.getColor(itemView.context, R.color.colorPrimaryDark))
+
+
+            baseBackgroundOverlay.animate().alpha(1f).setDuration(250).setListener(null)
+
             baseToThisTV.visibility = View.GONE
             thisToBaseTV.visibility = View.GONE
             fullNameTV.setTextSize(textSizeUnit, baseCurrencyTextSize)
@@ -96,8 +97,9 @@ class CurrencyViewHolder private constructor(itemView: View) : RecyclerView.View
             amountET.setTextIsSelectable(false)
             amountET.clearFocus()
 
-            rootContainer.background =
-                ColorDrawable(ContextCompat.getColor(itemView.context, android.R.color.transparent))
+
+            baseBackgroundOverlay.animate().alpha(0f).setDuration(250).setListener(null)
+
 
             fullNameTV.setTextSize(textSizeUnit, regularCurrencyTextSize)
             baseToThisTV.visibility = View.VISIBLE
