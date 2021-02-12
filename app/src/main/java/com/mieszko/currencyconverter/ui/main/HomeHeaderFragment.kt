@@ -1,4 +1,4 @@
-package com.mieszko.currencyconverter.ui
+package com.mieszko.currencyconverter.ui.main
 
 import android.os.Bundle
 import android.text.format.DateFormat
@@ -12,7 +12,7 @@ import com.mieszko.currencyconverter.viewmodel.CurrenciesViewModel
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import java.util.*
 
-class CurrenciesHeaderFragment : Fragment(R.layout.currencies_header_fragment) {
+class HomeHeaderFragment : Fragment(R.layout.currencies_header_fragment) {
     private val viewModel by sharedViewModel<CurrenciesViewModel>()
     private lateinit var errorMessage: TextView
     private lateinit var lastUpdated: TextView
@@ -20,6 +20,7 @@ class CurrenciesHeaderFragment : Fragment(R.layout.currencies_header_fragment) {
     //todo think of the way to handle errors, maybe in parent fragment?
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // TODO VIEWBINDING
         errorMessage = view.findViewById(R.id.error_message)
         lastUpdated = view.findViewById(R.id.last_updated)
         observeViewModel()
@@ -30,7 +31,6 @@ class CurrenciesHeaderFragment : Fragment(R.layout.currencies_header_fragment) {
             .observe(viewLifecycleOwner, { handleNewDate(it) })
     }
 
-    //todo revert
     private fun hideErrorMessage() {
         errorMessage.visibility = View.GONE
     }

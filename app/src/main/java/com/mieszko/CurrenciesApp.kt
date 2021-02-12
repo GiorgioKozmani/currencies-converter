@@ -1,6 +1,7 @@
 package com.mieszko
 
 import android.app.Application
+import android.content.res.Resources
 import com.mieszko.currencyconverter.data.persistance.SharedPrefs
 import com.mieszko.currencyconverter.di.apiModule
 import com.mieszko.currencyconverter.di.cacheModule
@@ -14,6 +15,7 @@ class CurrenciesApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        resourses = resources
 
         SharedPrefs.init(this)
         startKoin {
@@ -30,4 +32,7 @@ class CurrenciesApp : Application() {
         }
     }
 
+    companion object {
+        lateinit var resourses: Resources
+    }
 }

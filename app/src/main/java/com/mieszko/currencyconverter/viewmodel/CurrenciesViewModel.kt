@@ -1,23 +1,20 @@
 package com.mieszko.currencyconverter.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mieszko.currencyconverter.common.SupportedCurrency
-import com.mieszko.currencyconverter.data.model.CurrencyDataModel
-import com.mieszko.currencyconverter.data.model.CurrencyListItemModel
+import com.mieszko.currencyconverter.data.model.CurrencyData
+import com.mieszko.currencyconverter.data.model.HomeListItem
 import com.mieszko.currencyconverter.data.model.Resource
 import com.mieszko.currencyconverter.data.persistance.SharedPrefs
 import com.mieszko.currencyconverter.data.repository.ICurrenciesRepository
 import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.net.UnknownHostException
 import java.util.*
-import java.util.concurrent.TimeUnit
 import kotlin.math.pow
 import kotlin.math.roundToLong
 
@@ -25,21 +22,21 @@ import kotlin.math.roundToLong
 class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : ViewModel() {
     private val disposeBag = CompositeDisposable()
 
-    private val currenciesListModelsLiveData: MutableLiveData<Resource<List<CurrencyListItemModel>>> =
+    private val currenciesListModelsLiveData: MutableLiveData<Resource<List<HomeListItem>>> =
         MutableLiveData()
     private val lastUpdatedLiveData: MutableLiveData<Resource<Date>> =
         MutableLiveData()
 
-    private var currenciesDataList = mutableListOf<CurrencyDataModel>()
+    private var currenciesDataList = mutableListOf<CurrencyData>()
 
     //Exposing only LiveData
-    fun getCurrenciesLiveDate(): LiveData<Resource<List<CurrencyListItemModel>>> =
+    fun getCurrenciesLiveData(): LiveData<Resource<List<HomeListItem>>> =
         currenciesListModelsLiveData
 
     fun getLastUpdatedLiveData(): LiveData<Resource<Date>> =
         lastUpdatedLiveData
 
-    private lateinit var baseCurrencyDataModel: CurrencyDataModel
+    private lateinit var baseCurrencyData: CurrencyData
 
     init {
         setupSupportedCurrencies()
@@ -51,11 +48,11 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
 //        val newValue = newAmountText.sanitizeBaseValue().toValidDouble()
         //todo rollback if same check
         Completable.fromAction {
-            if (newAmount != baseCurrencyDataModel.amount) {
-                baseCurrencyDataModel.amount = newAmount
+            if (newAmount != baseCurrencyData.amount) {
+                baseCurrencyData.amount = newAmount
                 //TODO INTO BG THREAD
                 currenciesDataList.forEach { supportedCurrencyData ->
-                    if (supportedCurrencyData != baseCurrencyDataModel) {
+                    if (supportedCurrencyData != baseCurrencyData) {
                         supportedCurrencyData.amount =
                             calculateCurrencyAmount(supportedCurrencyData)
                     }
@@ -70,7 +67,7 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
     // Move new base currency to the top of the list, and inform adapter about the change so it's instantly animated
     fun setBaseCurrency(newBaseCurrency: SupportedCurrency) {
         Completable.fromAction {
-            baseCurrencyDataModel = currenciesDataList.find { it.currency == newBaseCurrency }!!
+            baseCurrencyData = currenciesDataList.find { it.currency == newBaseCurrency }!!
             moveBaseCurrencyTop()
             emitLiveData()
         }.subscribeOn(Schedulers.io())
@@ -82,24 +79,16 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
         //todo on bg thread?
         Completable.fromAction {
             Collections.swap(currenciesDataList, from, to)
-//
-//            val fromItem = currenciesDataList[from]
-//            currenciesDataList.removeAt(from)
-//            if (to < from) {
-//                currenciesDataList.add(to, fromItem)
-//            } else {
-//                currenciesDataList.add(to - 1, fromItem)
-//            }
             // after move reset base and emit
-            baseCurrencyDataModel = currenciesDataList[0]
+            baseCurrencyData = currenciesDataList[0]
             emitLiveData()
         }.subscribeOn(Schedulers.io())
             .subscribe()
     }
 
-    private fun calculateCurrencyAmount(supportedCurrency: CurrencyDataModel) =
+    private fun calculateCurrencyAmount(supportedCurrency: CurrencyData) =
         try {
-            (baseCurrencyDataModel.toUAHRatio / supportedCurrency.toUAHRatio * baseCurrencyDataModel.amount).roundTo2Decimals()
+            (baseCurrencyData.toUAHRatio / supportedCurrency.toUAHRatio * baseCurrencyData.amount).roundTo2Decimals()
         } catch (t: Throwable) {
             //todo TO CRASHLYTICS
             0.0
@@ -107,8 +96,8 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
 
     private fun moveBaseCurrencyTop() {
         //todo to bg thread?
-        currenciesDataList.remove(baseCurrencyDataModel)
-        currenciesDataList.add(0, baseCurrencyDataModel)
+        currenciesDataList.remove(baseCurrencyData)
+        currenciesDataList.add(0, baseCurrencyData)
     }
 
     private fun startUpdatingRates() {
@@ -120,31 +109,31 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
 //                .retry()
 //                .subscribe(
 //                    {
-                        dataRepository
-                            .loadCurrencies()
-                            .subscribeOn(Schedulers.io())
-                            .subscribe(
-                                { currenciesResponse ->
-                                    //todo simplify it, it might be better to do this other way around, and eliminate nulls
-                                    currenciesResponse
-                                        .forEach { singleCurrencyResponse ->
-                                            currenciesDataList
-                                                .find { it.currency.name == singleCurrencyResponse.shortName }
-                                                ?.apply {
-                                                    if (this != baseCurrencyDataModel) {
-                                                        toUAHRatio =
-                                                            singleCurrencyResponse.ratioToUAH
-                                                        amount = calculateCurrencyAmount(this)
-                                                    }
-                                                }
+            dataRepository
+                .loadCurrencies()
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                    { currenciesResponse ->
+                        //todo simplify it, it might be better to do this other way around, and eliminate nulls
+                        currenciesResponse
+                            .forEach { singleCurrencyResponse ->
+                                currenciesDataList
+                                    .find { it.currency.name == singleCurrencyResponse.shortName }
+                                    ?.apply {
+                                        if (this != baseCurrencyData) {
+                                            toUAHRatio =
+                                                singleCurrencyResponse.ratioToUAH
+                                            amount = calculateCurrencyAmount(this)
                                         }
+                                    }
+                            }
 
-                                    emitLiveData()
-                                },
-                                { t ->
-                                    emitError(t)
-                                }
-                            )
+                        emitLiveData()
+                    },
+                    { t ->
+                        emitError(t)
+                    }
+                )
 //                    },
 //                    { t ->
 //                        emitError(t)
@@ -179,7 +168,7 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
     }
 
     private fun emitUpdateDate() {
-        val dateLong = SharedPrefs.getLong(SharedPrefs.Key.SavedCurrenciesTime)
+        val dateLong = SharedPrefs.getLong(SharedPrefs.Key.CachedCurrenciesTime)
         val dateResource =
             if (dateLong != (-1).toLong()) {
                 Resource.Success(Date(dateLong))
@@ -193,15 +182,16 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
         getListItemModels()
             .subscribeOn(Schedulers.io())
             .subscribe { values ->
-                currenciesListModelsLiveData.postValue(Resource.Success(values)) }
+                currenciesListModelsLiveData.postValue(Resource.Success(values))
+            }
     }
 
-    private fun getListItemModels(): Single<List<CurrencyListItemModel>> {
+    private fun getListItemModels(): Single<List<HomeListItem>> {
         //todo this is waste of resources
         //todo hashmap with key as currency?
         return Single.just(currenciesDataList
             .map { currencyModel ->
-                CurrencyListItemModel(
+                HomeListItem(
                     currency = currencyModel.currency,
                     //todo verify
                     //todo trim last zeroes?
@@ -209,8 +199,8 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
                     amount = currencyModel.amount.roundTo2Decimals(),
                     //TODO REVERT CACHE
                     //TODO THIS WILL RETURN SOME CRAP BEFORE FETCHING ITEMS, BECAUSE UAH HAS RATIO SET
-                    baseToThisText = makeRatioString(currencyModel, baseCurrencyDataModel),
-                    thisToBaseText = makeRatioString(baseCurrencyDataModel, currencyModel)
+                    baseToThisText = makeRatioString(currencyModel, baseCurrencyData),
+                    thisToBaseText = makeRatioString(baseCurrencyData, currencyModel)
                 )
             })
 
@@ -218,8 +208,8 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
     }
 
     private fun makeRatioString(
-        firstCurrency: CurrencyDataModel,
-        secondCurrency: CurrencyDataModel
+        firstCurrency: CurrencyData,
+        secondCurrency: CurrencyData
     ) = if (secondCurrency.toUAHRatio != 0.0) {
         "1 ${firstCurrency.currency.name} ≈ ${(firstCurrency.toUAHRatio / secondCurrency.toUAHRatio).roundTo2Decimals()} ${secondCurrency.currency.name}"
     } else {
@@ -232,13 +222,12 @@ class CurrenciesViewModel(private val dataRepository: ICurrenciesRepository) : V
         SupportedCurrency
             .values()
             .mapTo(currenciesDataList) { currency ->
-                CurrencyDataModel(currency)
-                    .apply {
-                        if (currency == SupportedCurrency.UAH) {
-                            // initial setup for base currency
-                            toUAHRatio = 1.0; amount = 100.0
-                        }
+                CurrencyData(currency).apply {
+                    if (currency == SupportedCurrency.UAH) {
+                        // initial setup for base currency
+                        toUAHRatio = 1.0; amount = 100.0
                     }
+                }
             }
     }
 

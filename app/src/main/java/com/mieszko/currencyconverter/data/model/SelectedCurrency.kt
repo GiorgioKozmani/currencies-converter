@@ -2,8 +2,8 @@ package com.mieszko.currencyconverter.data.model
 
 import com.mieszko.currencyconverter.common.SupportedCurrency
 
-data class CurrencyDataModel(
+data class SelectedCurrency(
     val currency: SupportedCurrency,
-    var toUAHRatio: Double = 0.0,
-    var amount: Double = 0.0
+    //todo think whether it's better to keep it mutable or copy object instead
+    val isTracked: Boolean
 )

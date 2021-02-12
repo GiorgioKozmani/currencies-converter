@@ -50,9 +50,9 @@ object SharedPrefs {
 
     //KEYS
     enum class Key(val value: String) {
-        // Remember Inbox configuration (position and tab)
-        SavedCurrencies("SAVED_CURRENCIES"),
-        SavedCurrenciesTime("SAVED_CURRENCIES_TIME"),
+        CachedCurrencies("CACHED_CURRENCIES_DATA"),
+        CachedCurrenciesTime("CACHED_CURRENCIES_DATA_TIME"),
+        TrackedCurrencies("TRACKED_CURRENCIES")
     }
 
     //PRIVATE

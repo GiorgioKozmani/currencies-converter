@@ -1,15 +1,15 @@
-package com.mieszko.currencyconverter.ui
+package com.mieszko.currencyconverter.ui.main.list.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.mieszko.currencyconverter.data.model.HomeListItem
-import com.mieszko.currencyconverter.ui.viewholder.CurrencyViewHolder
 import com.mieszko.currencyconverter.viewmodel.CurrenciesViewModel
 
 
-class CurrenciesListAdapter(private val viewModel: CurrenciesViewModel) :
-    RecyclerView.Adapter<CurrencyViewHolder>() {
+//TODO REPLACE IMPLEMENTATION WITH EPOXY
+class HomeCurrenciesListAdapter(private val viewModel: CurrenciesViewModel) :
+    RecyclerView.Adapter<HomeCurrencyViewHolder>() {
 
     private val currentListData = mutableListOf<HomeListItem>()
 
@@ -24,11 +24,11 @@ class CurrenciesListAdapter(private val viewModel: CurrenciesViewModel) :
         currentListData.addAll(newResultsItems)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyViewHolder {
-        return CurrencyViewHolder.from(parent)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeCurrencyViewHolder {
+        return HomeCurrencyViewHolder.from(parent)
     }
 
-    override fun onBindViewHolder(holder: CurrencyViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: HomeCurrencyViewHolder, position: Int) {
         val currencyModel = currentListData[position]
         val isBase = position == 0
         val clickAction = if (isBase) {
@@ -49,7 +49,7 @@ class CurrenciesListAdapter(private val viewModel: CurrenciesViewModel) :
     }
 
     override fun onBindViewHolder(
-        holder: CurrencyViewHolder,
+        holder: HomeCurrencyViewHolder,
         position: Int,
         payloads: MutableList<Any>
     ) {

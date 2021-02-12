@@ -1,4 +1,4 @@
-package com.mieszko.currencyconverter.ui
+package com.mieszko.currencyconverter.ui.main.list
 
 import android.os.Bundle
 import android.view.View
@@ -8,21 +8,24 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mieszko.currencyconverter.R
 import com.mieszko.currencyconverter.data.model.HomeListItem
 import com.mieszko.currencyconverter.data.model.Resource
+import com.mieszko.currencyconverter.ui.main.list.adapter.HomeCurrenciesListAdapter
 import com.mieszko.currencyconverter.ui.util.CurrenciesListDragHelper
 import com.mieszko.currencyconverter.viewmodel.CurrenciesViewModel
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-class CurrenciesListFragment : Fragment(R.layout.currencies_list_fragment) {
+//todo I THINK THAT EPOXY IS THE ONLY WAY TO DO THIS RIGHT
+class HomeListFragment : Fragment(R.layout.currencies_list_fragment) {
     private val viewModel by sharedViewModel<CurrenciesViewModel>()
     private lateinit var recyclerView: RecyclerView
-    private lateinit var rvAdapter: CurrenciesListAdapter
+    private lateinit var rvAdapter: HomeCurrenciesListAdapter
     private lateinit var rvManager: LinearLayoutManager
     private lateinit var rvDragHelper: CurrenciesListDragHelper
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // TODO VIEWBINDING
         recyclerView = view.findViewById(R.id.currencies_rv)
-        rvAdapter = CurrenciesListAdapter(viewModel)
+        rvAdapter = HomeCurrenciesListAdapter(viewModel)
         rvManager = LinearLayoutManager(view.context)
         rvDragHelper = CurrenciesListDragHelper { from, to -> viewModel.moveItem(from, to) }
         setupRecyclerView()
@@ -30,8 +33,8 @@ class CurrenciesListFragment : Fragment(R.layout.currencies_list_fragment) {
     }
 
     private fun observeViewModel() {
-        viewModel.getCurrenciesLiveData()
-            .observe(viewLifecycleOwner, { handleNewResults(it) })
+            viewModel.getCurrenciesLiveData()
+                .observe(viewLifecycleOwner, { handleNewResults(it) })
     }
 
     private fun setupRecyclerView() {

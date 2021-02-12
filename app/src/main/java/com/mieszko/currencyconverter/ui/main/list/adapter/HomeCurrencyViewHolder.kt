@@ -1,4 +1,4 @@
-package com.mieszko.currencyconverter.ui.viewholder
+package com.mieszko.currencyconverter.ui.main.list.adapter
 
 import android.annotation.SuppressLint
 import android.text.TextWatcher
@@ -20,7 +20,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import java.text.DecimalFormat
 
 
-class CurrencyViewHolder private constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class HomeCurrencyViewHolder private constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
     //todo bug, now some random keboard is showing when scrolling
 
     private val baseBackgroundOverlay = itemView.findViewById<View>(R.id.base_background_overlay)
@@ -88,7 +88,7 @@ class CurrencyViewHolder private constructor(itemView: View) : RecyclerView.View
             thisToBaseTV.visibility = View.GONE
             fullNameTV.setTextSize(textSizeUnit, baseCurrencyTextSize)
         } else {
-            amountET.setOnTouchListener { _, event ->
+            amountET.setOnTouchListener { v, event ->
                 itemView.onTouchEvent(event)
                 // do not consume event
                 false
@@ -190,11 +190,11 @@ class CurrencyViewHolder private constructor(itemView: View) : RecyclerView.View
     }
 
     companion object {
-        fun from(parent: ViewGroup): CurrencyViewHolder {
+        fun from(parent: ViewGroup): HomeCurrencyViewHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
             val itemView: View =
-                layoutInflater.inflate(R.layout.list_item_base_currency, parent, false)
-            return CurrencyViewHolder(itemView)
+                layoutInflater.inflate(R.layout.home_currency_list_item, parent, false)
+            return HomeCurrencyViewHolder(itemView)
         }
     }
 }
