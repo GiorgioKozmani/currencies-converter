@@ -10,12 +10,12 @@ import com.mieszko.currencyconverter.data.model.HomeListItem
 import com.mieszko.currencyconverter.data.model.Resource
 import com.mieszko.currencyconverter.ui.main.list.adapter.HomeCurrenciesListAdapter
 import com.mieszko.currencyconverter.ui.util.CurrenciesListDragHelper
-import com.mieszko.currencyconverter.viewmodel.CurrenciesViewModel
+import com.mieszko.currencyconverter.viewmodel.HomeViewModel
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 //todo I THINK THAT EPOXY IS THE ONLY WAY TO DO THIS RIGHT
 class HomeListFragment : Fragment(R.layout.currencies_list_fragment) {
-    private val viewModel by sharedViewModel<CurrenciesViewModel>()
+    private val viewModel by sharedViewModel<HomeViewModel>()
     private lateinit var recyclerView: RecyclerView
     private lateinit var rvAdapter: HomeCurrenciesListAdapter
     private lateinit var rvManager: LinearLayoutManager

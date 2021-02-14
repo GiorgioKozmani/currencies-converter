@@ -19,10 +19,6 @@ abstract class TrackingListItemEpoxy : EpoxyModelWithHolder<TrackingListItemView
     @EpoxyAttribute
     lateinit var currencyItem: SupportedCurrency
 
-    //TODO HomeListItem should contain that information already! Remove
-    @EpoxyAttribute
-    open var isSelected: Boolean = false
-
     //todo this should be contained in model
     //   todo investigate @EpoxyAttribute(DoNotHash)
     @EpoxyAttribute
@@ -35,7 +31,6 @@ abstract class TrackingListItemEpoxy : EpoxyModelWithHolder<TrackingListItemView
             loadCurrencyFlag(holder, flagUrl)
         }
 
-        //todo investigate DONOTHASH
         holder.view.setOnClickListener { clickAction.invoke() }
     }
 
@@ -64,7 +59,6 @@ abstract class TrackingListItemEpoxy : EpoxyModelWithHolder<TrackingListItemView
     }
 }
 
-// todo at emplate we're not doing it correctly? investigate kotlin hilder
 class TrackingListItemViewHolder : EpoxyHolder() {
     lateinit var flagIV: CircleImageView
     lateinit var fullNameTV: TextView

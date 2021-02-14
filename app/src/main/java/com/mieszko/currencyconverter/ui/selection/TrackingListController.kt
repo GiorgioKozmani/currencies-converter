@@ -3,6 +3,7 @@ package com.mieszko.currencyconverter.ui.selection
 import com.airbnb.epoxy.Typed2EpoxyController
 import com.mieszko.CurrenciesApp
 import com.mieszko.currencyconverter.R
+import com.mieszko.currencyconverter.common.SupportedCurrency
 import com.mieszko.currencyconverter.data.model.SelectedCurrency
 import com.mieszko.currencyconverter.ui.selection.adapter.viewholder.trackingListAllItem
 import com.mieszko.currencyconverter.ui.selection.adapter.viewholder.trackingListHeader
@@ -10,10 +11,10 @@ import com.mieszko.currencyconverter.ui.selection.adapter.viewholder.trackingLis
 import com.mieszko.currencyconverter.viewmodel.SelectionViewModel
 
 class TrackingListController(private val viewModel: SelectionViewModel) :
-    Typed2EpoxyController<List<SelectedCurrency>, List<SelectedCurrency>>() {
+    Typed2EpoxyController<List<SupportedCurrency>, List<SelectedCurrency>>() {
 
     override fun buildModels(
-        trackedCurrencies: List<SelectedCurrency>,
+        trackedCurrencies: List<SupportedCurrency>,
         allCurrencies: List<SelectedCurrency>
     ) {
 
@@ -23,12 +24,10 @@ class TrackingListController(private val viewModel: SelectionViewModel) :
         }
 
         //todo add no tracked currencies item if no tracked items
-
         trackedCurrencies.forEach {
             trackingListItem {
-                id(it.currency.name + "tracked")
-                currencyItem(it.currency)
-                isSelected(it.isTracked)
+                id(it.name + "tracked")
+                currencyItem(it)
                 clickAction { viewModel.trackedCurrenciesItemClicked(it) }
             }
         }

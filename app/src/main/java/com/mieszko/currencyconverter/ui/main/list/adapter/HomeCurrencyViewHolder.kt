@@ -15,12 +15,12 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.mieszko.currencyconverter.R
 import com.mieszko.currencyconverter.data.model.HomeListItem
-import com.mieszko.currencyconverter.ui.util.fadeInText
 import de.hdodenhof.circleimageview.CircleImageView
 import java.text.DecimalFormat
 
 
-class HomeCurrencyViewHolder private constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class HomeCurrencyViewHolder private constructor(itemView: View) :
+    RecyclerView.ViewHolder(itemView) {
     //todo bug, now some random keboard is showing when scrolling
 
     private val baseBackgroundOverlay = itemView.findViewById<View>(R.id.base_background_overlay)
@@ -39,25 +39,38 @@ class HomeCurrencyViewHolder private constructor(itemView: View) : RecyclerView.
     private var textWatcher: TextWatcher? = null
 
     //TODO DECOUPLE FOCUS FROM BASE / REGULAR
-    fun bind(currencyItem: HomeListItem, isBaseCurrency: Boolean) {
+    fun bind(currencyItem: HomeListItem) {
         //todo think of 2 separate methods bind base bind regular
         amountET.removeTextChangedListener(textWatcher)
 
-        setItemType(isBaseCurrency)
+        when (currencyItem) {
+            is HomeListItem.Base -> {
+                isBase(true)
+
+                //todo hide ttb and btt
+            }
+            is HomeListItem.Regular -> {
+                isBase(false)
+
+                setThisToBaseText(currencyItem.thisToBaseText)
+                setBaseToThisText(currencyItem.baseToThisText)
+            }
+        }
+
 
         with(currencyItem) {
             setFullNameText(this.currency.fullName)
             setAmount(this.amount)
-            setThisToBaseText(this.thisToBaseText)
-            setBaseToThisText(this.baseToThisText)
             loadCurrencyFlag(this.currency.flagUrl)
         }
     }
 
     fun setClickAction(clickAction: () -> Unit) {
+        //todo factor out sanitizing
         itemView.setOnClickListener { clickAction.invoke() }
     }
 
+    //todo rethink, why to reset it if i could remove from adapter
     fun setValueChangeAction(afterTextChangeAction: ((Double) -> Unit), isBaseCurrency: Boolean) {
         amountET.removeTextChangedListener(textWatcher)
 
@@ -68,8 +81,12 @@ class HomeCurrencyViewHolder private constructor(itemView: View) : RecyclerView.
         }
     }
 
+    fun resetBaseOverlayImmediately(){
+        baseBackgroundOverlay.alpha = 0f
+    }
+
     @SuppressLint("ClickableViewAccessibility")
-    fun setItemType(isBaseCurrency: Boolean) {
+    fun isBase(isBaseCurrency: Boolean) {
         if (isBaseCurrency) {
             amountET.setOnTouchListener { _, _ ->
                 false
@@ -125,7 +142,9 @@ class HomeCurrencyViewHolder private constructor(itemView: View) : RecyclerView.
     }
 
     fun setThisToBaseText(newThisToBase: String) {
-        thisToBaseTV.fadeInText(newThisToBase)
+        //todo think if this effect is desirable
+//        thisToBaseTV.fadeInText(newThisToBase)
+        thisToBaseTV.text = newThisToBase
     }
 
     fun setBaseToThisText(newBaseToThis: String) {

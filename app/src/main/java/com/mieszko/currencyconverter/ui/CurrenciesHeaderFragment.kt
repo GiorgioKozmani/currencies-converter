@@ -8,12 +8,12 @@ import androidx.fragment.app.Fragment
 import com.mieszko.currencyconverter.R
 import com.mieszko.currencyconverter.data.model.HomeListItem
 import com.mieszko.currencyconverter.data.model.Resource
-import com.mieszko.currencyconverter.viewmodel.CurrenciesViewModel
+import com.mieszko.currencyconverter.viewmodel.HomeViewModel
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import java.util.*
 
 class CurrenciesHeaderFragment : Fragment(R.layout.currencies_header_fragment) {
-    private val viewModel by sharedViewModel<CurrenciesViewModel>()
+    private val viewModel by sharedViewModel<HomeViewModel>()
     private lateinit var errorMessage: TextView
     private lateinit var lastUpdated: TextView
 

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import com.airbnb.epoxy.EpoxyRecyclerView
 import com.airbnb.epoxy.Typed2EpoxyController
 import com.mieszko.currencyconverter.R
+import com.mieszko.currencyconverter.common.SupportedCurrency
 import com.mieszko.currencyconverter.data.model.SelectedCurrency
 import com.mieszko.currencyconverter.viewmodel.SelectionViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -17,7 +18,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class SelectionFragmentEpoxy : Fragment() {
     private val viewModel by viewModel<SelectionViewModel>()
     private lateinit var epoxyRV: EpoxyRecyclerView
-    private val epoxyController: Typed2EpoxyController<List<SelectedCurrency>, List<SelectedCurrency>> by lazy {
+    private val epoxyController: Typed2EpoxyController<List<SupportedCurrency>, List<SelectedCurrency>> by lazy {
         TrackingListController(
             viewModel
         )
@@ -46,9 +47,7 @@ class SelectionFragmentEpoxy : Fragment() {
             .observe(viewLifecycleOwner, { updateTrackedCurrenciesList(it) })
     }
 
-    private fun updateTrackedCurrenciesList(items: Pair<List<SelectedCurrency>, List<SelectedCurrency>>) {
+    private fun updateTrackedCurrenciesList(items: Pair<List<SupportedCurrency>, List<SelectedCurrency>>) {
         epoxyController.setData(items.first, items.second)
-
-//        trackedCurrenciesAdapter.updateItems(items)
     }
 }
