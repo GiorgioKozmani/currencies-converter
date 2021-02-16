@@ -8,8 +8,7 @@ import com.mieszko.currencyconverter.ui.main.HomeFragment
 import com.mieszko.currencyconverter.ui.selection.SelectionFragmentEpoxy
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
-
-    private companion object{
+    private companion object {
         const val MAIN_FRAGMENT = "main_fragment"
         const val SELECTION_FRAGMENT = "selection_fragment"
     }
@@ -27,7 +26,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     //rename to manage?
-    fun openSelectCurrenciesFragment(){
+    fun openSelectCurrenciesFragment() {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             addToBackStack(SELECTION_FRAGMENT)

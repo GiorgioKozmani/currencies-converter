@@ -8,12 +8,12 @@ import java.lang.reflect.Type
 import java.util.*
 import kotlin.NoSuchElementException
 
-class CurrenciesCache : ICurrenciesCache {
+class CurrenciesCache(private val sharedPrefsManager: ISharedPrefsManager) : ICurrenciesCache {
     private val type: Type = object : TypeToken<List<SingleCurrencyNetwork>>() {}.type
     private val gson = GsonBuilder().create()
 
     override fun getCurrencies(): Single<List<SingleCurrencyNetwork>> {
-        val savedJson = SharedPrefs.getString(SharedPrefs.Key.CachedCurrencies)
+        val savedJson = sharedPrefsManager.getString(ISharedPrefsManager.Key.CachedCurrencies)
         val savedCurrenciesResponse: List<SingleCurrencyNetwork>? = gson.fromJson(savedJson, type)
         return if (savedCurrenciesResponse == null || savedCurrenciesResponse.isEmpty()) {
             Single.error(NoSuchElementException("No currencies to show"))
@@ -23,8 +23,8 @@ class CurrenciesCache : ICurrenciesCache {
     }
 
     override fun saveCurrencies(currencies: List<SingleCurrencyNetwork>) {
-        SharedPrefs.put(SharedPrefs.Key.CachedCurrencies, gson.toJson(currencies, type))
-        SharedPrefs.put(SharedPrefs.Key.CachedCurrenciesTime, Date().time)
+        sharedPrefsManager.put(ISharedPrefsManager.Key.CachedCurrencies, gson.toJson(currencies, type))
+        sharedPrefsManager.put(ISharedPrefsManager.Key.CachedCurrenciesTime, Date().time)
     }
 }
 

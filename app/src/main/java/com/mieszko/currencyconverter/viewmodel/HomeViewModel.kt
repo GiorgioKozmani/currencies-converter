@@ -7,8 +7,8 @@ import com.mieszko.currencyconverter.common.SupportedCurrency
 import com.mieszko.currencyconverter.data.model.CurrencyRatio
 import com.mieszko.currencyconverter.data.model.HomeListItem
 import com.mieszko.currencyconverter.data.model.Resource
-import com.mieszko.currencyconverter.data.persistance.SharedPrefs
 import com.mieszko.currencyconverter.data.repository.ICurrenciesRepository
+import com.mieszko.currencyconverter.data.repository.ITrackedCurrenciesRepository
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -19,7 +19,7 @@ import kotlin.math.pow
 import kotlin.math.roundToLong
 
 
-class HomeViewModel(private val dataRepository: ICurrenciesRepository) : ViewModel() {
+class HomeViewModel(private val dataRepository: ICurrenciesRepository, private val trackedCurrenciesRepository: ITrackedCurrenciesRepository) : ViewModel() {
     private val disposeBag = CompositeDisposable()
 
     private val currenciesListModelsLiveData: MutableLiveData<Resource<List<HomeListItem>>> =
@@ -45,74 +45,54 @@ class HomeViewModel(private val dataRepository: ICurrenciesRepository) : ViewMod
     fun getLastUpdatedLiveData(): LiveData<Resource<Date>> =
         lastUpdatedLiveData
 
-    //    private lateinit var baseCurrencyData: CurrencyRatio
-//    private lateinit var baseCurrency: CurrencyRatio
-//    private var baseCurrencyAmount: Double = 0.0
-
     init {
-//        setupSupportedCurrencies()
-        // todo not really! it should select first from the selections list instead!
-//        setBaseCurrency(SupportedCurrency.UAH)
-        //TODO GET FROM SP INSTEAD
-        trackedCurrenciesList = SupportedCurrency.values().toMutableList()
-        getAllRates()
+    //todo dispose on detach
+        trackedCurrenciesRepository
+            .getTrackedCurrencies()
+            .subscribeOn(Schedulers.io())
+            .subscribe {
+                //todo or think of different approach that this would be only used for reordering
+                //todo this will require rework
+                // todo store amounts of all
+                trackedCurrenciesList = it.toMutableList()
+
+                getAllRates()
+            }
     }
 
-
-    //TODO IDEA: SOME MAP OF CURRENCY -> VALUE
     fun setBaseCurrencyAmount(newAmount: Double) {
-//        Completable.fromAction {
-//            if (newAmount != baseCurrencyData.amount) {
-//                baseCurrencyData.amount = newAmount
-//                currenciesDataList.forEach { supportedCurrencyData ->
-//                    if (supportedCurrencyData != baseCurrencyData) {
-//                        supportedCurrencyData.amount =
-//                            calculateCurrencyAmount(supportedCurrencyData.toUAHRatio)
-//                    }
-//                }
-//                emitLiveData()  Bogdann1  604936794
-//            }
-//        }
-        //todo this might be problematic, debug if lack of this check is not causing issues
-//        if (newAmount != baseCurrencyAmount) {
-        emitLiveData(newAmount)
-//        }
+        //todo i can also look for an instance
+        currenciesListModels.first().apply { amount = newAmount }
+        emitCurrencies()
     }
 
     // Move new base currency to the top of the list, and inform adapter about the change so it's instantly animated
-    //todo pass string instead?
-    //todo THINK IF IT MAKES SENSE TO UPDATE VALUES AFTER CHANGE, IMO IT DOESN'T AS WE KEEP TRACK ON SELECTION AND THIS IS ONLY THING WE SHOULD CARE ABOUT UNTIL BASE VALUE CHANGES
     fun setBaseCurrency(newBaseCurrency: SupportedCurrency) {
         moveBaseCurrencyTop(newBaseCurrency)
-        emitCurrencies(currenciesListModels.first { it.currency == newBaseCurrency }.amount)
+        currenciesListModels.first { it.currency == newBaseCurrency }
+        emitCurrencies()
     }
 
     private fun moveBaseCurrencyTop(newBaseCurrency: SupportedCurrency) {
-        //todo to bg thread?
         trackedCurrenciesList.remove(newBaseCurrency)
         trackedCurrenciesList.add(0, newBaseCurrency)
+
+        val listModel = currenciesListModels.first { it.currency == newBaseCurrency }
+        currenciesListModels.remove(listModel)
+        currenciesListModels.add(0, listModel)
     }
 
     fun moveItem(from: Int, to: Int) {
-        //TODO OCZYWISCIE OPTYMALIACJA TEGO GOWNA, ALE!!
-        // TODO UPDATE ALL TTB AND BTT TEXTS WHEN BASE IS CHANGED!
-
-        //TODO UPDATE:
-        // if from or to is 0 then :
-        // - save new base amount, use it for calculations for generating items
-        // if any is NOT 0
-        // - don't update values, don't recreate anything !!, just change order and emit like below
         Completable.fromAction {
             Collections.swap(trackedCurrenciesList, from, to)
             Collections.swap(currenciesListModels, from, to)
         }
             .subscribeOn(Schedulers.io())
             .doOnComplete {
-                //todo clean up
-                // recreate items on base change
                 if (to == 0 || from == 0) {
-                    emitCurrencies(currenciesListModels[0].amount)
-                }else{
+                    // recreate items on base change
+                    emitCurrencies()
+                } else {
                     // just emit order changing
                     currenciesListModelsLiveData.postValue(Resource.Success(currenciesListModels))
                 }
@@ -123,20 +103,22 @@ class HomeViewModel(private val dataRepository: ICurrenciesRepository) : ViewMod
     private fun calculateCurrencyAmount(currToUahRatio: Double, baseAmount: Double) =
         try {
             //TODO THIS IS EXTREMELY BAD, LIFT UP, RETHING
-            (currenciesRatios.find { it.currency == trackedCurrenciesList[0] }!!.toUAHRatio / currToUahRatio * baseAmount).roundTo2Decimals()
+            (currenciesRatios.find { it.currency == trackedCurrenciesList[0] }!!.toUAHRatio / currToUahRatio * baseAmount).roundToDecimals(
+                2
+            )
         } catch (t: Throwable) {
             //todo TO CRASHLYTICS
             0.0
         }
 
     private fun getAllRates() {
+        //TODO REVISE CACHE FOR RATIOS
         disposeBag.add(
 //            //todo as this is updated once in a day at 16, this would be nice to have it added as a (?) button, together with refresh button but don't update it every second
             dataRepository
                 .loadCurrencies()
                 .subscribeOn(Schedulers.io())
                 .subscribe({ currenciesResponse ->
-                    //todo simplify it, it might be better to do this other way around, and eliminate nulls
                     currenciesResponse
                         .mapNotNullTo(currenciesRatios) {
                             try {
@@ -151,14 +133,39 @@ class HomeViewModel(private val dataRepository: ICurrenciesRepository) : ViewMod
                         }
                         // add UAH as this one we're not getting from data source (for now, to be changed when aggregate data source will be implemented)
                         .add(CurrencyRatio(SupportedCurrency.UAH, 1.0))
-                    //todo rethink
-                    emitLiveData(DEFAULT_BASE_CURRENCY_AMOUNT)
-                }, { t -> emitError(t) }
-                )
+
+                    emitItemsAndUpdateTime()
+                }, { t -> emitError(t) })
         )
     }
 
+    // Handled in the background thread, in order to avoid blocking UI thread by the mapping,
+    // hence postValue, not setValue is used
+    private fun emitItemsAndUpdateTime() {
+        // Posts a task to a main thread to set the given value.
+        // If this method is called multiple times before a main thread executed a posted task,
+        // only the last value would be dispatched.
+        emitCurrencies()
+        emitUpdateDate()
+    }
+
+    private fun emitUpdateDate() {
+        //todo revise
+
+        //todo revise
+
+//        val dateLong = SharedPrefsManager.getLong(SharedPrefsManager.Key.CachedCurrenciesTime)
+//        val dateResource =
+//            if (dateLong != (-1).toLong()) {
+//                Resource.Success(Date(dateLong))
+//            } else {
+//                Resource.Error("Never updated")
+//            }
+//        lastUpdatedLiveData.postValue(dateResource)
+    }
+
     private fun emitError(t: Throwable?) {
+        //todo strings, revise
         val errorMessage = when (t) {
             is UnknownHostException -> {
                 "Not updated, turn on internet."
@@ -173,90 +180,74 @@ class HomeViewModel(private val dataRepository: ICurrenciesRepository) : ViewMod
         currenciesListModelsLiveData.postValue(Resource.Error(errorMessage))
     }
 
-    // Handled in the background thread, in order to avoid blocking UI thread by the mapping,
-    // hence postValue, not setValue is used
-    private fun emitLiveData(baseAmount: Double) {
-        // Posts a task to a main thread to set the given value.
-        // If this method is called multiple times before a main thread executed a posted task,
-        // only the last value would be dispatched.
-        emitCurrencies(baseAmount)
-        //todo this is not currect as data source stays the same
-        emitUpdateDate()
-    }
-
-    private fun emitUpdateDate() {
-        val dateLong = SharedPrefs.getLong(SharedPrefs.Key.CachedCurrenciesTime)
-        val dateResource =
-            if (dateLong != (-1).toLong()) {
-                Resource.Success(Date(dateLong))
-            } else {
-                Resource.Error("Never updated")
-            }
-        lastUpdatedLiveData.postValue(dateResource)
-    }
-
-    private fun emitCurrencies(baseAmount: Double) {
-        getListItemModels(baseAmount)
+    private fun emitCurrencies() {
+        getListItemModels()
             .subscribeOn(Schedulers.io())
-            .subscribe { values ->
-                currenciesListModelsLiveData.postValue(Resource.Success(values))
-            }
+            .subscribe({ values -> currenciesListModelsLiveData.postValue(Resource.Success(values)) },
+                {
+                    // handle model creation error
+                })
+//            .subscribe { values ->
+//                currenciesListModelsLiveData.postValue(Resource.Success(values))
+//            }
     }
 
-    private fun getListItemModels(baseAmount: Double): Single<List<HomeListItem>> {
+    private fun getListItemModels(): Single<List<HomeListItem>> {
         return Single.just(
             trackedCurrenciesList.map { trackedCurrency ->
                 //todo this would be nice to be able to use some map with currency / name as key
                 currenciesRatios.find { it.currency == trackedCurrency }
             }.mapIndexedNotNull { index, currencyRatio ->
-                //todo this is uneficcient
+                // todo don't try to obtain first object always
+                //TODO THIS WILL OFTEN FAIL AS TRACKED CURRENCIESLIST MIGHT BE EMPTY!! HANDLE THIS CASE
+                val baseCurrency = currenciesListModels.firstOrNull() ?: HomeListItem.Base(
+                    trackedCurrenciesList.first(),
+                    100.0
+                )
+
+                // todo remove all !! s
                 if (index == 0) {
                     HomeListItem.Base(
                         currency = currencyRatio!!.currency,
-                        amount = baseAmount
+                        amount = baseCurrency.amount
                     )
                 } else {
+                    val baseRatio = currenciesRatios.find { it.currency == baseCurrency.currency }!!
+
                     HomeListItem.Regular(
                         currency = currencyRatio!!.currency,
-                        //todo verify
-                        //todo trim last zeroes?
                         amount = calculateCurrencyAmount(
                             currToUahRatio = currencyRatio.toUAHRatio,
-                            baseAmount = baseAmount
+                            baseAmount = baseCurrency.amount
                         ),
-                        //TODO REVERT CACHE
-                        // todo this is very bad, optimise getting current base
-                        baseToThisText = makeRatioString(
-                            currencyRatio,
-                            currenciesRatios.find { it.currency == trackedCurrenciesList[0] }!!
-                        ),
-                        thisToBaseText = makeRatioString(
-                            currenciesRatios.find { it.currency == trackedCurrenciesList[0] }!!,
-                            currencyRatio
-                        )
+                        baseToThisText = makeRatioString(currencyRatio, baseRatio),
+                        thisToBaseText = makeRatioString(baseRatio, currencyRatio)
                     )
                 }
             })
             .doOnSuccess {
+                //todo if size == 0 then controller should show some item prompting to select more
                 currenciesListModels.clear()
                 currenciesListModels.addAll(it)
             }
-        //todo this is waste of resources
-        //todo hashmap with key as currency?
     }
 
     private fun makeRatioString(
         firstCurrency: CurrencyRatio,
         secondCurrency: CurrencyRatio
     ) = if (secondCurrency.toUAHRatio != 0.0) {
-        "1 ${firstCurrency.currency.name} ≈ ${(firstCurrency.toUAHRatio / secondCurrency.toUAHRatio).roundTo2Decimals()} ${secondCurrency.currency.name}"
+        "1 ${firstCurrency.currency.name} ≈ ${
+            (firstCurrency.toUAHRatio / secondCurrency.toUAHRatio).roundToDecimals(
+                3
+            )
+        } ${secondCurrency.currency.name}"
     } else {
         //todo TO CRASHLYTICS
         ""
     }
 
-    private fun Double.roundTo2Decimals(): Double {
-        val factor = 10.0.pow(2)
+    private fun Double.roundToDecimals(decimals: Int): Double {
+        val factor = 10.0.pow(decimals)
         return (this * factor).roundToLong() / factor
     }
 

@@ -82,4 +82,12 @@ class HomeListFragment : Fragment(R.layout.currencies_list_fragment) {
             rvManager.scrollToPositionWithOffset(firstPos, offsetTop)
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+    }
 }
