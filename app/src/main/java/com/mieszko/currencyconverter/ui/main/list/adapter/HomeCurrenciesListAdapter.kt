@@ -162,6 +162,7 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
 
     object ChangedToBase
 
+    //todo rethink if this shouldn't be replaced with NONBASECURRENCYCHANGE
     data class ChangedToNonBase(var thisToBaseText: String, var baseToThisText: String)
 
     // null represents NO CHANGE state

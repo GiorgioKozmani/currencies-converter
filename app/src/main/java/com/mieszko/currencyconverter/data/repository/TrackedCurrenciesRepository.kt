@@ -9,6 +9,7 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import java.lang.reflect.Type
+import java.util.*
 
 class TrackedCurrenciesRepository(
     private val sharedPrefsManager: ISharedPrefsManager
@@ -63,10 +64,28 @@ class TrackedCurrenciesRepository(
                 }
             }
         }
+
+    //todo consider currencies instead
+    override fun changeTrackingOrder(from: Int, to: Int): Completable =
+        Completable.fromCallable {
+            source.value.let { currentList ->
+                //todo change actual data, lol
+                val newList = currentList.toMutableList()
+                Collections.swap(newList, from, to)
+                sharedPrefsManager.put(
+                    ISharedPrefsManager.Key.TrackedCurrencies,
+                    gson.toJson(newList, supportedCurrencyType)
+                )
+                source.onNext(newList)
+            }
+        }
+
+
 }
 
 interface ITrackedCurrenciesRepository {
     fun getTrackedCurrencies(): Observable<List<SupportedCurrency>>
     fun addTrackedCurrency(trackedCurrency: SupportedCurrency): Completable
     fun removeTrackedCurrency(untrackedCurrency: SupportedCurrency): Completable
+    fun changeTrackingOrder(from: Int, to: Int): Completable
 }

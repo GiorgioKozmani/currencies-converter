@@ -7,20 +7,18 @@ import com.mieszko.currencyconverter.common.SupportedCurrency
 
 sealed class HomeListItem {
     abstract val currency: SupportedCurrency
-    abstract var amount: Double
+    abstract val amount: Double
 
     data class Base(
         override val currency: SupportedCurrency,
-        //todo remove amount?
-        override var amount: Double,
+        override val amount: Double,
     ) : HomeListItem()
-
 
     //todo rethink mutability
     data class Regular(
         override val currency: SupportedCurrency,
-        override var amount: Double,
-        var baseToThisText: String = "",
-        var thisToBaseText: String = ""
+        override val amount: Double,
+        val baseToThisText: String,
+        val thisToBaseText: String
     ) : HomeListItem()
 }
