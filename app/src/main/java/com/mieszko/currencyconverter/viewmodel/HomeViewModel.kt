@@ -32,7 +32,7 @@ class HomeViewModel(
     private lateinit var currenciesRatios: EnumMap<SupportedCurrency, Double>
 
     // models that are being passed to the view
-    private var currenciesListModels = mutableListOf<HomeListItem>()
+    private var currenciesListModels = listOf<HomeListItem>()
 
     //Exposing only LiveData
     fun getCurrenciesLiveData(): LiveData<Resource<List<HomeListItem>>> =
@@ -43,7 +43,7 @@ class HomeViewModel(
 
     //TODO IDEAS:
     // FOR CACHE: ONLY EMIT FROM CACHE IF THERE'S NO DATA FROM WEB. ALWAYS TRY TO GET NEW DATA ON APP START
-    // KEEP ALL ITEMS UPDATED, AND ONLY CHANGE ORDER WHEN TRACKING CHANGES (THEN CALCULATE IN MEMORY AND EMIT, DON'T PERSIST)
+    // TODO HANDLE ALL !!s
     init {
         disposeBag.add(getSupportedCurrenciesRatios()
             .subscribeOn(Schedulers.io())
@@ -53,47 +53,55 @@ class HomeViewModel(
                     .getTrackedCurrencies()
                     .subscribeOn(Schedulers.io())
             }
-            .subscribe { tracked ->
+            .flatMapSingle { trackedCurrencies ->
                 when {
-                    tracked.isEmpty() -> {
-                        currenciesListModels.clear()
-                        emitCurrencies()
-                    }
-                    tracked.first() == currenciesListModels.firstOrNull()?.currency && tracked.size == currenciesListModels.size && tracked.containsAll(
-                        currenciesListModels.map { it.currency }) -> {
-                        // todo IMPLEMENT REORDERING METHOD
-                        // IGNORE AS NO BASE HAS CHANGED
-                    }
-                    //todo add case for adding / removing some
-                    else -> {
-                        makeListItemModels(tracked)
-                            .doOnSuccess {
-                                currenciesListModels.clear()
-                                currenciesListModels.addAll(it)
-                            }
+                    trackedCurrencies.isEmpty() -> {
+                        clearListModels()
                             .subscribeOn(Schedulers.computation())
-                            .subscribe(
-                                { emitCurrencies() },
-                                {})
+                    }
+                    baseStaysTheSame(trackedCurrencies) && itemsDidNotChange(trackedCurrencies) -> {
+                        repositionRegularItems(trackedCurrencies)
+                            .subscribeOn(Schedulers.computation())
+                    }
+                    //todo add case for adding / removing some when base haven't changed!
+                    else -> {
+                        makeListItemModels(trackedCurrencies)
+                            .doOnSuccess { listItems -> currenciesListModels = listItems }
+                            .subscribeOn(Schedulers.computation())
                     }
                 }
+            }
+            .subscribe {
+                emitCurrencies()
+                //todo handle error, remember crashlitics
             })
     }
 
+    private fun repositionRegularItems(trackedCurrencies: List<SupportedCurrency>) =
+        Single.fromCallable {
+            // Just change order of items if base hasn't changed
+            trackedCurrencies
+                .forEachIndexed { index, supportedCurrency ->
+                    if (supportedCurrency != currenciesListModels[index].currency) {
+                        Collections.swap(
+                            currenciesListModels,
+                            index,
+                            currenciesListModels.indexOfFirst { it.currency == supportedCurrency }
+                        )
+                    }
+                }
+        }
+
     fun setBaseCurrencyAmount(newAmount: Double) {
-        //todo handle nullability
         val baseToUahRatio = currenciesRatios[currenciesListModels.first().currency]!!
 
         recreateCurrentItems(newAmount, baseToUahRatio)
             .subscribeOn(Schedulers.computation())
-            .doOnSuccess {
-                //todo check thread
-                currenciesListModels.clear()
-                currenciesListModels.addAll(it)
-            }
-            .subscribe({ emitCurrencies() }, {
-                // todo add safesubscribe that is going to report to crashlitics non fatals
-            })
+            .doOnSuccess { listItems -> currenciesListModels = listItems }
+            .subscribe({ emitCurrencies() },
+                {
+                    // todo add safesubscribe that is going to report to crashlitics non fatals
+                })
     }
 
     private fun recreateCurrentItems(
@@ -107,7 +115,6 @@ class HomeViewModel(
                         is HomeListItem.Base -> currentItem.copy(amount = baseAmount)
                         is HomeListItem.Regular -> currentItem.copy(
                             amount = calculateCurrencyAmount(
-                                //todo handle nullability
                                 currToUahRatio = currenciesRatios[currentItem.currency]!!,
                                 baseToUahRatio = baseToUahRatio,
                                 baseAmount = baseAmount
@@ -119,17 +126,18 @@ class HomeViewModel(
             .subscribeOn(Schedulers.computation())
 
     fun setBaseCurrency(newBaseCurrency: SupportedCurrency) {
-        trackedCurrenciesRepository.changeTrackingOrder(
-            currenciesListModels.indexOfFirst { it.currency == newBaseCurrency },
-            0
-        )
+        trackedCurrenciesRepository
+            .moveTrackedCurrencyToTop(newBaseCurrency)
             .subscribeOn(Schedulers.io())
             .subscribe()
     }
 
-    //TODO REVERT CHANGING ORDER FUNCTIONALITY AS NOW YOU CAN ONLY CHANGE TO BASE
     fun moveItem(from: Int, to: Int) {
-        trackedCurrenciesRepository.changeTrackingOrder(from, to)
+        trackedCurrenciesRepository
+            .swapTrackingOrder(
+                currenciesListModels[from].currency,
+                currenciesListModels[to].currency
+            )
             .subscribeOn(Schedulers.io())
             .subscribe()
     }
@@ -154,6 +162,7 @@ class HomeViewModel(
             .loadCurrencies()
             .map { currenciesResponse ->
                 currenciesResponse.apply {
+                    // todo document this part as it's not fully clear at first sight
                     put(SupportedCurrency.UAH, 1.0)
                 }
             }
@@ -258,6 +267,17 @@ class HomeViewModel(
     private fun Double.roundToDecimals(decimals: Int): Double {
         val factor = 10.0.pow(decimals)
         return (this * factor).roundToLong() / factor
+    }
+
+    private fun itemsDidNotChange(trackedCurrencies: List<SupportedCurrency>): Boolean =
+        trackedCurrencies.size == currenciesListModels.size
+                && trackedCurrencies.containsAll(currenciesListModels.map { it.currency })
+
+    private fun baseStaysTheSame(trackedCurrencies: List<SupportedCurrency>): Boolean =
+        trackedCurrencies.first() == currenciesListModels.firstOrNull()?.currency
+
+    private fun clearListModels() = Single.fromCallable {
+        currenciesListModels = listOf()
     }
 
     override fun onCleared() {

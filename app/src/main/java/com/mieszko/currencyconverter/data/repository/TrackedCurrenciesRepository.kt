@@ -26,12 +26,12 @@ class TrackedCurrenciesRepository(
             )
         )
 
-    //TODO ONE SOURCE OF TRUTH, THIS IS CRUCIAL. SO BOTH SELECTION FRAGMENT AND LIST FRAGMENT ONLY EMIT DATA FROM THERE! it might be slower but is better, check performance
     override fun getTrackedCurrencies(): Observable<List<SupportedCurrency>> {
         return source
     }
 
-    //todo emit errors if it's already present
+    // TODO HANDLE ERRORS INSTEAD OF DOING NOTHING
+
     override fun addTrackedCurrency(trackedCurrency: SupportedCurrency): Completable =
         Completable.fromCallable {
             source.value.let { currentList ->
@@ -52,7 +52,6 @@ class TrackedCurrenciesRepository(
         Completable.fromCallable {
             source.value.let { currentList ->
                 if (currentList.contains(untrackedCurrency)) {
-                    //todo change actual data, lol
                     val newList = currentList.toMutableList().apply { remove(untrackedCurrency) }
                     sharedPrefsManager.put(
                         ISharedPrefsManager.Key.TrackedCurrencies,
@@ -65,13 +64,38 @@ class TrackedCurrenciesRepository(
             }
         }
 
-    //todo consider currencies instead
-    override fun changeTrackingOrder(from: Int, to: Int): Completable =
+    override fun moveTrackedCurrencyToTop(trackedCurrency: SupportedCurrency): Completable =
         Completable.fromCallable {
             source.value.let { currentList ->
-                //todo change actual data, lol
+                if (currentList.contains(trackedCurrency)) {
+                    val newList = currentList.toMutableList()
+                        .apply {
+                            remove(trackedCurrency)
+                            add(0, trackedCurrency)
+                        }
+                    sharedPrefsManager.put(
+                        ISharedPrefsManager.Key.TrackedCurrencies,
+                        gson.toJson(newList, supportedCurrencyType)
+                    )
+                    source.onNext(newList)
+                } else {
+                    source.onNext(currentList)
+                }
+            }
+        }
+
+    override fun swapTrackingOrder(
+        firstCurrency: SupportedCurrency,
+        secondCurrency: SupportedCurrency
+    ): Completable =
+        Completable.fromCallable {
+            source.value.let { currentList ->
                 val newList = currentList.toMutableList()
-                Collections.swap(newList, from, to)
+                Collections.swap(
+                    newList,
+                    newList.indexOf(firstCurrency),
+                    newList.indexOf(secondCurrency)
+                )
                 sharedPrefsManager.put(
                     ISharedPrefsManager.Key.TrackedCurrencies,
                     gson.toJson(newList, supportedCurrencyType)
@@ -79,13 +103,20 @@ class TrackedCurrenciesRepository(
                 source.onNext(newList)
             }
         }
-
-
 }
 
 interface ITrackedCurrenciesRepository {
+    //todo javadoc
     fun getTrackedCurrencies(): Observable<List<SupportedCurrency>>
+
     fun addTrackedCurrency(trackedCurrency: SupportedCurrency): Completable
+
     fun removeTrackedCurrency(untrackedCurrency: SupportedCurrency): Completable
-    fun changeTrackingOrder(from: Int, to: Int): Completable
+
+    fun swapTrackingOrder(
+        firstCurrency: SupportedCurrency,
+        secondCurrency: SupportedCurrency
+    ): Completable
+
+    fun moveTrackedCurrencyToTop(trackedCurrency: SupportedCurrency): Completable
 }
