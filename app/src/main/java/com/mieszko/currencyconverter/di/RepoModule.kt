@@ -1,16 +1,21 @@
 package com.mieszko.currencyconverter.di
 
-import com.mieszko.currencyconverter.data.repository.CurrenciesRepository
-import com.mieszko.currencyconverter.data.repository.ICurrenciesRepository
-import com.mieszko.currencyconverter.data.repository.ITrackedCurrenciesRepository
-import com.mieszko.currencyconverter.data.repository.TrackedCurrenciesRepository
+import com.mieszko.currencyconverter.data.repository.*
 import org.koin.dsl.module
 
+/**
+ * Repo module
+ *
+ * It's important to keep only single instances of repositories so they can act as Single Source Of Truths
+ */
 val repoModule = module {
-    single<ICurrenciesRepository> {
-        CurrenciesRepository(currenciesApi = get(), cache = get())
+    single<IRatiosRepository> {
+        RatiosRepository(currenciesApi = get(), cache = get())
     }
     single<ITrackedCurrenciesRepository> {
-        TrackedCurrenciesRepository(sharedPrefsManager = get())
+        TrackedCodesRepository(sharedPrefsManager = get())
+    }
+    single<ICodesDataRepository> {
+        CodesDataRepository()
     }
 }

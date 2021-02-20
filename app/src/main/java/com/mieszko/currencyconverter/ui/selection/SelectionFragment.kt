@@ -8,24 +8,17 @@ import androidx.fragment.app.Fragment
 import com.airbnb.epoxy.EpoxyRecyclerView
 import com.airbnb.epoxy.Typed2EpoxyController
 import com.mieszko.currencyconverter.R
-import com.mieszko.currencyconverter.common.SupportedCurrency
-import com.mieszko.currencyconverter.data.model.SelectedCurrency
+import com.mieszko.currencyconverter.data.model.AllCurrenciesListModel
+import com.mieszko.currencyconverter.data.model.TrackedCurrenciesListModel
 import com.mieszko.currencyconverter.viewmodel.SelectionViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-//todo di
-//todo I THINK THAT EPOXY IS THE ONLY WAY TO DO THIS RIGHT
-class SelectionFragmentEpoxy : Fragment() {
+class SelectionFragment : Fragment() {
     private val viewModel by viewModel<SelectionViewModel>()
-    private lateinit var epoxyRV: EpoxyRecyclerView
-    private val epoxyController: Typed2EpoxyController<List<SupportedCurrency>, List<SelectedCurrency>> by lazy {
-        TrackingListController(
-            viewModel
-        )
-    }
+    private val epoxyController: Typed2EpoxyController<
+            List<TrackedCurrenciesListModel>,
+            List<AllCurrenciesListModel>> by lazy { TrackingListController(viewModel) }
 
-    //TODO ADD SHADOW TO YOUR CURRENCIES ON THE BOTTOM / TOP + PADDINGS, SET FIXED HEIGHT OF SELECTED ONES, ADD OPTION FOR DRAG AND DROP ALSO
-    // FOR YOUR CURRENCIES
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,8 +30,7 @@ class SelectionFragmentEpoxy : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         observeViewModel()
-        epoxyRV = view.findViewById(R.id.selection_epoxy_rv)
-        epoxyRV.setController(epoxyController)
+        view.findViewById<EpoxyRecyclerView>(R.id.selection_epoxy_rv).setController(epoxyController)
         epoxyController.setData(listOf(), listOf())
     }
 
@@ -47,7 +39,7 @@ class SelectionFragmentEpoxy : Fragment() {
             .observe(viewLifecycleOwner, { updateTrackedCurrenciesList(it) })
     }
 
-    private fun updateTrackedCurrenciesList(items: Pair<List<SupportedCurrency>, List<SelectedCurrency>>) {
+    private fun updateTrackedCurrenciesList(items: Pair<List<TrackedCurrenciesListModel>, List<AllCurrenciesListModel>>) {
         epoxyController.setData(items.first, items.second)
     }
 }

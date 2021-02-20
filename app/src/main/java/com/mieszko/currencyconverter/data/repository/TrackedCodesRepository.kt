@@ -3,7 +3,7 @@ package com.mieszko.currencyconverter.data.repository
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.mieszko.currencyconverter.common.SupportedCurrency
+import com.mieszko.currencyconverter.common.SupportedCode
 import com.mieszko.currencyconverter.data.persistance.ISharedPrefsManager
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
@@ -11,14 +11,15 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 import java.lang.reflect.Type
 import java.util.*
 
-class TrackedCurrenciesRepository(
+//todo create usecases, only set / get methods in repository. Viewmodel should talk to usecases instead
+class TrackedCodesRepository(
     private val sharedPrefsManager: ISharedPrefsManager
 ) : ITrackedCurrenciesRepository {
 
-    private val supportedCurrencyType: Type = object : TypeToken<List<SupportedCurrency>>() {}.type
+    private val supportedCurrencyType: Type = object : TypeToken<List<SupportedCode>>() {}.type
     private val gson: Gson = GsonBuilder().create()
 
-    private val source: BehaviorSubject<List<SupportedCurrency>> =
+    private val source: BehaviorSubject<List<SupportedCode>> =
         BehaviorSubject.createDefault(
             gson.fromJson(
                 sharedPrefsManager.getString(ISharedPrefsManager.Key.TrackedCurrencies, "[]"),
@@ -26,17 +27,17 @@ class TrackedCurrenciesRepository(
             )
         )
 
-    override fun getTrackedCurrencies(): Observable<List<SupportedCurrency>> {
+    override fun getTrackedCurrencies(): Observable<List<SupportedCode>> {
         return source
     }
 
     // TODO HANDLE ERRORS INSTEAD OF DOING NOTHING
 
-    override fun addTrackedCurrency(trackedCurrency: SupportedCurrency): Completable =
+    override fun addTrackedCurrency(trackedCurrency: SupportedCode): Completable =
         Completable.fromCallable {
             source.value.let { currentList ->
                 if (!currentList.contains(trackedCurrency)) {
-                    val newList = currentList.toMutableList().apply { add(0, trackedCurrency) }
+                    val newList = currentList.toMutableList().apply { add(trackedCurrency) }
                     sharedPrefsManager.put(
                         ISharedPrefsManager.Key.TrackedCurrencies,
                         gson.toJson(newList, supportedCurrencyType)
@@ -48,7 +49,7 @@ class TrackedCurrenciesRepository(
             }
         }
 
-    override fun removeTrackedCurrency(untrackedCurrency: SupportedCurrency): Completable =
+    override fun removeTrackedCurrency(untrackedCurrency: SupportedCode): Completable =
         Completable.fromCallable {
             source.value.let { currentList ->
                 if (currentList.contains(untrackedCurrency)) {
@@ -64,7 +65,7 @@ class TrackedCurrenciesRepository(
             }
         }
 
-    override fun moveTrackedCurrencyToTop(trackedCurrency: SupportedCurrency): Completable =
+    override fun moveTrackedCurrencyToTop(trackedCurrency: SupportedCode): Completable =
         Completable.fromCallable {
             source.value.let { currentList ->
                 if (currentList.contains(trackedCurrency)) {
@@ -85,8 +86,8 @@ class TrackedCurrenciesRepository(
         }
 
     override fun swapTrackingOrder(
-        firstCurrency: SupportedCurrency,
-        secondCurrency: SupportedCurrency
+        firstCurrency: SupportedCode,
+        secondCurrency: SupportedCode
     ): Completable =
         Completable.fromCallable {
             source.value.let { currentList ->
@@ -107,16 +108,17 @@ class TrackedCurrenciesRepository(
 
 interface ITrackedCurrenciesRepository {
     //todo javadoc
-    fun getTrackedCurrencies(): Observable<List<SupportedCurrency>>
+    fun getTrackedCurrencies(): Observable<List<SupportedCode>>
 
-    fun addTrackedCurrency(trackedCurrency: SupportedCurrency): Completable
+    //todo add note that it's added to the end of the list
+    fun addTrackedCurrency(trackedCurrency: SupportedCode): Completable
 
-    fun removeTrackedCurrency(untrackedCurrency: SupportedCurrency): Completable
+    fun removeTrackedCurrency(untrackedCurrency: SupportedCode): Completable
 
     fun swapTrackingOrder(
-        firstCurrency: SupportedCurrency,
-        secondCurrency: SupportedCurrency
+        firstCurrency: SupportedCode,
+        secondCurrency: SupportedCode
     ): Completable
 
-    fun moveTrackedCurrencyToTop(trackedCurrency: SupportedCurrency): Completable
+    fun moveTrackedCurrencyToTop(trackedCurrency: SupportedCode): Completable
 }

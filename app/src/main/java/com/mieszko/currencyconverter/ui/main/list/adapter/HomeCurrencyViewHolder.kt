@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.mieszko.currencyconverter.R
-import com.mieszko.currencyconverter.data.model.HomeListItem
+import com.mieszko.currencyconverter.data.model.HomeListModel
 import de.hdodenhof.circleimageview.CircleImageView
 import java.text.DecimalFormat
 
@@ -25,7 +25,7 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
 
     private val baseBackgroundOverlay = itemView.findViewById<View>(R.id.base_background_overlay)
     private val amountET = itemView.findViewById<EditText>(R.id.currency_amount)
-    private val fullNameTV = itemView.findViewById<TextView>(R.id.currency_full_name)
+    private val nameTV = itemView.findViewById<TextView>(R.id.currency_full_name)
     private val baseToThisTV = itemView.findViewById<TextView>(R.id.base_to_this)
     private val thisToBaseTV = itemView.findViewById<TextView>(R.id.this_to_base)
     private val flagIV = itemView.findViewById<CircleImageView>(R.id.country_flag)
@@ -39,29 +39,29 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
     private var textWatcher: TextWatcher? = null
 
     //TODO DECOUPLE FOCUS FROM BASE / REGULAR
-    fun bind(currencyItem: HomeListItem) {
+    fun bind(currencyModel: HomeListModel) {
         //todo think of 2 separate methods bind base bind regular
         amountET.removeTextChangedListener(textWatcher)
 
-        when (currencyItem) {
-            is HomeListItem.Base -> {
+        when (currencyModel) {
+            is HomeListModel.Base -> {
                 isBase(true)
 
                 //todo hide ttb and btt
             }
-            is HomeListItem.Regular -> {
+            is HomeListModel.Regular -> {
                 isBase(false)
 
-                setThisToBaseText(currencyItem.thisToBaseText)
-                setBaseToThisText(currencyItem.baseToThisText)
+                setThisToBaseText(currencyModel.thisToBaseText)
+                setBaseToThisText(currencyModel.baseToThisText)
             }
         }
 
 
-        with(currencyItem) {
-            setFullNameText(this.currency.fullName)
+        with(currencyModel) {
+            setNameText(this.codeData.name)
             setAmount(this.amount)
-            loadCurrencyFlag(this.currency.flagUrl)
+            loadCurrencyFlag(this.codeData.flagUrl)
         }
     }
 
@@ -99,11 +99,11 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
             //todo gradient?
 
 
-            baseBackgroundOverlay.animate().alpha(1f).setDuration(250).setListener(null)
+            baseBackgroundOverlay.animate().alpha(1f).setDuration(BASE_OVERLAY_TRANSITION_DURATION).setListener(null)
 
             baseToThisTV.visibility = View.GONE
             thisToBaseTV.visibility = View.GONE
-            fullNameTV.setTextSize(textSizeUnit, baseCurrencyTextSize)
+            nameTV.setTextSize(textSizeUnit, baseCurrencyTextSize)
         } else {
             amountET.setOnTouchListener { v, event ->
                 itemView.onTouchEvent(event)
@@ -115,17 +115,17 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
             amountET.clearFocus()
 
 
-            baseBackgroundOverlay.animate().alpha(0f).setDuration(250).setListener(null)
+            baseBackgroundOverlay.animate().alpha(0f).setDuration(BASE_OVERLAY_TRANSITION_DURATION).setListener(null)
 
 
-            fullNameTV.setTextSize(textSizeUnit, regularCurrencyTextSize)
+            nameTV.setTextSize(textSizeUnit, regularCurrencyTextSize)
             baseToThisTV.visibility = View.VISIBLE
             thisToBaseTV.visibility = View.VISIBLE
         }
     }
 
-    private fun setFullNameText(@StringRes currencyFullNameRes: Int) {
-        fullNameTV.text = itemView.context.getString(currencyFullNameRes)
+    private fun setNameText(@StringRes currencyNameRes: Int) {
+        nameTV.text = itemView.context.getString(currencyNameRes)
     }
 
     fun setAmount(newAmount: Double) {
@@ -209,6 +209,8 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
     }
 
     companion object {
+        private const val BASE_OVERLAY_TRANSITION_DURATION: Long = 250
+
         fun from(parent: ViewGroup): HomeCurrencyViewHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
             val itemView: View =

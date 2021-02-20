@@ -13,18 +13,14 @@ import com.airbnb.epoxy.EpoxyModelWithHolder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.mieszko.currencyconverter.R
-import com.mieszko.currencyconverter.common.SupportedCurrency
+import com.mieszko.currencyconverter.data.model.AllCurrenciesListModel
 import de.hdodenhof.circleimageview.CircleImageView
 
 @EpoxyModelClass(layout = R.layout.epoxy_tracking_list_all_item)
 abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListAllItemViewHolder>() {
 
     @EpoxyAttribute
-    lateinit var currencyItem: SupportedCurrency
-
-    //TODO HomeListItem should contain that information already! Remove
-    @EpoxyAttribute
-    open var isSelected: Boolean = false
+    lateinit var model: AllCurrenciesListModel
 
     //todo this should be contained in model
     //   todo investigate @EpoxyAttribute(DoNotHash)
@@ -32,11 +28,11 @@ abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListAllIt
     lateinit var clickAction: () -> Unit
 
     override fun bind(holder: TrackingListAllItemViewHolder) {
-        with(currencyItem) {
-            setFullNameText(holder, fullName)
-            handleSelection(holder, isSelected)
-            setShortNameText(holder, name)
-            loadCurrencyFlag(holder, flagUrl)
+        with(model) {
+            setCodeText(holder, code.name)
+            setNameText(holder, codeData.name)
+            handleSelection(holder, isTracked)
+            loadCurrencyFlag(holder, codeData.flagUrl)
         }
 
         //todo investigate DONOTHASH
@@ -44,6 +40,7 @@ abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListAllIt
     }
 
     override fun unbind(holder: TrackingListAllItemViewHolder) {
+        //todo implement
         // Release resources and don't leak listeners as this view goes back to the view pool
 //        holder.button.setOnClickListener(null)
 //        holder.button.setImageDrawable(null)
@@ -59,15 +56,15 @@ abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListAllIt
         holder.selectedCheckbox.background = ColorDrawable(testColor)
     }
 
-    private fun setFullNameText(
+    private fun setNameText(
         holder: TrackingListAllItemViewHolder,
-        @StringRes currencyFullNameRes: Int
+        @StringRes currencyNameRes: Int
     ) {
-        holder.fullNameTV.text = holder.view.context.getString(currencyFullNameRes)
+        holder.nameTV.text = holder.view.context.getString(currencyNameRes)
     }
 
-    private fun setShortNameText(holder: TrackingListAllItemViewHolder, currencyShortName: String) {
-        holder.shortNameTV.text = currencyShortName
+    private fun setCodeText(holder: TrackingListAllItemViewHolder, currencyCode: String) {
+        holder.codeTV.text = currencyCode
     }
 
     private fun loadCurrencyFlag(holder: TrackingListAllItemViewHolder, flagUrl: String) {
@@ -81,8 +78,8 @@ abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListAllIt
 class TrackingListAllItemViewHolder : EpoxyHolder() {
     lateinit var flagIV: CircleImageView
     lateinit var selectedCheckbox: ImageView
-    lateinit var fullNameTV: TextView
-    lateinit var shortNameTV: TextView
+    lateinit var nameTV: TextView
+    lateinit var codeTV: TextView
 
     lateinit var view: View
 
@@ -90,8 +87,8 @@ class TrackingListAllItemViewHolder : EpoxyHolder() {
         view = itemView
 
         selectedCheckbox = itemView.findViewById(R.id.selected_checkbox)
-        fullNameTV = itemView.findViewById(R.id.currency_full_name)
-        shortNameTV = itemView.findViewById(R.id.currency_short_name)
+        nameTV = itemView.findViewById(R.id.currency_full_name)
+        codeTV = itemView.findViewById(R.id.currency_short_name)
         flagIV = itemView.findViewById(R.id.country_flag)
     }
 }

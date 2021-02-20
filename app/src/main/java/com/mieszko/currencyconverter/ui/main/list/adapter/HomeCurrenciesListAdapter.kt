@@ -3,25 +3,23 @@ package com.mieszko.currencyconverter.ui.main.list.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.mieszko.currencyconverter.data.model.HomeListItem
+import com.mieszko.currencyconverter.data.model.HomeListModel
 import com.mieszko.currencyconverter.viewmodel.HomeViewModel
 
-
-//TODO REPLACE IMPLEMENTATION WITH EPOXY
 class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
     RecyclerView.Adapter<HomeCurrencyViewHolder>() {
 
-    private val currentListData = mutableListOf<HomeListItem>()
+    private val currentListData = mutableListOf<HomeListModel>()
 
-    fun updateCurrencies(currencies: List<HomeListItem>) {
+    fun updateCurrencies(currencies: List<HomeListModel>) {
         DiffUtil.calculateDiff(CurrenciesDiffCallback(currentListData, currencies))
             .dispatchUpdatesTo(this)
         refreshList(currencies)
     }
 
-    private fun refreshList(newResultsItems: List<HomeListItem>) {
+    private fun refreshList(newResultsModels: List<HomeListModel>) {
         currentListData.clear()
-        currentListData.addAll(newResultsItems)
+        currentListData.addAll(newResultsModels)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeCurrencyViewHolder {
@@ -40,7 +38,7 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
             // base currency has no click effect
             {}
         } else {
-            { viewModel.setBaseCurrency(currencyModel.currency) }
+            { viewModel.setBaseCurrency(currencyModel.code) }
         }
         val valueChangeAction: ((Double) -> Unit) = if (isBase) {
             { newText -> viewModel.setBaseCurrencyAmount(newText) }
@@ -48,7 +46,7 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
             {}
         }
 
-        holder.bind(currencyItem = currencyModel)
+        holder.bind(currencyModel = currencyModel)
         holder.setClickAction(clickAction)
         holder.setValueChangeAction(valueChangeAction, isBase)
     }
@@ -64,7 +62,7 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
             // base currency has no click effect
             {}
         } else {
-            { viewModel.setBaseCurrency(currency.currency) }
+            { viewModel.setBaseCurrency(currency.code) }
         }
         val valueChangeAction: ((Double) -> Unit) = if (isBase) {
             { newText -> viewModel.setBaseCurrencyAmount(newText) }
@@ -105,7 +103,7 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
     }
 
     override fun getItemId(position: Int): Long {
-        return currentListData[position].currency.ordinal.toLong()
+        return currentListData[position].code.ordinal.toLong()
     }
 
     override fun getItemCount(): Int {
@@ -113,15 +111,15 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
     }
 
     class CurrenciesDiffCallback(
-        private val oldList: List<HomeListItem>,
-        private val newList: List<HomeListItem>
+        private val oldList: List<HomeListModel>,
+        private val newList: List<HomeListModel>
     ) : DiffUtil.Callback() {
         override fun getOldListSize(): Int = oldList.size
         override fun getNewListSize(): Int = newList.size
 
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             // items represent the same currency
-            return oldList[oldItemPosition].currency == newList[newItemPosition].currency
+            return oldList[oldItemPosition].code == newList[newItemPosition].code
         }
 
         override fun areContentsTheSame(oldPosition: Int, newPosition: Int): Boolean {
@@ -132,11 +130,11 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
             val oldObj = oldList[oldItemPosition]
             val newObj = newList[newItemPosition]
 
-            if (newObj is HomeListItem.Base && oldObj is HomeListItem.Base) {
-                // todo think if we should return anything here
+            if (newObj is HomeListModel.Base && oldObj is HomeListModel.Base) {
+                // do nothing if body changed as it is most probably amount change
             }
 
-            if (newObj is HomeListItem.Regular && oldObj is HomeListItem.Regular) {
+            if (newObj is HomeListModel.Regular && oldObj is HomeListModel.Regular) {
                 return NonBaseCurrencyChange().apply {
                     if (oldObj.amount != newObj.amount) {
                         amount = newObj.amount
@@ -151,8 +149,8 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
             }
 
             return when (newObj) {
-                is HomeListItem.Base -> ChangedToBase
-                is HomeListItem.Regular -> ChangedToNonBase(
+                is HomeListModel.Base -> ChangedToBase
+                is HomeListModel.Regular -> ChangedToNonBase(
                     newObj.thisToBaseText,
                     newObj.baseToThisText
                 )

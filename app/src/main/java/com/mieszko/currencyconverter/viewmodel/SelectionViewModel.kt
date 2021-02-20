@@ -3,107 +3,108 @@ package com.mieszko.currencyconverter.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.mieszko.currencyconverter.common.SupportedCurrency
-import com.mieszko.currencyconverter.data.model.SelectedCurrency
+import com.mieszko.currencyconverter.common.SupportedCode
+import com.mieszko.currencyconverter.data.model.AllCurrenciesListModel
+import com.mieszko.currencyconverter.data.model.TrackedCurrenciesListModel
+import com.mieszko.currencyconverter.data.repository.ICodesDataRepository
 import com.mieszko.currencyconverter.data.repository.ITrackedCurrenciesRepository
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
-class SelectionViewModel(private val trackedCurrenciesRepository: ITrackedCurrenciesRepository) :
+// TODO USE USECASES INSTEAD
+class SelectionViewModel(
+    private val trackedCurrenciesRepository: ITrackedCurrenciesRepository,
+    private val codesDataRepository: ICodesDataRepository
+) :
     ViewModel() {
+    private val disposeBag = CompositeDisposable()
 
-    private val trackedCurrenciesLiveData: MutableLiveData<Pair<List<SupportedCurrency>, List<SelectedCurrency>>> =
+    private val trackedCurrenciesLiveData: MutableLiveData<Pair<List<TrackedCurrenciesListModel>, List<AllCurrenciesListModel>>> =
         MutableLiveData()
 
     //Exposing only LiveData
-    fun getTrackedCurrenciesLiveData(): LiveData<Pair<List<SupportedCurrency>, List<SelectedCurrency>>> =
+    fun getTrackedCurrenciesLiveData(): LiveData<Pair<List<TrackedCurrenciesListModel>, List<AllCurrenciesListModel>>> =
         trackedCurrenciesLiveData
 
-//    private var allCurrenciesList = mutableListOf<SelectedCurrency>()
-
-    //todo 2 only names as string
-    //todo have supported currencies as hashmap of short name (like enum now) and associated data (full, flagImg)
-//    private var trackedCurrenciesList = mutableListOf<SupportedCurrency>()
-
+    //TODO GO FOR ENUM MAP AGAIN
+    //TODO GET THREADING RIGHT
     init {
-        //todo disposable and stop observing on detach
-        getTrackedCurrencies()
-            .subscribeOn(Schedulers.io())
-            .map { Pair(it, getAllCurrencies(it)) }
-            .subscribe(::emitData)
+        disposeBag.add(
+            getTrackedCurrencies()
+                .subscribeOn(Schedulers.io())
+                .flatMapSingle { trackedCodes ->
+                    Single.zip(
+                        getTrackedCurrenciesModels(trackedCodes)
+                            .subscribeOn(Schedulers.computation()),
+                        getAllCurrenciesModels(trackedCodes)
+                            .subscribeOn(Schedulers.computation()),
+                        { trackedModels, allModels -> Pair(trackedModels, allModels) }
+                    )
+                }
+                .subscribeOn(Schedulers.computation())
+                .subscribe(::emitData)
+        )
     }
 
-    private fun getTrackedCurrencies(): Observable<List<SupportedCurrency>> {
+    //todo this should be handled by separate usecase
+    private fun getTrackedCurrenciesModels(trackedCodes: List<SupportedCode>) =
+        Single.fromCallable {
+            trackedCodes.map { trackedCode ->
+                TrackedCurrenciesListModel(
+                    trackedCode,
+                    codesDataRepository.getCodeData(trackedCode)
+                )
+            }
+        }
+
+
+    private fun getAllCurrenciesModels(trackedCurrencies: List<SupportedCode>): Single<List<AllCurrenciesListModel>> =
+        //todo check if there's any difference between this and Single.just()
+        Single.fromCallable {
+            SupportedCode
+                .values()
+                .map { code ->
+                    AllCurrenciesListModel(
+                        code,
+                        codesDataRepository.getCodeData(code),
+                        trackedCurrencies.contains(code)
+                    )
+                }
+        }
+
+    //todo usecase
+    private fun getTrackedCurrencies(): Observable<List<SupportedCode>> {
         return trackedCurrenciesRepository
             .getTrackedCurrencies()
-            .subscribeOn(Schedulers.io())
     }
 
-    private fun getAllCurrencies(trackedCurrencies: List<SupportedCurrency>): List<SelectedCurrency> {
-        return SupportedCurrency
-            .values()
-            .map { currency ->
-                SelectedCurrency(currency, trackedCurrencies.contains(currency))
-            }
-    }
-
-    private fun emitData(data: Pair<List<SupportedCurrency>, List<SelectedCurrency>>) {
+    private fun emitData(data: Pair<List<TrackedCurrenciesListModel>, List<AllCurrenciesListModel>>) {
         trackedCurrenciesLiveData.postValue(data)
     }
 
-    // todo to repo
-    fun trackedCurrenciesItemClicked(currency: SupportedCurrency) {
-        //todo just store names :>
-//        trackedCurrenciesList.remove(currency)
-//
-//        SharedPrefsManager.put(
-//            SharedPrefsManager.Key.TrackedCurrencies,
-//            gson.toJson(trackedCurrenciesList, supportedCurrencyType)
-//        )
-//
-//        //todo this is very inefficient. Find a way to use short as ID, investigate having supported currencies as hashmap [SHORT, DATA]
-//        allCurrenciesList.indexOfFirst { it.currency == currency }.let { index ->
-//            if (index != -1) {
-//                allCurrenciesList[index] = allCurrenciesList[index].copy(isTracked = false)
-//            }
-//        }
-//
-//        emitData()
+    //todo usecase
+    fun trackedCurrenciesItemClicked(currency: TrackedCurrenciesListModel) {
         trackedCurrenciesRepository
-            .removeTrackedCurrency(currency)
+            .removeTrackedCurrency(currency.code)
             .subscribeOn(Schedulers.io())
             .subscribe()
     }
 
-    fun allCurrenciesItemClicked(selectedCurrency: SelectedCurrency) {
-//        val newTrackingFlag = !selectedCurrency.isTracked
-
-        if (selectedCurrency.isTracked) {
+    fun allCurrenciesItemClicked(allCurrenciesListModel: AllCurrenciesListModel) {
+        if (allCurrenciesListModel.isTracked) {
+            //todo usecase
             trackedCurrenciesRepository
-                .removeTrackedCurrency(selectedCurrency.currency)
+                .removeTrackedCurrency(allCurrenciesListModel.code)
                 .subscribeOn(Schedulers.io())
                 .subscribe()
         } else {
+            //todo usecase
             trackedCurrenciesRepository
-                .addTrackedCurrency(selectedCurrency.currency)
+                .addTrackedCurrency(allCurrenciesListModel.code)
                 .subscribeOn(Schedulers.io())
                 .subscribe()
         }
-
-//        allCurrenciesList[allCurrenciesList.indexOf(selectedCurrency)] =
-//            selectedCurrency.copy(isTracked = newTrackingFlag)
-//
-//        if (newTrackingFlag) {
-//            trackedCurrenciesList.add(selectedCurrency.currency)
-//        } else {
-//            trackedCurrenciesList.remove(selectedCurrency.currency)
-//        }
-//
-//        SharedPrefsManager.put(
-//            SharedPrefsManager.Key.TrackedCurrencies,
-//            gson.toJson(trackedCurrenciesList, supportedCurrencyType)
-//        )
-//
-//        emitData()
     }
 }

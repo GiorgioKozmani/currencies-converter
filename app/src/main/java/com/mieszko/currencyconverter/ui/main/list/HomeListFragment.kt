@@ -6,14 +6,13 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mieszko.currencyconverter.R
-import com.mieszko.currencyconverter.data.model.HomeListItem
+import com.mieszko.currencyconverter.data.model.HomeListModel
 import com.mieszko.currencyconverter.data.model.Resource
 import com.mieszko.currencyconverter.ui.main.list.adapter.HomeCurrenciesListAdapter
 import com.mieszko.currencyconverter.ui.util.CurrenciesListDragHelper
 import com.mieszko.currencyconverter.viewmodel.HomeViewModel
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-//todo I THINK THAT EPOXY IS THE ONLY WAY TO DO THIS RIGHT
 class HomeListFragment : Fragment(R.layout.currencies_list_fragment) {
     private val viewModel by sharedViewModel<HomeViewModel>()
     private lateinit var recyclerView: RecyclerView
@@ -51,7 +50,7 @@ class HomeListFragment : Fragment(R.layout.currencies_list_fragment) {
         })
     }
 
-    private fun handleNewResults(response: Resource<List<HomeListItem>>) {
+    private fun handleNewResults(response: Resource<List<HomeListModel>>) {
         when (response) {
             is Resource.Loading -> {
                 // loading is not handled yet
@@ -65,7 +64,7 @@ class HomeListFragment : Fragment(R.layout.currencies_list_fragment) {
     }
 
     //todo step away from synthetics, go for viewbinding
-    private fun updateListData(response: Resource<List<HomeListItem>>) {
+    private fun updateListData(response: Resource<List<HomeListModel>>) {
         // this is a workaround for issue with dragging 1st item of the list
         // https://issuetracker.google.com/issues/37018279
         val firstPos = rvManager.findFirstCompletelyVisibleItemPosition()
@@ -81,13 +80,5 @@ class HomeListFragment : Fragment(R.layout.currencies_list_fragment) {
         if (firstPos >= 0) {
             rvManager.scrollToPositionWithOffset(firstPos, offsetTop)
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
     }
 }

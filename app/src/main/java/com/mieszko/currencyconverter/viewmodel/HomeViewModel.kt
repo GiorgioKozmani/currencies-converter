@@ -3,10 +3,11 @@ package com.mieszko.currencyconverter.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.mieszko.currencyconverter.common.SupportedCurrency
-import com.mieszko.currencyconverter.data.model.HomeListItem
+import com.mieszko.currencyconverter.common.SupportedCode
+import com.mieszko.currencyconverter.data.model.HomeListModel
 import com.mieszko.currencyconverter.data.model.Resource
-import com.mieszko.currencyconverter.data.repository.ICurrenciesRepository
+import com.mieszko.currencyconverter.data.repository.ICodesDataRepository
+import com.mieszko.currencyconverter.data.repository.IRatiosRepository
 import com.mieszko.currencyconverter.data.repository.ITrackedCurrenciesRepository
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -18,24 +19,25 @@ import kotlin.math.roundToLong
 
 
 class HomeViewModel(
-    private val dataRepository: ICurrenciesRepository,
-    private val trackedCurrenciesRepository: ITrackedCurrenciesRepository
+    private val ratiosRepository: IRatiosRepository,
+    private val trackedCurrenciesRepository: ITrackedCurrenciesRepository,
+    private val codesDataRepository: ICodesDataRepository,
 ) : ViewModel() {
     private val disposeBag = CompositeDisposable()
 
-    private val currenciesListModelsLiveData: MutableLiveData<Resource<List<HomeListItem>>> =
+    private val currenciesListModelsLiveData: MutableLiveData<Resource<List<HomeListModel>>> =
         MutableLiveData()
     private val lastUpdatedLiveData: MutableLiveData<Resource<Date>> =
         MutableLiveData()
 
     // all available toUahRatios
-    private lateinit var currenciesRatios: EnumMap<SupportedCurrency, Double>
+    private lateinit var currenciesRatios: EnumMap<SupportedCode, Double>
 
     // models that are being passed to the view
-    private var currenciesListModels = listOf<HomeListItem>()
+    private var currenciesListModels = listOf<HomeListModel>()
 
     //Exposing only LiveData
-    fun getCurrenciesLiveData(): LiveData<Resource<List<HomeListItem>>> =
+    fun getCurrenciesLiveData(): LiveData<Resource<List<HomeListModel>>> =
         currenciesListModelsLiveData
 
     fun getLastUpdatedLiveData(): LiveData<Resource<Date>> =
@@ -44,6 +46,7 @@ class HomeViewModel(
     //TODO IDEAS:
     // FOR CACHE: ONLY EMIT FROM CACHE IF THERE'S NO DATA FROM WEB. ALWAYS TRY TO GET NEW DATA ON APP START
     // TODO HANDLE ALL !!s
+    // TODO ENTRY ANIMATION
     init {
         disposeBag.add(getSupportedCurrenciesRatios()
             .subscribeOn(Schedulers.io())
@@ -71,34 +74,38 @@ class HomeViewModel(
                     }
                 }
             }
-            .subscribe {
-                emitCurrencies()
-                //todo handle error, remember crashlitics
-            })
+            .subscribe(
+                { emitModels() },
+                {
+                    //todo remember crashlitics
+                    //TODO REVERT ERROR HANDLING AND RETRY
+                    emitError(it)
+                })
+        )
     }
 
-    private fun repositionRegularItems(trackedCurrencies: List<SupportedCurrency>) =
+    private fun repositionRegularItems(trackedCurrencies: List<SupportedCode>) =
         Single.fromCallable {
             // Just change order of items if base hasn't changed
             trackedCurrencies
                 .forEachIndexed { index, supportedCurrency ->
-                    if (supportedCurrency != currenciesListModels[index].currency) {
+                    if (supportedCurrency != currenciesListModels[index].code) {
                         Collections.swap(
                             currenciesListModels,
                             index,
-                            currenciesListModels.indexOfFirst { it.currency == supportedCurrency }
+                            currenciesListModels.indexOfFirst { it.code == supportedCurrency }
                         )
                     }
                 }
         }
 
     fun setBaseCurrencyAmount(newAmount: Double) {
-        val baseToUahRatio = currenciesRatios[currenciesListModels.first().currency]!!
+        val baseToUahRatio = currenciesRatios[currenciesListModels.first().code]!!
 
         recreateCurrentItems(newAmount, baseToUahRatio)
             .subscribeOn(Schedulers.computation())
             .doOnSuccess { listItems -> currenciesListModels = listItems }
-            .subscribe({ emitCurrencies() },
+            .subscribe({ emitModels() },
                 {
                     // todo add safesubscribe that is going to report to crashlitics non fatals
                 })
@@ -107,15 +114,15 @@ class HomeViewModel(
     private fun recreateCurrentItems(
         baseAmount: Double,
         baseToUahRatio: Double
-    ): Single<List<HomeListItem>> =
+    ): Single<List<HomeListModel>> =
         Single.fromCallable {
             currenciesListModels
                 .map { currentItem ->
                     when (currentItem) {
-                        is HomeListItem.Base -> currentItem.copy(amount = baseAmount)
-                        is HomeListItem.Regular -> currentItem.copy(
+                        is HomeListModel.Base -> currentItem.copy(amount = baseAmount)
+                        is HomeListModel.Regular -> currentItem.copy(
                             amount = calculateCurrencyAmount(
-                                currToUahRatio = currenciesRatios[currentItem.currency]!!,
+                                currToUahRatio = currenciesRatios[currentItem.code]!!,
                                 baseToUahRatio = baseToUahRatio,
                                 baseAmount = baseAmount
                             )
@@ -123,9 +130,8 @@ class HomeViewModel(
                     }
                 }
         }
-            .subscribeOn(Schedulers.computation())
 
-    fun setBaseCurrency(newBaseCurrency: SupportedCurrency) {
+    fun setBaseCurrency(newBaseCurrency: SupportedCode) {
         trackedCurrenciesRepository
             .moveTrackedCurrencyToTop(newBaseCurrency)
             .subscribeOn(Schedulers.io())
@@ -135,8 +141,8 @@ class HomeViewModel(
     fun moveItem(from: Int, to: Int) {
         trackedCurrenciesRepository
             .swapTrackingOrder(
-                currenciesListModels[from].currency,
-                currenciesListModels[to].currency
+                currenciesListModels[from].code,
+                currenciesListModels[to].code
             )
             .subscribeOn(Schedulers.io())
             .subscribe()
@@ -155,15 +161,15 @@ class HomeViewModel(
             0.0
         }
 
-    private fun getSupportedCurrenciesRatios(): Single<EnumMap<SupportedCurrency, Double>> {
+    private fun getSupportedCurrenciesRatios(): Single<EnumMap<SupportedCode, Double>> {
         //TODO REVISE CACHE FOR RATIOS
 //            //todo as this is updated once in a day at 16, this would be nice to have it added as a (?) button, together with refresh button but don't update it every second
-        return dataRepository
-            .loadCurrencies()
+        return ratiosRepository
+            .loadCurrenciesRatios()
             .map { currenciesResponse ->
                 currenciesResponse.apply {
                     // todo document this part as it's not fully clear at first sight
-                    put(SupportedCurrency.UAH, 1.0)
+                    put(SupportedCode.UAH, 1.0)
                 }
             }
     }
@@ -196,24 +202,31 @@ class HomeViewModel(
         currenciesListModelsLiveData.postValue(Resource.Error(errorMessage))
     }
 
-    private fun emitCurrencies() {
+    private fun emitModels() {
         currenciesListModelsLiveData.postValue(Resource.Success(currenciesListModels))
     }
 
-    private fun makeListItemModels(trackedCurrencies: List<SupportedCurrency>): Single<List<HomeListItem>> {
+    private fun makeListItemModels(trackedCurrencies: List<SupportedCode>): Single<List<HomeListModel>> {
         var baseCurrency = currenciesListModels.firstOrNull()
-            ?: HomeListItem.Base(trackedCurrencies.first(), 0.0)
+        //todo rework, this has to come from some repo, + obtaining same item twice is pointless
+            ?: HomeListModel.Base(
+                trackedCurrencies.first(),
+                codesDataRepository.getCodeData(trackedCurrencies.first()),
+                DEFAULT_BASE_AMOUNT
+            )
 
         return Single.fromCallable {
             trackedCurrencies
                 .mapIndexed { index, supportedCurrency ->
                     val newCurrencyRatio = currenciesRatios[supportedCurrency]!!
-                    val baseRatio = currenciesRatios[baseCurrency.currency]!!
+                    val newCurrencyCodeData = codesDataRepository.getCodeData(supportedCurrency)
+                    val baseRatio = currenciesRatios[baseCurrency.code]!!
                     val baseAmount = baseCurrency.amount
 
                     if (index == 0) {
-                        HomeListItem.Base(
-                            currency = supportedCurrency,
+                        HomeListModel.Base(
+                            code = supportedCurrency,
+                            codeData = newCurrencyCodeData,
                             amount = calculateCurrencyAmount(
                                 currToUahRatio = newCurrencyRatio,
                                 baseToUahRatio = baseRatio,
@@ -221,26 +234,27 @@ class HomeViewModel(
                             )
                         ).also { baseCurrency = it }
                     } else {
-                        val baseCurrencyName = baseCurrency.currency.name
-                        val newCurrencyName = supportedCurrency.name
+                        val baseCurrencyCode = baseCurrency.code.name
+                        val newCurrencyCode = supportedCurrency.name
 
-                        HomeListItem.Regular(
-                            currency = supportedCurrency,
+                        HomeListModel.Regular(
+                            code = supportedCurrency,
+                            codeData = newCurrencyCodeData,
                             amount = calculateCurrencyAmount(
                                 currToUahRatio = newCurrencyRatio,
                                 baseToUahRatio = baseRatio,
                                 baseAmount = baseAmount
                             ),
                             baseToThisText = makeRatioString(
-                                firstCurrencyName = newCurrencyName,
+                                firstCurrencyCode = newCurrencyCode,
                                 firstCurrencyToUahRatio = newCurrencyRatio,
-                                secondCurrencyName = baseCurrencyName,
+                                secondCurrencyCode = baseCurrencyCode,
                                 secondCurrencyToUahRatio = baseRatio
                             ),
                             thisToBaseText = makeRatioString(
-                                firstCurrencyName = baseCurrencyName,
+                                firstCurrencyCode = baseCurrencyCode,
                                 firstCurrencyToUahRatio = baseRatio,
-                                secondCurrencyName = newCurrencyName,
+                                secondCurrencyCode = newCurrencyCode,
                                 secondCurrencyToUahRatio = newCurrencyRatio
                             )
                         )
@@ -250,15 +264,15 @@ class HomeViewModel(
     }
 
     private fun makeRatioString(
-        firstCurrencyName: String,
+        firstCurrencyCode: String,
         firstCurrencyToUahRatio: Double,
-        secondCurrencyName: String,
+        secondCurrencyCode: String,
         secondCurrencyToUahRatio: Double
     ) = if (secondCurrencyToUahRatio != 0.0) {
-        "1 $firstCurrencyName ≈ ${
+        "1 $firstCurrencyCode ≈ ${
             (firstCurrencyToUahRatio / secondCurrencyToUahRatio)
                 .roundToDecimals(3)
-        } $secondCurrencyName"
+        } $secondCurrencyCode"
     } else {
         //todo TO CRASHLYTICS
         ""
@@ -269,12 +283,12 @@ class HomeViewModel(
         return (this * factor).roundToLong() / factor
     }
 
-    private fun itemsDidNotChange(trackedCurrencies: List<SupportedCurrency>): Boolean =
+    private fun itemsDidNotChange(trackedCurrencies: List<SupportedCode>): Boolean =
         trackedCurrencies.size == currenciesListModels.size
-                && trackedCurrencies.containsAll(currenciesListModels.map { it.currency })
+                && trackedCurrencies.containsAll(currenciesListModels.map { it.code })
 
-    private fun baseStaysTheSame(trackedCurrencies: List<SupportedCurrency>): Boolean =
-        trackedCurrencies.first() == currenciesListModels.firstOrNull()?.currency
+    private fun baseStaysTheSame(trackedCurrencies: List<SupportedCode>): Boolean =
+        trackedCurrencies.first() == currenciesListModels.firstOrNull()?.code
 
     private fun clearListModels() = Single.fromCallable {
         currenciesListModels = listOf()
@@ -283,5 +297,9 @@ class HomeViewModel(
     override fun onCleared() {
         super.onCleared()
         disposeBag.clear()
+    }
+
+    private companion object {
+        const val DEFAULT_BASE_AMOUNT = 100.0
     }
 }

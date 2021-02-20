@@ -3,19 +3,19 @@ package com.mieszko.currencyconverter.ui.selection
 import com.airbnb.epoxy.Typed2EpoxyController
 import com.mieszko.CurrenciesApp
 import com.mieszko.currencyconverter.R
-import com.mieszko.currencyconverter.common.SupportedCurrency
-import com.mieszko.currencyconverter.data.model.SelectedCurrency
+import com.mieszko.currencyconverter.data.model.AllCurrenciesListModel
+import com.mieszko.currencyconverter.data.model.TrackedCurrenciesListModel
 import com.mieszko.currencyconverter.ui.selection.adapter.viewholder.trackingListAllItem
 import com.mieszko.currencyconverter.ui.selection.adapter.viewholder.trackingListHeader
 import com.mieszko.currencyconverter.ui.selection.adapter.viewholder.trackingListItem
 import com.mieszko.currencyconverter.viewmodel.SelectionViewModel
 
 class TrackingListController(private val viewModel: SelectionViewModel) :
-    Typed2EpoxyController<List<SupportedCurrency>, List<SelectedCurrency>>() {
+    Typed2EpoxyController<List<TrackedCurrenciesListModel>, List<AllCurrenciesListModel>>() {
 
     override fun buildModels(
-        trackedCurrencies: List<SupportedCurrency>,
-        allCurrencies: List<SelectedCurrency>
+        trackedCurrencies: List<TrackedCurrenciesListModel>,
+        allCurrencies: List<AllCurrenciesListModel>
     ) {
 
         trackingListHeader {
@@ -26,8 +26,8 @@ class TrackingListController(private val viewModel: SelectionViewModel) :
         //todo add no tracked currencies item if no tracked items
         trackedCurrencies.forEach {
             trackingListItem {
-                id(it.name + "tracked")
-                currencyItem(it)
+                id(it.code.name + "tracked")
+                model(it)
                 clickAction { viewModel.trackedCurrenciesItemClicked(it) }
             }
         }
@@ -39,9 +39,8 @@ class TrackingListController(private val viewModel: SelectionViewModel) :
 
         allCurrencies.forEach {
             trackingListAllItem {
-                id(it.currency.name + "all")
-                currencyItem(it.currency)
-                isSelected(it.isTracked)
+                id(it.code.name + "all")
+                model(it)
                 clickAction { viewModel.allCurrenciesItemClicked(it) }
             }
         }
