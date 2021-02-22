@@ -3,6 +3,7 @@ package com.mieszko.currencyconverter.data.repository
 import com.mieszko.currencyconverter.common.SupportedCode
 import com.mieszko.currencyconverter.data.api.CurrenciesApi
 import com.mieszko.currencyconverter.data.persistance.IRatiosCache
+import com.mieszko.currencyconverter.domain.repository.IRatiosRepository
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.*
@@ -21,9 +22,9 @@ class RatiosRepository(
         return currenciesApi
             .getCurrencies()
             .doOnSuccess { cache.cacheRatios(it) }
-                // TODO HANDLE CASE THAT CACHE IS EMPTY!
-                // TODO EMIT RESOURCE INSTEAD, SO WE KNOW WHEN IT'S NOT FRESH
-                // TODO IF IT IS THE CASE, SHOW TOAST FOR NOW, IN FUTURE EMPLATELIKE
+            // TODO HANDLE CASE THAT CACHE IS EMPTY!
+            // TODO EMIT RESOURCE INSTEAD, SO WE KNOW WHEN IT'S NOT FRESH
+            // TODO IF IT IS THE CASE, SHOW TOAST FOR NOW, IN FUTURE EMPLATELIKE
             .onErrorResumeNext { cache.getCachedRatios().subscribeOn(Schedulers.computation()) }
             .flatMap { list ->
                 Single.fromCallable {
@@ -40,10 +41,6 @@ class RatiosRepository(
                     .subscribeOn(Schedulers.computation())
             }
     }
-}
-
-interface IRatiosRepository {
-    fun loadCurrenciesRatios(): Single<EnumMap<SupportedCode, Double>>
 }
 
 

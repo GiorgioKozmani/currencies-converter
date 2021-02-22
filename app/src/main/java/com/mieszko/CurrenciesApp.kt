@@ -2,7 +2,7 @@ package com.mieszko
 
 import android.app.Application
 import android.content.res.Resources
-import com.mieszko.currencyconverter.di.*
+import com.mieszko.currencyconverter.di.module.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin

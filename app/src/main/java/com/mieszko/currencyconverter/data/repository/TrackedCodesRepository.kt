@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.mieszko.currencyconverter.common.SupportedCode
 import com.mieszko.currencyconverter.data.persistance.ISharedPrefsManager
+import com.mieszko.currencyconverter.domain.repository.ITrackedCurrenciesRepository
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
@@ -104,21 +105,4 @@ class TrackedCodesRepository(
                 source.onNext(newList)
             }
         }
-}
-
-interface ITrackedCurrenciesRepository {
-    //todo javadoc
-    fun getTrackedCurrencies(): Observable<List<SupportedCode>>
-
-    //todo add note that it's added to the end of the list
-    fun addTrackedCurrency(trackedCurrency: SupportedCode): Completable
-
-    fun removeTrackedCurrency(untrackedCurrency: SupportedCode): Completable
-
-    fun swapTrackingOrder(
-        firstCurrency: SupportedCode,
-        secondCurrency: SupportedCode
-    ): Completable
-
-    fun moveTrackedCurrencyToTop(trackedCurrency: SupportedCode): Completable
 }

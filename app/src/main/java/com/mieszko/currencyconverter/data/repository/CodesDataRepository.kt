@@ -1,8 +1,9 @@
 package com.mieszko.currencyconverter.data.repository
 
 import com.mieszko.currencyconverter.R
-import com.mieszko.currencyconverter.common.CodeData
 import com.mieszko.currencyconverter.common.SupportedCode
+import com.mieszko.currencyconverter.data.model.CodeData
+import com.mieszko.currencyconverter.domain.repository.ICodesDataRepository
 import java.util.*
 
 /**
@@ -406,8 +407,4 @@ class CodesDataRepository : ICodesDataRepository {
 //    XAG(R.string.silver_full, "https://img.freeflagicons.com/thumb/round_icon/georgia/georgia_64.png"),
 
     }
-}
-
-interface ICodesDataRepository {
-    fun getCodeData(code: SupportedCode): CodeData
 }
