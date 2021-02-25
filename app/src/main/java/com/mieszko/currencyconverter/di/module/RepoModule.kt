@@ -3,7 +3,7 @@ package com.mieszko.currencyconverter.di.module
 import com.mieszko.currencyconverter.data.repository.*
 import com.mieszko.currencyconverter.domain.repository.ICodesDataRepository
 import com.mieszko.currencyconverter.domain.repository.IRatiosRepository
-import com.mieszko.currencyconverter.domain.repository.ITrackedCurrenciesRepository
+import com.mieszko.currencyconverter.domain.repository.ITrackedCodesRepository
 import org.koin.dsl.module
 
 /**
@@ -15,7 +15,7 @@ val repoModule = module {
     single<IRatiosRepository> {
         RatiosRepository(currenciesApi = get(), cache = get())
     }
-    single<ITrackedCurrenciesRepository> {
+    single<ITrackedCodesRepository> {
         TrackedCodesRepository(sharedPrefsManager = get())
     }
     single<ICodesDataRepository> {

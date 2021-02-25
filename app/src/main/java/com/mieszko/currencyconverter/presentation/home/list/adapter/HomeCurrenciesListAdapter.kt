@@ -3,7 +3,7 @@ package com.mieszko.currencyconverter.presentation.home.list.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.mieszko.currencyconverter.domain.model.HomeListModel
+import com.mieszko.currencyconverter.domain.model.list.HomeListModel
 import com.mieszko.currencyconverter.presentation.home.HomeViewModel
 
 class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :

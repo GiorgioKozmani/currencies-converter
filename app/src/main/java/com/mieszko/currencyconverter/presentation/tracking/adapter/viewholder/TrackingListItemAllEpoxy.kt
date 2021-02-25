@@ -13,7 +13,7 @@ import com.airbnb.epoxy.EpoxyModelWithHolder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.mieszko.currencyconverter.R
-import com.mieszko.currencyconverter.domain.model.AllCurrenciesListModel
+import com.mieszko.currencyconverter.domain.model.list.AllCurrenciesListModel
 import de.hdodenhof.circleimageview.CircleImageView
 
 @EpoxyModelClass(layout = R.layout.epoxy_tracking_list_all_item)

@@ -1,4 +1,4 @@
-package com.mieszko.currencyconverter.domain.model
+package com.mieszko.currencyconverter.domain.model.list
 
 import com.mieszko.currencyconverter.common.SupportedCode
 import com.mieszko.currencyconverter.data.model.CodeData

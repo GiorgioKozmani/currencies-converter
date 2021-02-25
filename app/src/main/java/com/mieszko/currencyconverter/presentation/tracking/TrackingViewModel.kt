@@ -5,18 +5,21 @@ import androidx.lifecycle.MutableLiveData
 import com.mieszko.currencyconverter.common.BaseViewModel
 import com.mieszko.currencyconverter.common.IDisposablesBag
 import com.mieszko.currencyconverter.common.SupportedCode
-import com.mieszko.currencyconverter.domain.model.AllCurrenciesListModel
-import com.mieszko.currencyconverter.domain.model.TrackedCurrenciesListModel
+import com.mieszko.currencyconverter.domain.model.list.AllCurrenciesListModel
+import com.mieszko.currencyconverter.domain.model.list.TrackedCurrenciesListModel
 import com.mieszko.currencyconverter.domain.repository.ICodesDataRepository
-import com.mieszko.currencyconverter.domain.repository.ITrackedCurrenciesRepository
-import io.reactivex.rxjava3.core.Observable
+import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.IAddTrackedCodesUseCase
+import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.IObserveTrackedCodesUseCase
+import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.IRemoveTrackedCodesUseCase
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 
-// TODO USE USECASES INSTEAD
 class TrackingViewModel(
     disposablesBag: IDisposablesBag,
-    private val trackedCurrenciesRepository: ITrackedCurrenciesRepository,
+    private val removeTrackedCodesUseCase: IRemoveTrackedCodesUseCase,
+    observeTrackedCodesUseCase: IObserveTrackedCodesUseCase,
+    private val addTrackedCodesUseCase: IAddTrackedCodesUseCase,
+    // TODO USE USECASES INSTEAD
     private val codesDataRepository: ICodesDataRepository
 ) : BaseViewModel(disposablesBag) {
 
@@ -31,9 +34,10 @@ class TrackingViewModel(
     //TODO GET THREADING RIGHT
     init {
         disposablesBag.add(
-            getTrackedCurrencies()
+            observeTrackedCodesUseCase()
                 .subscribeOn(Schedulers.io())
                 .flatMapSingle { trackedCodes ->
+                    //todo this is a good example for usecase
                     Single.zip(
                         getTrackedCurrenciesModels(trackedCodes)
                             .subscribeOn(Schedulers.computation()),
@@ -73,20 +77,13 @@ class TrackingViewModel(
                 }
         }
 
-    //todo usecase
-    private fun getTrackedCurrencies(): Observable<List<SupportedCode>> {
-        return trackedCurrenciesRepository
-            .getTrackedCurrencies()
-    }
-
     private fun emitData(data: Pair<List<TrackedCurrenciesListModel>, List<AllCurrenciesListModel>>) {
         trackedCurrenciesLiveData.postValue(data)
     }
 
     //todo usecase
     fun trackedCurrenciesItemClicked(currency: TrackedCurrenciesListModel) {
-        trackedCurrenciesRepository
-            .removeTrackedCurrency(currency.code)
+        removeTrackedCodesUseCase(currency.code)
             .subscribeOn(Schedulers.io())
             .subscribe()
     }
@@ -94,14 +91,12 @@ class TrackingViewModel(
     fun allCurrenciesItemClicked(allCurrenciesListModel: AllCurrenciesListModel) {
         if (allCurrenciesListModel.isTracked) {
             //todo usecase
-            trackedCurrenciesRepository
-                .removeTrackedCurrency(allCurrenciesListModel.code)
+            removeTrackedCodesUseCase(allCurrenciesListModel.code)
                 .subscribeOn(Schedulers.io())
                 .subscribe()
         } else {
             //todo usecase
-            trackedCurrenciesRepository
-                .addTrackedCurrency(allCurrenciesListModel.code)
+            addTrackedCodesUseCase(allCurrenciesListModel.code)
                 .subscribeOn(Schedulers.io())
                 .subscribe()
         }

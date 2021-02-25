@@ -8,8 +8,8 @@ import androidx.fragment.app.Fragment
 import com.airbnb.epoxy.EpoxyRecyclerView
 import com.airbnb.epoxy.Typed2EpoxyController
 import com.mieszko.currencyconverter.R
-import com.mieszko.currencyconverter.domain.model.AllCurrenciesListModel
-import com.mieszko.currencyconverter.domain.model.TrackedCurrenciesListModel
+import com.mieszko.currencyconverter.domain.model.list.AllCurrenciesListModel
+import com.mieszko.currencyconverter.domain.model.list.TrackedCurrenciesListModel
 import com.mieszko.currencyconverter.presentation.tracking.adapter.TrackingListController
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

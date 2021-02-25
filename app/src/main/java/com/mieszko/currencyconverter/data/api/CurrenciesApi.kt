@@ -1,6 +1,6 @@
 package com.mieszko.currencyconverter.data.api
 
-import com.mieszko.currencyconverter.data.api.model.CurrencyRatioDTO
+import com.mieszko.currencyconverter.data.model.CurrencyRatioDTO
 import io.reactivex.rxjava3.core.Single
 import retrofit2.http.GET
 

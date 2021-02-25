@@ -22,7 +22,8 @@ class CurrenciesApp : Application() {
                     apiModule,
                     cacheModule,
                     viewModelModule,
-                    sharedPrefsModule
+                    sharedPrefsModule,
+                    useCaseModule
                 )
             )
         }

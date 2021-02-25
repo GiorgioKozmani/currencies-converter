@@ -3,8 +3,8 @@ package com.mieszko.currencyconverter.presentation.tracking.adapter
 import com.airbnb.epoxy.Typed2EpoxyController
 import com.mieszko.CurrenciesApp
 import com.mieszko.currencyconverter.R
-import com.mieszko.currencyconverter.domain.model.AllCurrenciesListModel
-import com.mieszko.currencyconverter.domain.model.TrackedCurrenciesListModel
+import com.mieszko.currencyconverter.domain.model.list.AllCurrenciesListModel
+import com.mieszko.currencyconverter.domain.model.list.TrackedCurrenciesListModel
 import com.mieszko.currencyconverter.presentation.tracking.TrackingViewModel
 import com.mieszko.currencyconverter.presentation.tracking.adapter.viewholder.trackingListAllItem
 import com.mieszko.currencyconverter.presentation.tracking.adapter.viewholder.trackingListHeader

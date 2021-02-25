@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mieszko.currencyconverter.R
-import com.mieszko.currencyconverter.domain.model.HomeListModel
+import com.mieszko.currencyconverter.domain.model.list.HomeListModel
 import com.mieszko.currencyconverter.common.Resource
 import com.mieszko.currencyconverter.presentation.home.list.adapter.HomeCurrenciesListAdapter
 import com.mieszko.currencyconverter.presentation.util.CurrenciesListDragHelper

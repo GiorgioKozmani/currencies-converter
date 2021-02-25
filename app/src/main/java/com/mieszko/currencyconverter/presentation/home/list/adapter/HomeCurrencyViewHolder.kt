@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.mieszko.currencyconverter.R
-import com.mieszko.currencyconverter.domain.model.HomeListModel
+import com.mieszko.currencyconverter.domain.model.list.HomeListModel
 import de.hdodenhof.circleimageview.CircleImageView
 import java.text.DecimalFormat
 

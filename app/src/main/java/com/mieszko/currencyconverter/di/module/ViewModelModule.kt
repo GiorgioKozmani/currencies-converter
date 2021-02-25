@@ -9,7 +9,24 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
-    viewModel { HomeViewModel(get(), get(), get(), get()) }
-    viewModel { TrackingViewModel(get(), get(), get()) }
+    viewModel {
+        HomeViewModel(
+            disposablesBag = get(),
+            codesDataRepository = get(),
+            ratiosRepository = get(),
+            moveTrackedCodeToTopUseCase = get(),
+            observeTrackedCodesUseCase = get(),
+            swapTrackedCodesUseCase = get()
+        )
+    }
+    viewModel {
+        TrackingViewModel(
+            disposablesBag = get(),
+            observeTrackedCodesUseCase = get(),
+            codesDataRepository = get(),
+            addTrackedCodesUseCase = get(),
+            removeTrackedCodesUseCase = get()
+        )
+    }
     factory<IDisposablesBag> { DisposablesBag(CompositeDisposable()) }
 }

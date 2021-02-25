@@ -6,10 +6,13 @@ import com.mieszko.currencyconverter.common.BaseViewModel
 import com.mieszko.currencyconverter.common.IDisposablesBag
 import com.mieszko.currencyconverter.common.Resource
 import com.mieszko.currencyconverter.common.SupportedCode
-import com.mieszko.currencyconverter.domain.model.HomeListModel
+import com.mieszko.currencyconverter.domain.model.RatiosTime
+import com.mieszko.currencyconverter.domain.model.list.HomeListModel
 import com.mieszko.currencyconverter.domain.repository.ICodesDataRepository
 import com.mieszko.currencyconverter.domain.repository.IRatiosRepository
-import com.mieszko.currencyconverter.domain.repository.ITrackedCurrenciesRepository
+import com.mieszko.currencyconverter.domain.usecase.trackedcodes.IMoveTrackedCodeToTopUseCase
+import com.mieszko.currencyconverter.domain.usecase.trackedcodes.ISwapTrackedCodesUseCase
+import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.IObserveTrackedCodesUseCase
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.net.UnknownHostException
@@ -20,9 +23,12 @@ import kotlin.math.roundToLong
 
 class HomeViewModel(
     disposablesBag: IDisposablesBag,
+    //TODO REMOVE REPOS FROM DEPS
     private val ratiosRepository: IRatiosRepository,
-    private val trackedCurrenciesRepository: ITrackedCurrenciesRepository,
     private val codesDataRepository: ICodesDataRepository,
+    private val observeTrackedCodesUseCase: IObserveTrackedCodesUseCase,
+    private val moveTrackedCodeToTopUseCase: IMoveTrackedCodeToTopUseCase,
+    private val swapTrackedCodesUseCase: ISwapTrackedCodesUseCase
 ) : BaseViewModel(disposablesBag) {
 
     private val currenciesListModelsLiveData: MutableLiveData<Resource<List<HomeListModel>>> =
@@ -50,10 +56,15 @@ class HomeViewModel(
     init {
         disposablesBag.add(getSupportedCurrenciesRatios()
             .subscribeOn(Schedulers.io())
-            .doOnSuccess { newRatios -> currenciesRatios = newRatios }
+            //TODO HANDLE TIME TOO
+            //todo rework. different flows on different resources
+            // todo handle success error and maybe loading if transformed into observable
+            // todo into usecase
+            .filter { it is Resource.Success<RatiosTime> }
+            //todo remove !!
+            .doOnSuccess { newRatios -> currenciesRatios = newRatios.data!!.ratios }
             .flatMapObservable {
-                trackedCurrenciesRepository
-                    .getTrackedCurrencies()
+                observeTrackedCodesUseCase()
                     .subscribeOn(Schedulers.io())
             }
             .flatMapSingle { trackedCurrencies ->
@@ -132,18 +143,16 @@ class HomeViewModel(
         }
 
     fun setBaseCurrency(newBaseCurrency: SupportedCode) {
-        trackedCurrenciesRepository
-            .moveTrackedCurrencyToTop(newBaseCurrency)
+        moveTrackedCodeToTopUseCase(newBaseCurrency)
             .subscribeOn(Schedulers.io())
             .subscribe()
     }
 
     fun moveItem(from: Int, to: Int) {
-        trackedCurrenciesRepository
-            .swapTrackingOrder(
-                currenciesListModels[from].code,
-                currenciesListModels[to].code
-            )
+        swapTrackedCodesUseCase(
+            currenciesListModels[from].code,
+            currenciesListModels[to].code
+        )
             .subscribeOn(Schedulers.io())
             .subscribe()
     }
@@ -161,17 +170,11 @@ class HomeViewModel(
             0.0
         }
 
-    private fun getSupportedCurrenciesRatios(): Single<EnumMap<SupportedCode, Double>> {
+    private fun getSupportedCurrenciesRatios(): Single<Resource<RatiosTime>> {
         //TODO REVISE CACHE FOR RATIOS
 //            //todo as this is updated once in a day at 16, this would be nice to have it added as a (?) button, together with refresh button but don't update it every second
         return ratiosRepository
             .loadCurrenciesRatios()
-            .map { currenciesResponse ->
-                currenciesResponse.apply {
-                    // todo document this part as it's not fully clear at first sight
-                    put(SupportedCode.UAH, 1.0)
-                }
-            }
     }
 
 //    private fun emitUpdateDate() {
