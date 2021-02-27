@@ -10,14 +10,9 @@ interface ISharedPrefsManager {
     fun getString(key: Key): String?
     fun getString(key: Key, defValue: String): String?
 
-    //LONG
-    fun put(key: Key, toPut: Long)
-    fun getLong(key: Key): Long
-
     //KEYS
     enum class Key(val value: String) {
-        CachedCurrencies("CACHED_CURRENCIES_DATA"),
-        CachedCurrenciesTime("CACHED_CURRENCIES_DATA_TIME"),
+        CachedRatios("CACHED_RATIOS"),
         TrackedCurrencies("TRACKED_CURRENCIES")
     }
 }
@@ -40,14 +35,5 @@ class SharedPrefsManager(context: Application) : ISharedPrefsManager {
 
     override fun getString(key: ISharedPrefsManager.Key, defValue: String): String? {
         return mSharedPrefs.getString(key.value, defValue)
-    }
-
-    //LONG
-    override fun put(key: ISharedPrefsManager.Key, toPut: Long) {
-        editor.putLong(key.value, toPut).apply()
-    }
-
-    override fun getLong(key: ISharedPrefsManager.Key): Long {
-        return mSharedPrefs.getLong(key.value, -1)
     }
 }

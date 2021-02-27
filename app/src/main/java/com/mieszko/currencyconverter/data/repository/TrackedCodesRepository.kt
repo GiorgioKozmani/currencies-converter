@@ -1,5 +1,6 @@
 package com.mieszko.currencyconverter.data.repository
 
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -19,6 +20,10 @@ class TrackedCodesRepository(
     private val supportedCurrencyType: Type = object : TypeToken<List<SupportedCode>>() {}.type
     private val gson: Gson = GsonBuilder().create()
 
+    //todo check
+//    One of the issues with Subject is that after it receives onComplete() or onError() – it's no longer able to move data. Sometimes it's the desired behavior, but sometimes it's not.
+//    In cases when such behavior isn't desired, we should consider using RxRelay.
+//    https://www.baeldung.com/rx-relay
     private val source: BehaviorSubject<List<SupportedCode>> =
         BehaviorSubject.createDefault(
             gson.fromJson(
@@ -28,7 +33,8 @@ class TrackedCodesRepository(
         )
 
     override fun observeTrackedCodes(): Observable<List<SupportedCode>> {
-        return source
+        return source.doOnNext {
+        }
     }
 
     override fun saveTrackedCodes(trackedCodes: List<SupportedCode>): Completable =

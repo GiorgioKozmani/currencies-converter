@@ -1,46 +1,55 @@
 package com.mieszko.currencyconverter.presentation.home
 
+import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.mieszko.currencyconverter.common.BaseViewModel
 import com.mieszko.currencyconverter.common.IDisposablesBag
 import com.mieszko.currencyconverter.common.Resource
 import com.mieszko.currencyconverter.common.SupportedCode
+import com.mieszko.currencyconverter.domain.model.CodeWithData
 import com.mieszko.currencyconverter.domain.model.RatiosTime
 import com.mieszko.currencyconverter.domain.model.list.HomeListModel
-import com.mieszko.currencyconverter.domain.repository.ICodesDataRepository
-import com.mieszko.currencyconverter.domain.repository.IRatiosRepository
+import com.mieszko.currencyconverter.domain.usecase.IMapDataToCodesUseCase
+import com.mieszko.currencyconverter.domain.usecase.ratios.IFetchRemoteRatiosUseCase
+import com.mieszko.currencyconverter.domain.usecase.ratios.IObserveRatiosUseCase
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.IMoveTrackedCodeToTopUseCase
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.ISwapTrackedCodesUseCase
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.IObserveTrackedCodesUseCase
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.BehaviorSubject
+import io.reactivex.rxjava3.subjects.Subject
 import java.net.UnknownHostException
 import java.util.*
 import kotlin.math.pow
 import kotlin.math.roundToLong
 
+// TODO
+//https://proandroiddev.com/anemic-repositories-mvi-and-rxjava-induced-design-damage-and-how-aac-viewmodel-is-silently-1762caa70e13
+//The take-away here is that if:
+//you don’t have a saveState/restoreState function on your ViewModel
+//you don’t have an initialState: Bundle? constructor argument on your ViewModel (passed in from the ViewModelProvider.Factory in your Activity/Fragment as a dynamic argument)
+//you don’t use SavedStateHandle.getLiveData("key") nor SavedStateHandle.get("key")/set("key")
+// https://developer.android.com/jetpack/androidx/releases/lifecycle#version_230_3
+// there are some changes to saving state made recently
 
 class HomeViewModel(
     disposablesBag: IDisposablesBag,
-    //TODO REMOVE REPOS FROM DEPS
-    private val ratiosRepository: IRatiosRepository,
-    private val codesDataRepository: ICodesDataRepository,
-    private val observeTrackedCodesUseCase: IObserveTrackedCodesUseCase,
+    observeRatiosUseCase: IObserveRatiosUseCase,
+    observeTrackedCodesUseCase: IObserveTrackedCodesUseCase,
+    fetchRemoteRatiosUseCase: IFetchRemoteRatiosUseCase,
     private val moveTrackedCodeToTopUseCase: IMoveTrackedCodeToTopUseCase,
-    private val swapTrackedCodesUseCase: ISwapTrackedCodesUseCase
+    private val swapTrackedCodesUseCase: ISwapTrackedCodesUseCase,
+    private val mapCodeToDataUseCase: IMapDataToCodesUseCase
 ) : BaseViewModel(disposablesBag) {
 
     private val currenciesListModelsLiveData: MutableLiveData<Resource<List<HomeListModel>>> =
         MutableLiveData()
     private val lastUpdatedLiveData: MutableLiveData<Resource<Date>> =
         MutableLiveData()
-
-    // all available toUahRatios
-    private lateinit var currenciesRatios: EnumMap<SupportedCode, Double>
-
-    // models that are being passed to the view
-    private var currenciesListModels = listOf<HomeListModel>()
 
     //Exposing only LiveData
     fun getCurrenciesLiveData(): LiveData<Resource<List<HomeListModel>>> =
@@ -49,97 +58,164 @@ class HomeViewModel(
     fun getLastUpdatedLiveData(): LiveData<Resource<Date>> =
         lastUpdatedLiveData
 
-    //TODO IDEAS:
-    // FOR CACHE: ONLY EMIT FROM CACHE IF THERE'S NO DATA FROM WEB. ALWAYS TRY TO GET NEW DATA ON APP START
+    private val baseAmountChange: Subject<Double> =
+        BehaviorSubject.createDefault(DEFAULT_BASE_AMOUNT)
+
+    // models that are being passed to the view
+    // TODO DON'T STORE ACTUAL MODELS HERE? STORY ONLY DATA MODELS SO THIGS THAT COME FROM REPOSITORIES
+    // 1. CODE 2. NAME 3. FLAG 4. TOUAHRATIO 5. AMOUNT?
+    //TODO !! STEP AWAY FROM KEEPING A LIST OF currenciesListModels IN THE VIEWMODEL, AND KEEP ONLY DATA MODELS HERE?
+    // ACTUAL MODELS SENT TO THE VIEW WOULD BE GENERATED JUST BEFORE EMISSION
     // TODO HANDLE ALL !!s
-    // TODO ENTRY ANIMATION
+    private var currenciesListModels = listOf<HomeListModel>()
+
     init {
-        disposablesBag.add(getSupportedCurrenciesRatios()
-            .subscribeOn(Schedulers.io())
-            //TODO HANDLE TIME TOO
-            //todo rework. different flows on different resources
-            // todo handle success error and maybe loading if transformed into observable
-            // todo into usecase
-            .filter { it is Resource.Success<RatiosTime> }
-            //todo remove !!
-            .doOnSuccess { newRatios -> currenciesRatios = newRatios.data!!.ratios }
-            .flatMapObservable {
+        // emit list items when ratios or tracking order or base amount changes
+        disposablesBag.add(
+            //todo use RxRelay with default of loading?
+            Observable.combineLatest(
+                // CODES RATIOS CHANGED
+                observeRatiosUseCase()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.computation())
+                    //TODO HANDLE ERROR HERE?
+                    .ofType(Resource.Success::class.java)
+                    //todo into entity
+                    .map { ratios ->
+                        Pair(
+                            System.nanoTime(),
+                            ratios as Resource.Success<RatiosTime>
+                        )
+                    },
+                // TRACKING CODES CHANGED
                 observeTrackedCodesUseCase()
                     .subscribeOn(Schedulers.io())
-            }
-            .flatMapSingle { trackedCurrencies ->
-                when {
-                    trackedCurrencies.isEmpty() -> {
-                        clearListModels()
-                            .subscribeOn(Schedulers.computation())
-                    }
-                    baseStaysTheSame(trackedCurrencies) && itemsDidNotChange(trackedCurrencies) -> {
-                        repositionRegularItems(trackedCurrencies)
-                            .subscribeOn(Schedulers.computation())
-                    }
-                    //todo add case for adding / removing some when base haven't changed!
-                    else -> {
-                        makeListItemModels(trackedCurrencies)
-                            .doOnSuccess { listItems -> currenciesListModels = listItems }
-                            .subscribeOn(Schedulers.computation())
+                    .observeOn(Schedulers.computation())
+                    .map { trackedCodes -> Pair(System.nanoTime(), trackedCodes) },
+                // BASE CURRENCY AMOUNT CHANGED
+                baseAmountChange
+                    .subscribeOn(Schedulers.computation())
+                    .observeOn(Schedulers.computation())
+                    .map { newAmount -> Pair(System.nanoTime(), newAmount) },
+                { ratios, trackedCodes, newBaseAmount ->
+                    //todo map before so it's not passing resource anymore
+                    val allCodesRatios = ratios.second.data!!.ratios
+
+                    // CHECK WHAT'S THE LATEST CHANGE
+                    when (listOf(ratios, trackedCodes, newBaseAmount).maxByOrNull { it.first }) {
+                        ratios -> {
+                            // recreate all models on ratios change
+                            makeListItemModels(
+                                mapCodeToDataUseCase(trackedCodes.second),
+                                allCodesRatios
+                            ).subscribeOn(Schedulers.computation())
+                        }
+                        trackedCodes -> {
+                            when {
+                                //todo step away from pair wrapping as it's not readable now
+                                trackedCodes.second.isEmpty() -> {
+                                    // when there's no tracked currencies emit no items
+                                    Single.just(listOf<HomeListModel>())
+                                        .subscribeOn(Schedulers.computation())
+                                }
+                                baseStaysTheSame(trackedCodes.second) && itemsDidNotChange(
+                                    trackedCodes.second
+                                ) -> {
+                                    repositionNonBaseItems(trackedCodes.second)
+                                        .subscribeOn(Schedulers.computation())
+                                }
+                                // TODO THIS TODO IS IMPORTANT :D add case for adding / removing some when base haven't changed!
+                                else -> {
+                                    makeListItemModels(
+                                        mapCodeToDataUseCase(trackedCodes.second),
+                                        allCodesRatios
+                                    ).subscribeOn(Schedulers.computation())
+                                }
+                            }
+                        }
+                        newBaseAmount -> {
+                            //TODO THIS WILL CRASH WHEN LIST IS EMPTY
+                            if (currenciesListModels.isEmpty()) {
+                                Single.just(listOf())
+                            } else {
+                                val baseToUahRatio =
+                                    allCodesRatios[currenciesListModels.first().code]!!
+                                recreateCurrentItems(
+                                    newBaseAmount.second,
+                                    baseToUahRatio,
+                                    allCodesRatios
+                                ).subscribeOn(Schedulers.computation())
+                            }
+                        }
+                        // FALLBACK - recreate list models. This should never be reached
+                        else -> {
+                            makeListItemModels(
+                                mapCodeToDataUseCase(trackedCodes.second),
+                                allCodesRatios
+                            ).subscribeOn(Schedulers.computation())
+                        }
                     }
                 }
-            }
-            .subscribe(
-                { emitModels() },
-                {
-                    //todo remember crashlitics
-                    //TODO REVERT ERROR HANDLING AND RETRY
-                    emitError(it)
-                })
+            )
+                .flatMapSingle { it }
+                .doOnNext { listItems -> currenciesListModels = listItems }
+                .subscribeBy(
+                    onNext = { listItems -> emitModels(listItems) },
+                    onError = { emitError(it) }
+                ))
+
+        // ATTEMPT FETCHING FRESH DATA FROM NETWORK
+        disposablesBag.add(
+            fetchRemoteRatiosUseCase()
+                .subscribeOn(Schedulers.io())
+                .subscribe()
         )
     }
 
-    private fun repositionRegularItems(trackedCurrencies: List<SupportedCode>) =
+    /**
+     * returns a new list that mapped currenciesListModels items to tracked order
+     *
+     * @param trackedCodes
+     */
+    private fun repositionNonBaseItems(trackedCodes: List<SupportedCode>) =
         Single.fromCallable {
-            // Just change order of items if base hasn't changed
-            trackedCurrencies
-                .forEachIndexed { index, supportedCurrency ->
-                    if (supportedCurrency != currenciesListModels[index].code) {
-                        Collections.swap(
-                            currenciesListModels,
-                            index,
-                            currenciesListModels.indexOfFirst { it.code == supportedCurrency }
-                        )
-                    }
+            // copy models list
+            val reorderedList = currenciesListModels.toList()
+            trackedCodes.forEachIndexed { index, supportedCurrency ->
+                if (supportedCurrency != reorderedList[index].code) {
+                    Collections.swap(
+                        reorderedList,
+                        index,
+                        reorderedList.indexOfFirst { it.code == supportedCurrency }
+                    )
                 }
+            }
+            reorderedList
         }
 
     fun setBaseCurrencyAmount(newAmount: Double) {
-        val baseToUahRatio = currenciesRatios[currenciesListModels.first().code]!!
-
-        recreateCurrentItems(newAmount, baseToUahRatio)
-            .subscribeOn(Schedulers.computation())
-            .doOnSuccess { listItems -> currenciesListModels = listItems }
-            .subscribe({ emitModels() },
-                {
-                    // todo add safesubscribe that is going to report to crashlitics non fatals
-                })
+        baseAmountChange.onNext(newAmount)
     }
 
+    @WorkerThread
     private fun recreateCurrentItems(
         baseAmount: Double,
-        baseToUahRatio: Double
+        baseToUahRatio: Double,
+        allCodesRatios: EnumMap<SupportedCode, Double>
     ): Single<List<HomeListModel>> =
         Single.fromCallable {
-            currenciesListModels
-                .map { currentItem ->
-                    when (currentItem) {
-                        is HomeListModel.Base -> currentItem.copy(amount = baseAmount)
-                        is HomeListModel.Regular -> currentItem.copy(
-                            amount = calculateCurrencyAmount(
-                                currToUahRatio = currenciesRatios[currentItem.code]!!,
-                                baseToUahRatio = baseToUahRatio,
-                                baseAmount = baseAmount
-                            )
+            currenciesListModels.map { currentItem ->
+                when (currentItem) {
+                    is HomeListModel.Base -> currentItem.copy(amount = baseAmount)
+                    is HomeListModel.Regular -> currentItem.copy(
+                        amount = calculateCurrencyAmount(
+                            currToUahRatio = allCodesRatios[currentItem.code]!!,
+                            baseToUahRatio = baseToUahRatio,
+                            baseAmount = baseAmount
                         )
-                    }
+                    )
                 }
+            }
         }
 
     fun setBaseCurrency(newBaseCurrency: SupportedCode) {
@@ -157,6 +233,7 @@ class HomeViewModel(
             .subscribe()
     }
 
+    @WorkerThread
     private fun calculateCurrencyAmount(
         currToUahRatio: Double,
         baseToUahRatio: Double,
@@ -169,13 +246,6 @@ class HomeViewModel(
             //todo TO CRASHLYTICS
             0.0
         }
-
-    private fun getSupportedCurrenciesRatios(): Single<Resource<RatiosTime>> {
-        //TODO REVISE CACHE FOR RATIOS
-//            //todo as this is updated once in a day at 16, this would be nice to have it added as a (?) button, together with refresh button but don't update it every second
-        return ratiosRepository
-            .loadCurrenciesRatios()
-    }
 
 //    private fun emitUpdateDate() {
 //        //todo revise
@@ -191,6 +261,8 @@ class HomeViewModel(
 
     private fun emitError(t: Throwable?) {
         //todo strings, revise
+
+        // REVISE
         val errorMessage = when (t) {
             is UnknownHostException -> {
                 "Not updated, turn on internet."
@@ -205,31 +277,46 @@ class HomeViewModel(
         currenciesListModelsLiveData.postValue(Resource.Error(errorMessage))
     }
 
-    private fun emitModels() {
-        currenciesListModelsLiveData.postValue(Resource.Success(currenciesListModels))
+    private fun emitModels(listItemsModels: List<HomeListModel>) {
+        //todo step away from emitting resource from here
+        currenciesListModelsLiveData.postValue(Resource.Success(listItemsModels))
     }
 
-    private fun makeListItemModels(trackedCurrencies: List<SupportedCode>): Single<List<HomeListModel>> {
+    //TODO IT WOULD BE OPTIMAL TO MAKE CODE WITH DATA CONTAIN ALSO FRESH RATIO FOR THAT CURRENCY
+    //TODO ADD BASE TO PARAMS
+    @WorkerThread
+    private fun makeListItemModels(
+        trackedCodesWithData: List<CodeWithData>,
+        allCodesRatios: EnumMap<SupportedCode, Double>
+    ): Single<List<HomeListModel>> {
+        if (trackedCodesWithData.isEmpty()) {
+            return Single.just(listOf())
+        }
+
+        //TODO RETHINK IT
         var baseCurrency = currenciesListModels.firstOrNull()
-        //todo rework, this has to come from some repo, + obtaining same item twice is pointless
-            ?: HomeListModel.Base(
-                trackedCurrencies.first(),
-                codesDataRepository.getCodeData(trackedCurrencies.first()),
-                DEFAULT_BASE_AMOUNT
-            )
+            ?: let {
+                //TODO THIS CRASHES WHEN LIST IS EMPTY
+                val newBaseCodeWithData = trackedCodesWithData.first()
+                HomeListModel.Base(
+                    newBaseCodeWithData.code,
+                    newBaseCodeWithData.data,
+                    DEFAULT_BASE_AMOUNT
+                )
+            }
 
         return Single.fromCallable {
-            trackedCurrencies
-                .mapIndexed { index, supportedCurrency ->
-                    val newCurrencyRatio = currenciesRatios[supportedCurrency]!!
-                    val newCurrencyCodeData = codesDataRepository.getCodeData(supportedCurrency)
-                    val baseRatio = currenciesRatios[baseCurrency.code]!!
+            trackedCodesWithData
+                .mapIndexed { index, trackedCodeWithData ->
+                    //TODO THINK OF HOW TO GET A RID OF !!
+                    val newCurrencyRatio = allCodesRatios[trackedCodeWithData.code]!!
+                    val baseRatio = allCodesRatios[baseCurrency.code]!!
                     val baseAmount = baseCurrency.amount
 
                     if (index == 0) {
                         HomeListModel.Base(
-                            code = supportedCurrency,
-                            codeData = newCurrencyCodeData,
+                            code = trackedCodeWithData.code,
+                            codeData = trackedCodeWithData.data,
                             amount = calculateCurrencyAmount(
                                 currToUahRatio = newCurrencyRatio,
                                 baseToUahRatio = baseRatio,
@@ -237,19 +324,18 @@ class HomeViewModel(
                             )
                         ).also { baseCurrency = it }
                     } else {
-                        val baseCurrencyCode = baseCurrency.code.name
-                        val newCurrencyCode = supportedCurrency.name
+                        val baseCurrencyCode = baseCurrency.code
 
                         HomeListModel.Regular(
-                            code = supportedCurrency,
-                            codeData = newCurrencyCodeData,
+                            code = trackedCodeWithData.code,
+                            codeData = trackedCodeWithData.data,
                             amount = calculateCurrencyAmount(
                                 currToUahRatio = newCurrencyRatio,
                                 baseToUahRatio = baseRatio,
                                 baseAmount = baseAmount
                             ),
                             baseToThisText = makeRatioString(
-                                firstCurrencyCode = newCurrencyCode,
+                                firstCurrencyCode = trackedCodeWithData.code,
                                 firstCurrencyToUahRatio = newCurrencyRatio,
                                 secondCurrencyCode = baseCurrencyCode,
                                 secondCurrencyToUahRatio = baseRatio
@@ -257,7 +343,7 @@ class HomeViewModel(
                             thisToBaseText = makeRatioString(
                                 firstCurrencyCode = baseCurrencyCode,
                                 firstCurrencyToUahRatio = baseRatio,
-                                secondCurrencyCode = newCurrencyCode,
+                                secondCurrencyCode = trackedCodeWithData.code,
                                 secondCurrencyToUahRatio = newCurrencyRatio
                             )
                         )
@@ -266,10 +352,12 @@ class HomeViewModel(
         }
     }
 
+    //todo extract to usecase
+    @WorkerThread
     private fun makeRatioString(
-        firstCurrencyCode: String,
+        firstCurrencyCode: SupportedCode,
         firstCurrencyToUahRatio: Double,
-        secondCurrencyCode: String,
+        secondCurrencyCode: SupportedCode,
         secondCurrencyToUahRatio: Double
     ) = if (secondCurrencyToUahRatio != 0.0) {
         "1 $firstCurrencyCode ≈ ${
@@ -281,21 +369,20 @@ class HomeViewModel(
         ""
     }
 
+    @WorkerThread
     private fun Double.roundToDecimals(decimals: Int): Double {
         val factor = 10.0.pow(decimals)
         return (this * factor).roundToLong() / factor
     }
 
+    @WorkerThread
     private fun itemsDidNotChange(trackedCurrencies: List<SupportedCode>): Boolean =
         trackedCurrencies.size == currenciesListModels.size
                 && trackedCurrencies.containsAll(currenciesListModels.map { it.code })
 
+    @WorkerThread
     private fun baseStaysTheSame(trackedCurrencies: List<SupportedCode>): Boolean =
         trackedCurrencies.first() == currenciesListModels.firstOrNull()?.code
-
-    private fun clearListModels() = Single.fromCallable {
-        currenciesListModels = listOf()
-    }
 
     private companion object {
         const val DEFAULT_BASE_AMOUNT = 100.0

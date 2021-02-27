@@ -1,6 +1,8 @@
 package com.mieszko.currencyconverter.data.persistance.cache.ratios
 
 import com.mieszko.currencyconverter.data.model.CurrencyRatioDTO
+import java.util.*
 
 //todo introduce mappers
-data class RatiosTimeDTO(val ratios: List<CurrencyRatioDTO>, val time: Long)
+//todo REMOVE THIS MODEL
+data class RatiosTimeDTO(val ratios: List<CurrencyRatioDTO>, val date: Date)

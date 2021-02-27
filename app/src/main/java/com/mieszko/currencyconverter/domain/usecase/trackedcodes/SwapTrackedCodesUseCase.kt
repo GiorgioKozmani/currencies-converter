@@ -1,5 +1,6 @@
 package com.mieszko.currencyconverter.domain.usecase.trackedcodes
 
+import android.util.Log
 import com.mieszko.currencyconverter.common.SupportedCode
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.IGetTrackedCodesOnceUseCase
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.ISaveTrackedCodesUseCase
@@ -13,13 +14,12 @@ class SwapTrackedCodesUseCase(
     private val saveTrackedCodesUseCase: ISaveTrackedCodesUseCase
 ) : ISwapTrackedCodesUseCase {
     override fun invoke(firstCurrency: SupportedCode, secondCurrency: SupportedCode): Completable =
-        //todo get threading right
         getTrackedCodesOnceUseCase()
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
             .flatMapCompletable { currentTrackedCodes ->
-                //todo check thread
                 Single.fromCallable {
                     currentTrackedCodes
-                        //todo this might not work because of also, check out
                         .toMutableList()
                         .also { currentList ->
                             Collections.swap(
@@ -30,7 +30,6 @@ class SwapTrackedCodesUseCase(
                         }
                 }
                     .subscribeOn(Schedulers.computation())
-                    //todo check thread
                     .flatMapCompletable { codes ->
                         saveTrackedCodesUseCase(codes)
                             .subscribeOn(Schedulers.io())

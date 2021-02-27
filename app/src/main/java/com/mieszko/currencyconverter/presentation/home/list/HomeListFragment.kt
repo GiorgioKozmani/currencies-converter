@@ -20,6 +20,10 @@ class HomeListFragment : Fragment(R.layout.currencies_list_fragment) {
     private lateinit var rvManager: LinearLayoutManager
     private lateinit var rvDragHelper: CurrenciesListDragHelper
 
+    // TODO ENTRY ANIMATION
+    // TODO WHEN TIMES'S UPDATED ANIMATE BOUNCE SIZE CHANGE?
+    // TODO PLAY WITH ELEVATION
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // TODO VIEWBINDING

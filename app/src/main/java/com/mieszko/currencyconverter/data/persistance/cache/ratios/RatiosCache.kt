@@ -1,41 +1,59 @@
 package com.mieszko.currencyconverter.data.persistance.cache.ratios
 
-import android.util.Log
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import com.mieszko.currencyconverter.common.Resource
 import com.mieszko.currencyconverter.data.model.CurrencyRatioDTO
 import com.mieszko.currencyconverter.data.persistance.ISharedPrefsManager
-import com.mieszko.currencyconverter.domain.model.RatiosTime
-import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import java.lang.reflect.Type
 import java.util.*
-import kotlin.NoSuchElementException
 
 class RatiosCache(private val sharedPrefsManager: ISharedPrefsManager) : IRatiosCache {
     private val type: Type = object : TypeToken<RatiosTimeDTO>() {}.type
     private val gson = GsonBuilder().create()
 
-    override fun getCachedRatios(): Single<RatiosTimeDTO> {
-        val savedJson = sharedPrefsManager.getString(ISharedPrefsManager.Key.CachedCurrencies)
-        val cachedData: RatiosTimeDTO? = gson.fromJson(savedJson, type)
-        return if (cachedData == null || cachedData.ratios.isEmpty()) {
-            // TODO CUSTOM ERROR INSTEAD, SO IT'S NICELY HANDLED IN VM
-            Single.error(NoSuchElementException("No ratios to show"))
-        } else {
-            //todo mapper for it
-            Single.just(cachedData)
-        }
+    //todo check
+//    One of the issues with Subject is that after it receives onComplete() or onError() – it's no longer able to move data. Sometimes it's the desired behavior, but sometimes it's not.
+//    In cases when such behavior isn't desired, we should consider using RxRelay.
+//    https://www.baeldung.com/rx-relay
+    //TODO INSTEAD OF ERROR GO FOR RXRELAY!!
+    private val source: BehaviorSubject<Resource<RatiosTimeDTO>> =
+        BehaviorSubject.createDefault(
+            when (val persistedRatios = gson.fromJson<RatiosTimeDTO>(
+                sharedPrefsManager.getString(ISharedPrefsManager.Key.CachedRatios),
+                type
+            )) {
+                null -> {
+                    Resource.Error("NO RATIOS ARE AVAILABLE")
+                }
+                else -> {
+                    Resource.Success(persistedRatios)
+                }
+            }
+        )
+
+    override fun observeCodeRatios(): Observable<Resource<RatiosTimeDTO>> {
+        return source
     }
 
-    override fun cacheRatios(ratios: List<CurrencyRatioDTO>) {
-        sharedPrefsManager.put(
-            ISharedPrefsManager.Key.CachedCurrencies,
-            gson.toJson(RatiosTimeDTO(ratios, Date().time), type)
-        )
-    }
+    // TODO ONCE THIS WILL BE WORKING REWORK IT WOULD USE ROOM DB
+    override fun saveTrackedCodes(ratios: List<CurrencyRatioDTO>): Completable =
+        Completable.fromAction {
+            val ratiosTime = RatiosTimeDTO(ratios, Date())
+
+            sharedPrefsManager.put(
+                ISharedPrefsManager.Key.CachedRatios,
+                gson.toJson(ratiosTime, type)
+            )
+            source.onNext(Resource.Success(ratiosTime))
+        }
+
 }
 
 interface IRatiosCache {
-    fun getCachedRatios(): Single<RatiosTimeDTO>
-    fun cacheRatios(ratios: List<CurrencyRatioDTO>)
+    fun observeCodeRatios(): Observable<Resource<RatiosTimeDTO>>
+    fun saveTrackedCodes(ratios: List<CurrencyRatioDTO>): Completable
 }

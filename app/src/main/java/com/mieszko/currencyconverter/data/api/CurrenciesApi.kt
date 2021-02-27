@@ -11,5 +11,5 @@ interface CurrenciesApi {
     }
 
     @GET("exchange?json")
-    fun getCurrencies(): Single<List<CurrencyRatioDTO>>
+    fun getCodeRatios(): Single<List<CurrencyRatioDTO>>
 }

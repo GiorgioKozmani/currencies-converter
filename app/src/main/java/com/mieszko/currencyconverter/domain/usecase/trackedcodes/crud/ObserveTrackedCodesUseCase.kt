@@ -4,7 +4,6 @@ import com.mieszko.currencyconverter.common.SupportedCode
 import com.mieszko.currencyconverter.domain.repository.ITrackedCodesRepository
 import io.reactivex.rxjava3.core.Observable
 
-//TODO DI
 class ObserveTrackedCodesUseCase(
     private val trackedCodesRepository: ITrackedCodesRepository
 ) : IObserveTrackedCodesUseCase {

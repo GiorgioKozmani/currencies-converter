@@ -9,15 +9,16 @@ import java.util.*
 /**
  * Codes data repository
  *
- * This repository provides static data associated with all supported currencies
+ * This repository provides data associated with all supported currencies
  */
 class CodesDataRepository : ICodesDataRepository {
 
+    // todo If your app also uses “UseCase” classes like GetUserUseCase or GetUserFetchTask, then you definitely don’t need a Repository, as those “UseCase” classes are already doing what a Repository would.
+    // TODO If an app does not have a remote API, it does not need a Repository. !!!!!!!!
     override fun getCodeData(code: SupportedCode): CodeData = supportedCodeDataMap[code]!!
 
     private companion object {
         // EnumMap is much faster than HashMap.
-// TODO HAVE THIS PROVIDED FROM SOME REPOSITORY!!! THAT'S A MUST
 // TODO THIS COULD BE CACHED, BUT COULD ALSO COME FROM FIREBASE FOR EXAMPLE! IT MIGHT BE WORTH CONSIDERING TO HAVE THIS CHANGEABLE ON DEMAND
 // WHEN FOR EXAMPLE THESE IMAGES BECOME OUTDATED
 // ANOTHER IDEA (PROBABLY BETTER) WOULD BE TO HAVE THESE ICONS SAVED LOCALLY
