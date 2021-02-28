@@ -2,7 +2,6 @@ package com.mieszko.currencyconverter.data.persistance.cache.ratios
 
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.mieszko.currencyconverter.common.Resource
 import com.mieszko.currencyconverter.data.model.CurrencyRatioDTO
 import com.mieszko.currencyconverter.data.persistance.ISharedPrefsManager
 import io.reactivex.rxjava3.core.Completable
@@ -20,22 +19,19 @@ class RatiosCache(private val sharedPrefsManager: ISharedPrefsManager) : IRatios
 //    In cases when such behavior isn't desired, we should consider using RxRelay.
 //    https://www.baeldung.com/rx-relay
     //TODO INSTEAD OF ERROR GO FOR RXRELAY!!
-    private val source: BehaviorSubject<Resource<RatiosTimeDTO>> =
+    private val source: BehaviorSubject<RatiosTimeDTO> =
         BehaviorSubject.createDefault(
-            when (val persistedRatios = gson.fromJson<RatiosTimeDTO>(
-                sharedPrefsManager.getString(ISharedPrefsManager.Key.CachedRatios),
-                type
-            )) {
-                null -> {
-                    Resource.Error("NO RATIOS ARE AVAILABLE")
-                }
-                else -> {
-                    Resource.Success(persistedRatios)
-                }
+            try {
+                gson.fromJson(
+                    sharedPrefsManager.getString(ISharedPrefsManager.Key.CachedRatios),
+                    type
+                )
+            } catch (e: Exception) {
+                RatiosTimeDTO(listOf(), Date())
             }
         )
 
-    override fun observeCodeRatios(): Observable<Resource<RatiosTimeDTO>> {
+    override fun observeCodeRatios(): Observable<RatiosTimeDTO> {
         return source
     }
 
@@ -48,12 +44,12 @@ class RatiosCache(private val sharedPrefsManager: ISharedPrefsManager) : IRatios
                 ISharedPrefsManager.Key.CachedRatios,
                 gson.toJson(ratiosTime, type)
             )
-            source.onNext(Resource.Success(ratiosTime))
+            source.onNext(ratiosTime)
         }
 
 }
 
 interface IRatiosCache {
-    fun observeCodeRatios(): Observable<Resource<RatiosTimeDTO>>
+    fun observeCodeRatios(): Observable<RatiosTimeDTO>
     fun saveTrackedCodes(ratios: List<CurrencyRatioDTO>): Completable
 }

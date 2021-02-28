@@ -15,7 +15,7 @@ class CodesDataRepository : ICodesDataRepository {
 
     // todo If your app also uses “UseCase” classes like GetUserUseCase or GetUserFetchTask, then you definitely don’t need a Repository, as those “UseCase” classes are already doing what a Repository would.
     // TODO If an app does not have a remote API, it does not need a Repository. !!!!!!!!
-    override fun getCodeData(code: SupportedCode): CodeData = supportedCodeDataMap[code]!!
+    override fun getCodeStaticData(code: SupportedCode): CodeData? = supportedCodeDataMap[code]
 
     private companion object {
         // EnumMap is much faster than HashMap.

@@ -24,7 +24,7 @@ class RatiosRepository(
 
     // TODO ADD SOME STATIC DATA TO CACHE ON FIRST RUN SO SMTH'S AVAILABLE?
     // TODO HANDLE TOO FREQUENT REFRESH CLICKS (INTRODUCE MINUMUM LOADING TIME? )
-    override fun observeRatios(): Observable<Resource<RatiosTimeDTO>> {
+    override fun observeRatios(): Observable<RatiosTimeDTO> {
         return cache.observeCodeRatios()
     }
 

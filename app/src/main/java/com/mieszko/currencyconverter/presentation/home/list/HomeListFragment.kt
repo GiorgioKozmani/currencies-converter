@@ -1,7 +1,9 @@
 package com.mieszko.currencyconverter.presentation.home.list
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -63,6 +65,7 @@ class HomeListFragment : Fragment(R.layout.currencies_list_fragment) {
                 updateListData(response)
             }
             is Resource.Error -> {
+                Toast.makeText(context, "TODO NETWORK REFRESH ERROR", Toast.LENGTH_SHORT).show()
             }
         }
     }

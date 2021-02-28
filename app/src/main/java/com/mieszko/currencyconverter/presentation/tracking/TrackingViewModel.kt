@@ -36,6 +36,7 @@ class TrackingViewModel(
         disposablesBag.add(
             observeTrackedCodesUseCase()
                 .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.computation())
                 .flatMapSingle { trackedCodes ->
                     //todo this is a good example for usecase
                     Single.zip(
@@ -54,11 +55,13 @@ class TrackingViewModel(
     //todo this should be handled by separate usecase
     private fun getTrackedCurrenciesModels(trackedCodes: List<SupportedCode>) =
         Single.fromCallable {
-            trackedCodes.map { trackedCode ->
-                TrackedCurrenciesListModel(
-                    trackedCode,
-                    codesDataRepository.getCodeData(trackedCode)
-                )
+            trackedCodes.mapNotNull { trackedCode ->
+                codesDataRepository.getCodeStaticData(trackedCode)?.let { staticData ->
+                    TrackedCurrenciesListModel(
+                        trackedCode,
+                        staticData
+                    )
+                }
             }
         }
 
@@ -68,12 +71,14 @@ class TrackingViewModel(
         Single.fromCallable {
             SupportedCode
                 .values()
-                .map { code ->
-                    AllCurrenciesListModel(
-                        code,
-                        codesDataRepository.getCodeData(code),
-                        trackedCurrencies.contains(code)
-                    )
+                .mapNotNull { code ->
+                    codesDataRepository.getCodeStaticData(code)?.let { staticData ->
+                        AllCurrenciesListModel(
+                            code,
+                            staticData,
+                            trackedCurrencies.contains(code)
+                        )
+                    }
                 }
         }
 
