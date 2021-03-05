@@ -4,6 +4,7 @@ import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import com.airbnb.epoxy.EpoxyAttribute
 import com.airbnb.epoxy.EpoxyHolder
@@ -31,7 +32,7 @@ abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListAllIt
             setCodeText(holder, code.name)
             setNameText(holder, codeData.name)
             handleSelection(holder, isTracked)
-            loadCurrencyFlag(holder, codeData.flagUrl)
+            loadCurrencyFlag(holder, codeData.flagResId)
         }
 
         //todo investigate DONOTHASH
@@ -66,9 +67,9 @@ abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListAllIt
         holder.codeTV.text = currencyCode
     }
 
-    private fun loadCurrencyFlag(holder: TrackingListAllItemViewHolder, flagUrl: String) {
+    private fun loadCurrencyFlag(holder: TrackingListAllItemViewHolder, @DrawableRes flagRes: Int) {
         Glide.with(holder.view.context)
-            .load(flagUrl)
+            .load(flagRes)
             .apply(RequestOptions().apply { centerCrop() })
             .into(holder.flagIV)
     }

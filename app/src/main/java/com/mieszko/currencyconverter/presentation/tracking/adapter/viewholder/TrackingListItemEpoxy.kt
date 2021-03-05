@@ -2,6 +2,7 @@ package com.mieszko.currencyconverter.presentation.tracking.adapter.viewholder
 
 import android.view.View
 import android.widget.TextView
+import androidx.annotation.DrawableRes
 import com.airbnb.epoxy.EpoxyAttribute
 import com.airbnb.epoxy.EpoxyHolder
 import com.airbnb.epoxy.EpoxyModelClass
@@ -27,7 +28,7 @@ abstract class TrackingListItemEpoxy : EpoxyModelWithHolder<TrackingListItemView
         with(model) {
             setCodeText(holder, code.name)
             setNameText(holder, codeData.name)
-            loadCurrencyFlag(holder, codeData.flagUrl)
+            loadCurrencyFlag(holder, codeData.flagResId)
         }
 
         holder.view.setOnClickListener { clickAction.invoke() }
@@ -51,9 +52,9 @@ abstract class TrackingListItemEpoxy : EpoxyModelWithHolder<TrackingListItemView
         holder.codeTV.text = code
     }
 
-    private fun loadCurrencyFlag(holder: TrackingListItemViewHolder, flagUrl: String) {
+    private fun loadCurrencyFlag(holder: TrackingListItemViewHolder, @DrawableRes flagRes: Int) {
         Glide.with(holder.view.context)
-            .load(flagUrl)
+            .load(flagRes)
             .apply(RequestOptions().apply { centerCrop() })
             .into(holder.flagIV)
     }

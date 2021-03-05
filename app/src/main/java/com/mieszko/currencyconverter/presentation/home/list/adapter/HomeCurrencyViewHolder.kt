@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import androidx.annotation.DrawableRes
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -60,7 +61,7 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
         with(currencyModel) {
             setNameText(this.codeData.name)
             setAmount(this.amount)
-            loadCurrencyFlag(this.codeData.flagUrl)
+            loadCurrencyFlag(this.codeData.flagResId)
         }
     }
 
@@ -152,9 +153,9 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
         baseToThisTV.text = newBaseToThis
     }
 
-    private fun loadCurrencyFlag(flagUrl: String) {
+    private fun loadCurrencyFlag(@DrawableRes flagRes: Int) {
         Glide.with(itemView)
-            .load(flagUrl)
+            .load(flagRes)
             .apply(RequestOptions().apply { centerCrop() })
             .into(flagIV)
     }
