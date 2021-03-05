@@ -22,7 +22,7 @@ class HomeHeaderFragment : Fragment(R.layout.currencies_header_fragment) {
         observeViewModel()
 
         view.findViewById<View>(R.id.refresh_rates_button).setOnClickListener {
-            viewModel.loadCurrencies()
+            viewModel.reloadCurrencies()
         }
     }
 

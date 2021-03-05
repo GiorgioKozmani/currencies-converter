@@ -1,5 +1,6 @@
 package com.mieszko.currencyconverter.data.repository
 
+import com.mieszko.CurrenciesApp
 import com.mieszko.currencyconverter.R
 import com.mieszko.currencyconverter.common.SupportedCode
 import com.mieszko.currencyconverter.data.model.CodeData
@@ -17,7 +18,11 @@ class CodesDataRepository : ICodesDataRepository {
     // TODO If an app does not have a remote API, it does not need a Repository. !!!!!!!!
     override fun getCodeStaticData(code: SupportedCode): CodeData? = supportedCodeDataMap[code]
 
+    //todo rework
+
     private companion object {
+        private val resources = CurrenciesApp.resourses
+
         // EnumMap is much faster than HashMap.
 // TODO THIS COULD BE CACHED, BUT COULD ALSO COME FROM FIREBASE FOR EXAMPLE! IT MIGHT BE WORTH CONSIDERING TO HAVE THIS CHANGEABLE ON DEMAND
 // WHEN FOR EXAMPLE THESE IMAGES BECOME OUTDATED
@@ -29,383 +34,383 @@ class CodesDataRepository : ICodesDataRepository {
                 put(
                     SupportedCode.AUD,
                     CodeData(
-                        R.string.aud_full,
+                        resources.getString(R.string.aud_full),
                         "https://img.freeflagicons.com/thumb/round_icon/australia/australia_64.png"
                     )
                 )
                 put(
                     SupportedCode.BGN,
                     CodeData(
-                        R.string.bgn_full,
+                        resources.getString(R.string.bgn_full),
                         "https://img.freeflagicons.com/thumb/round_icon/bulgaria/bulgaria_64.png"
                     )
                 )
                 put(
                     SupportedCode.BRL,
                     CodeData(
-                        R.string.brl_full,
+                        resources.getString(R.string.brl_full),
                         "https://img.freeflagicons.com/thumb/round_icon/brazil/brazil_64.png"
                     )
                 )
                 put(
                     SupportedCode.CAD,
                     CodeData(
-                        R.string.cad_full,
+                        resources.getString(R.string.cad_full),
                         "https://img.freeflagicons.com/thumb/round_icon/canada/canada_64.png"
                     )
                 )
                 put(
                     SupportedCode.CHF,
                     CodeData(
-                        R.string.chf_full,
+                        resources.getString(R.string.chf_full),
                         "https://img.freeflagicons.com/thumb/round_icon/switzerland/switzerland_64.png"
                     )
                 )
                 put(
                     SupportedCode.CNY,
                     CodeData(
-                        R.string.cny_full,
+                        resources.getString(R.string.cny_full),
                         "https://img.freeflagicons.com/thumb/round_icon/china/china_64.png"
                     )
                 )
                 put(
                     SupportedCode.CZK,
                     CodeData(
-                        R.string.czk_full,
+                        resources.getString(R.string.czk_full),
                         "https://img.freeflagicons.com/thumb/round_icon/czech_republic/czech_republic_64.png"
                     )
                 )
                 put(
                     SupportedCode.DKK,
                     CodeData(
-                        R.string.dkk_full,
+                        resources.getString(R.string.dkk_full),
                         "https://img.freeflagicons.com/thumb/round_icon/denmark/denmark_64.png"
                     )
                 )
                 put(
                     SupportedCode.EUR,
                     CodeData(
-                        R.string.eur_full,
+                        resources.getString(R.string.eur_full),
                         "https://img.freeflagicons.com/thumb/round_icon/european_union/european_union_64.png"
                     )
                 )
                 put(
                     SupportedCode.GBP,
                     CodeData(
-                        R.string.gbp_full,
+                        resources.getString(R.string.gbp_full),
                         "https://img.freeflagicons.com/thumb/round_icon/united_kingdom/united_kingdom_64.png"
                     )
                 )
                 put(
                     SupportedCode.HKD,
                     CodeData(
-                        R.string.hkd_full,
+                        resources.getString(R.string.hkd_full),
                         "https://img.freeflagicons.com/thumb/round_icon/hong_kong/hong_kong_64.png"
                     )
                 )
                 put(
                     SupportedCode.HRK,
                     CodeData(
-                        R.string.hrk_full,
+                        resources.getString(R.string.hrk_full),
                         "https://img.freeflagicons.com/thumb/round_icon/croatia/croatia_64.png"
                     )
                 )
                 put(
                     SupportedCode.HUF,
                     CodeData(
-                        R.string.huf_full,
+                        resources.getString(R.string.huf_full),
                         "https://img.freeflagicons.com/thumb/round_icon/hungary/hungary_64.png"
                     )
                 )
                 put(
                     SupportedCode.ILS,
                     CodeData(
-                        R.string.ils_full,
+                        resources.getString(R.string.ils_full),
                         "https://img.freeflagicons.com/thumb/round_icon/israel/israel_64.png"
                     )
                 )
                 put(
                     SupportedCode.INR,
                     CodeData(
-                        R.string.inr_full,
+                        resources.getString(R.string.inr_full),
                         "https://img.freeflagicons.com/thumb/round_icon/india/india_64.png"
                     )
                 )
                 put(
                     SupportedCode.JPY,
                     CodeData(
-                        R.string.jpy_full,
+                        resources.getString(R.string.jpy_full),
                         "https://img.freeflagicons.com/thumb/round_icon/japan/japan_64.png"
                     )
                 )
                 put(
                     SupportedCode.KRW,
                     CodeData(
-                        R.string.krw_full,
+                        resources.getString(R.string.krw_full),
                         "https://img.freeflagicons.com/thumb/round_icon/korea_south/korea_south_64.png"
                     )
                 )
                 put(
                     SupportedCode.MXN,
                     CodeData(
-                        R.string.mxn_full,
+                        resources.getString(R.string.mxn_full),
                         "https://img.freeflagicons.com/thumb/round_icon/mexico/mexico_64.png"
                     )
                 )
                 put(
                     SupportedCode.MYR,
                     CodeData(
-                        R.string.myr_full,
+                        resources.getString(R.string.myr_full),
                         "https://img.freeflagicons.com/thumb/round_icon/malaysia/malaysia_64.png"
                     )
                 )
                 put(
                     SupportedCode.NOK,
                     CodeData(
-                        R.string.nok_full,
+                        resources.getString(R.string.nok_full),
                         "https://img.freeflagicons.com/thumb/round_icon/norway/norway_64.png"
                     )
                 )
                 put(
                     SupportedCode.NZD,
                     CodeData(
-                        R.string.nzd_full,
+                        resources.getString(R.string.nzd_full),
                         "https://img.freeflagicons.com/thumb/round_icon/new_zealand/new_zealand_64.png"
                     )
                 )
                 put(
                     SupportedCode.PLN,
                     CodeData(
-                        R.string.pln_full,
+                        resources.getString(R.string.pln_full),
                         "https://img.freeflagicons.com/thumb/round_icon/poland/poland_64.png"
                     )
                 )
                 put(
                     SupportedCode.RON,
                     CodeData(
-                        R.string.ron_full,
+                        resources.getString(R.string.ron_full),
                         "https://img.freeflagicons.com/thumb/round_icon/romania/romania_64.png"
                     )
                 )
                 put(
                     SupportedCode.RUB,
                     CodeData(
-                        R.string.rub_full,
+                        resources.getString(R.string.rub_full),
                         "https://img.freeflagicons.com/thumb/round_icon/russia/russia_64.png"
                     )
                 )
                 put(
                     SupportedCode.SEK,
                     CodeData(
-                        R.string.sek_full,
+                        resources.getString(R.string.sek_full),
                         "https://img.freeflagicons.com/thumb/round_icon/sweden/sweden_64.png"
                     )
                 )
                 put(
                     SupportedCode.SGD,
                     CodeData(
-                        R.string.sgd_full,
+                        resources.getString(R.string.sgd_full),
                         "https://img.freeflagicons.com/thumb/round_icon/sudan/sudan_64.png"
                     )
                 )
                 put(
                     SupportedCode.THB,
                     CodeData(
-                        R.string.thb_full,
+                        resources.getString(R.string.thb_full),
                         "https://img.freeflagicons.com/thumb/round_icon/thailand/thailand_64.png"
                     )
                 )
                 put(
                     SupportedCode.TRY,
                     CodeData(
-                        R.string.thb_full,
+                        resources.getString(R.string.thb_full),
                         "https://img.freeflagicons.com/thumb/round_icon/turkey/turkey_64.png"
                     )
                 )
                 put(
                     SupportedCode.USD,
                     CodeData(
-                        R.string.usd_full,
+                        resources.getString(R.string.usd_full),
                         "https://img.freeflagicons.com/thumb/round_icon/united_states_of_america/united_states_of_america_64.png"
                     )
                 )
                 put(
                     SupportedCode.ZAR,
                     CodeData(
-                        R.string.zar_full,
+                        resources.getString(R.string.zar_full),
                         "https://img.freeflagicons.com/thumb/round_icon/south_africa/south_africa_64.png"
                     )
                 )
                 put(
                     SupportedCode.UAH,
                     CodeData(
-                        R.string.uah_full,
+                        resources.getString(R.string.uah_full),
                         "https://img.freeflagicons.com/thumb/round_icon/ukraine/ukraine_64.png"
                     )
                 )
                 put(
                     SupportedCode.IDR,
                     CodeData(
-                        R.string.idr_full,
+                        resources.getString(R.string.idr_full),
                         "https://img.freeflagicons.com/thumb/round_icon/indonesia/indonesia_64.png"
                     )
                 )
                 put(
                     SupportedCode.KZT,
                     CodeData(
-                        R.string.kzt_full,
+                        resources.getString(R.string.kzt_full),
                         "https://img.freeflagicons.com/thumb/round_icon/kazakhstan/kazakhstan_64.png"
                     )
                 )
                 put(
                     SupportedCode.MDL,
                     CodeData(
-                        R.string.mdl_full,
+                        resources.getString(R.string.mdl_full),
                         "https://img.freeflagicons.com/thumb/round_icon/moldova/moldova_64.png"
                     )
                 )
                 put(
                     SupportedCode.SAR,
                     CodeData(
-                        R.string.sar_full,
+                        resources.getString(R.string.sar_full),
                         "https://img.freeflagicons.com/thumb/round_icon/saudi_arabia/saudi_arabia_64.png"
                     )
                 )
                 put(
                     SupportedCode.EGP,
                     CodeData(
-                        R.string.egp_full,
+                        resources.getString(R.string.egp_full),
                         "https://img.freeflagicons.com/thumb/round_icon/egypt/egypt_64.png"
                     )
                 )
                 put(
                     SupportedCode.BYN,
                     CodeData(
-                        R.string.byn_full,
+                        resources.getString(R.string.byn_full),
                         "https://img.freeflagicons.com/thumb/round_icon/belarus/belarus_64.png"
                     )
                 )
                 put(
                     SupportedCode.AZN,
                     CodeData(
-                        R.string.azn_full,
+                        resources.getString(R.string.azn_full),
                         "https://img.freeflagicons.com/thumb/round_icon/azerbaijan/azerbaijan_64.png"
                     )
                 )
                 put(
                     SupportedCode.DZD,
                     CodeData(
-                        R.string.dzd_full,
+                        resources.getString(R.string.dzd_full),
                         "https://img.freeflagicons.com/thumb/round_icon/algeria/algeria_64.png"
                     )
                 )
                 put(
                     SupportedCode.BDT,
                     CodeData(
-                        R.string.bdt_full,
+                        resources.getString(R.string.bdt_full),
                         "https://img.freeflagicons.com/thumb/round_icon/bangladesh/bangladesh_64.png"
                     )
                 )
                 put(
                     SupportedCode.AMD,
                     CodeData(
-                        R.string.amd_full,
+                        resources.getString(R.string.amd_full),
                         "https://img.freeflagicons.com/thumb/round_icon/armenia/armenia_64.png"
                     )
                 )
                 put(
                     SupportedCode.KGS,
                     CodeData(
-                        R.string.kgs_full,
+                        resources.getString(R.string.kgs_full),
                         "https://img.freeflagicons.com/thumb/round_icon/kyrgyzstan/kyrgyzstan_64.png"
                     )
                 )
                 put(
                     SupportedCode.LBP,
                     CodeData(
-                        R.string.lbp_full,
+                        resources.getString(R.string.lbp_full),
                         "https://img.freeflagicons.com/thumb/round_icon/lebanon/lebanon_64.png"
                     )
                 )
                 put(
                     SupportedCode.LYD,
                     CodeData(
-                        R.string.lyd_full,
+                        resources.getString(R.string.lyd_full),
                         "https://img.freeflagicons.com/thumb/round_icon/libya/libya_64.png"
                     )
                 )
                 put(
                     SupportedCode.VND,
                     CodeData(
-                        R.string.vnd_full,
+                        resources.getString(R.string.vnd_full),
                         "https://img.freeflagicons.com/thumb/round_icon/vietnam/vietnam_64.png"
                     )
                 )
                 put(
                     SupportedCode.AED,
                     CodeData(
-                        R.string.aed_full,
+                        resources.getString(R.string.aed_full),
                         "https://img.freeflagicons.com/thumb/round_icon/united_arab_emirates/united_arab_emirates_64.png"
                     )
                 )
                 put(
                     SupportedCode.TND,
                     CodeData(
-                        R.string.tnd_full,
+                        resources.getString(R.string.tnd_full),
                         "https://img.freeflagicons.com/thumb/round_icon/tunisia/tunisia_64.png"
                     )
                 )
                 put(
                     SupportedCode.UZS,
                     CodeData(
-                        R.string.uzs_full,
+                        resources.getString(R.string.uzs_full),
                         "https://img.freeflagicons.com/thumb/round_icon/uzbekistan/uzbekistan_64.png"
                     )
                 )
                 put(
                     SupportedCode.TWD,
                     CodeData(
-                        R.string.twd_full,
+                        resources.getString(R.string.twd_full),
                         "https://img.freeflagicons.com/thumb/round_icon/republic_of_china/republic_of_china_64.png"
                     )
                 )
                 put(
                     SupportedCode.GHS,
                     CodeData(
-                        R.string.ghs_full,
+                        resources.getString(R.string.ghs_full),
                         "https://img.freeflagicons.com/thumb/round_icon/ghana/ghana_64.png"
                     )
                 )
                 put(
                     SupportedCode.RSD,
                     CodeData(
-                        R.string.rsd_full,
+                        resources.getString(R.string.rsd_full),
                         "https://img.freeflagicons.com/thumb/round_icon/serbia/serbia_64.png"
                     )
                 )
                 put(
                     SupportedCode.TJS,
                     CodeData(
-                        R.string.tjs_full,
+                        resources.getString(R.string.tjs_full),
                         "https://img.freeflagicons.com/thumb/round_icon/tajikistan/tajikistan_64.png"
                     )
                 )
                 put(
                     SupportedCode.GEL,
                     CodeData(
-                        R.string.gel_full,
+                        resources.getString(R.string.gel_full),
                         "https://img.freeflagicons.com/thumb/round_icon/georgia/georgia_64.png"
                     )
                 )
             }
 
 //TODO NOT SUPPORTED BY UKRAINIAN SERVICE
-//    ISK(R.string.isk_full, "https://img.freeflagicons.com/thumb/round_icon/iceland/iceland_64.png"),
-//    PHP(R.string.php_full, "https://img.freeflagicons.com/thumb/round_icon/philippines/philippines_64.png")
+//    ISK(_root_ide_package_.com.mieszko.resources.getString(R.string.isk_full), "https://img.freeflagicons.com/thumb/round_icon/iceland/iceland_64.png"),
+//    PHP(_root_ide_package_.com.mieszko.resources.getString(R.string.php_full), "https://img.freeflagicons.com/thumb/round_icon/philippines/philippines_64.png")
 
 // TODO CONSIDER WHAT TO DO WITH THESE
-//    XAU(R.string.gold_full, "https://img.freeflagicons.com/thumb/round_icon/georgia/georgia_64.png"),
-//    XAG(R.string.silver_full, "https://img.freeflagicons.com/thumb/round_icon/georgia/georgia_64.png"),
+//    XAU(_root_ide_package_.com.mieszko.resources.getString(R.string.gold_full), "https://img.freeflagicons.com/thumb/round_icon/georgia/georgia_64.png"),
+//    XAG(_root_ide_package_.com.mieszko.resources.getString(R.string.silver_full), "https://img.freeflagicons.com/thumb/round_icon/georgia/georgia_64.png"),
 
     }
 }

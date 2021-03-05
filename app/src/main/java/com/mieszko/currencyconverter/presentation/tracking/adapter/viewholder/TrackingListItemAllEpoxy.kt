@@ -4,7 +4,6 @@ import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import com.airbnb.epoxy.EpoxyAttribute
 import com.airbnb.epoxy.EpoxyHolder
@@ -58,9 +57,9 @@ abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListAllIt
 
     private fun setNameText(
         holder: TrackingListAllItemViewHolder,
-        @StringRes currencyNameRes: Int
+        currencyName: String
     ) {
-        holder.nameTV.text = holder.view.context.getString(currencyNameRes)
+        holder.nameTV.text = currencyName
     }
 
     private fun setCodeText(holder: TrackingListAllItemViewHolder, currencyCode: String) {

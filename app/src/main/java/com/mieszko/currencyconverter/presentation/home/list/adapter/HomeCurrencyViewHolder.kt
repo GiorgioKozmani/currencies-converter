@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
-import androidx.annotation.StringRes
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -81,7 +80,7 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
         }
     }
 
-    fun resetBaseOverlayImmediately(){
+    fun resetBaseOverlayImmediately() {
         baseBackgroundOverlay.alpha = 0f
     }
 
@@ -99,7 +98,8 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
             //todo gradient?
 
 
-            baseBackgroundOverlay.animate().alpha(1f).setDuration(BASE_OVERLAY_TRANSITION_DURATION).setListener(null)
+            baseBackgroundOverlay.animate().alpha(1f).setDuration(BASE_OVERLAY_TRANSITION_DURATION)
+                .setListener(null)
 
             baseToThisTV.visibility = View.GONE
             thisToBaseTV.visibility = View.GONE
@@ -115,7 +115,8 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
             amountET.clearFocus()
 
 
-            baseBackgroundOverlay.animate().alpha(0f).setDuration(BASE_OVERLAY_TRANSITION_DURATION).setListener(null)
+            baseBackgroundOverlay.animate().alpha(0f).setDuration(BASE_OVERLAY_TRANSITION_DURATION)
+                .setListener(null)
 
 
             nameTV.setTextSize(textSizeUnit, regularCurrencyTextSize)
@@ -124,8 +125,8 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
         }
     }
 
-    private fun setNameText(@StringRes currencyNameRes: Int) {
-        nameTV.text = itemView.context.getString(currencyNameRes)
+    private fun setNameText(currencyName: String) {
+        nameTV.text = currencyName
     }
 
     fun setAmount(newAmount: Double) {

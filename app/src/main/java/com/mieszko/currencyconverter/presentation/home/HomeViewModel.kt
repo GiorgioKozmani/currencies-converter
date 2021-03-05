@@ -1,6 +1,5 @@
 package com.mieszko.currencyconverter.presentation.home
 
-import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -61,11 +60,6 @@ class HomeViewModel(
     private val baseAmountChange: Subject<Double> =
         BehaviorSubject.createDefault(DEFAULT_BASE_AMOUNT)
 
-    // models that are being passed to the view
-    // TODO DON'T STORE ACTUAL MODELS HERE? STORY ONLY DATA MODELS SO THIGS THAT COME FROM REPOSITORIES
-    // 1. CODE 2. NAME 3. FLAG 4. TOUAHRATIO 5. AMOUNT?
-    //TODO !! STEP AWAY FROM KEEPING A LIST OF currenciesListModels IN THE VIEWMODEL, AND KEEP ONLY DATA MODELS HERE?
-    // ACTUAL MODELS SENT TO THE VIEW WOULD BE GENERATED JUST BEFORE EMISSION
     // TODO HANDLE ALL !!s
     private var currenciesListModels = listOf<HomeListModel>()
 
@@ -75,11 +69,10 @@ class HomeViewModel(
             //todo use RxRelay with default of loading?
             Observable.combineLatest(
                 // CODES RATIOS CHANGED
-                Observable.combineLatest(
+              Observable.combineLatest(
                     observeRatiosUseCase()
                         .subscribeOn(Schedulers.io())
                         .observeOn(Schedulers.computation())
-                        //todo note that this works fine
                         .doOnNext { lastUpdatedLiveData.postValue(it.time) },
                     // TRACKING CODES CHANGED
                     observeTrackedCodesUseCase()
@@ -113,10 +106,9 @@ class HomeViewModel(
                                 trackedCodesWithData = trackedCodesWithData
                             )
                             // base amount change by user
-                            //todo here i can simplify by just recalculating values?
                         } else {
                             val baseAmount = newBaseAmount.second
-                            
+
                             makeListItemModels(
                                 baseAmount = baseAmount,
                                 trackedCodesWithData = trackedCodesWithData
@@ -142,6 +134,7 @@ class HomeViewModel(
     private fun fetchRemoteRatios() {
         disposablesBag.add(
             fetchRemoteRatiosUseCase()
+                    //todo loading?
                 .subscribeOn(Schedulers.io())
                 .subscribeBy(
                     onComplete = {},
@@ -150,8 +143,7 @@ class HomeViewModel(
         )
     }
 
-    //TODO RETHINK INTERFACE
-    fun loadCurrencies() {
+    fun reloadCurrencies() {
         fetchRemoteRatios()
     }
 
