@@ -1,8 +1,7 @@
 package com.mieszko.currencyconverter.domain.usecase
 
-import android.util.Log
 import androidx.annotation.WorkerThread
-import com.mieszko.currencyconverter.common.SupportedCode
+import com.mieszko.currencyconverter.common.model.SupportedCode
 import com.mieszko.currencyconverter.domain.model.CodeWithData
 import com.mieszko.currencyconverter.domain.repository.ICodesDataRepository
 import java.util.*

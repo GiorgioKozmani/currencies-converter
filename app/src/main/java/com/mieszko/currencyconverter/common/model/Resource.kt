@@ -1,4 +1,4 @@
-package com.mieszko.currencyconverter.common
+package com.mieszko.currencyconverter.common.model
 
 sealed class Resource<T>(
     val data: T? = null,

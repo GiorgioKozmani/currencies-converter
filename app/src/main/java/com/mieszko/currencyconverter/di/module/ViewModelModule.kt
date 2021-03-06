@@ -1,7 +1,7 @@
 package com.mieszko.currencyconverter.di.module
 
-import com.mieszko.currencyconverter.common.DisposablesBag
-import com.mieszko.currencyconverter.common.IDisposablesBag
+import com.mieszko.currencyconverter.common.util.DisposablesBag
+import com.mieszko.currencyconverter.common.util.IDisposablesBag
 import com.mieszko.currencyconverter.presentation.home.HomeViewModel
 import com.mieszko.currencyconverter.presentation.tracking.TrackingViewModel
 import io.reactivex.rxjava3.disposables.CompositeDisposable

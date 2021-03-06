@@ -1,7 +1,6 @@
 package com.mieszko.currencyconverter.domain.usecase.trackedcodes
 
-import android.util.Log
-import com.mieszko.currencyconverter.common.SupportedCode
+import com.mieszko.currencyconverter.common.model.SupportedCode
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.IGetTrackedCodesOnceUseCase
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.ISaveTrackedCodesUseCase
 import io.reactivex.rxjava3.core.Completable

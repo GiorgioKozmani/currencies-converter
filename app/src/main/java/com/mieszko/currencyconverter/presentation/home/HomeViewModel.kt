@@ -3,10 +3,10 @@ package com.mieszko.currencyconverter.presentation.home
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.mieszko.currencyconverter.common.BaseViewModel
-import com.mieszko.currencyconverter.common.IDisposablesBag
-import com.mieszko.currencyconverter.common.Resource
-import com.mieszko.currencyconverter.common.SupportedCode
+import com.mieszko.currencyconverter.common.base.BaseViewModel
+import com.mieszko.currencyconverter.common.util.IDisposablesBag
+import com.mieszko.currencyconverter.common.model.Resource
+import com.mieszko.currencyconverter.common.model.SupportedCode
 import com.mieszko.currencyconverter.domain.model.CodeWithData
 import com.mieszko.currencyconverter.domain.model.list.HomeListModel
 import com.mieszko.currencyconverter.domain.usecase.IMapDataToCodesUseCase

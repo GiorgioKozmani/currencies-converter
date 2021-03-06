@@ -1,6 +1,5 @@
 package com.mieszko.currencyconverter.data.repository
 
-import com.mieszko.currencyconverter.common.Resource
 import com.mieszko.currencyconverter.data.api.CurrenciesApi
 import com.mieszko.currencyconverter.data.persistance.cache.ratios.IRatiosCache
 import com.mieszko.currencyconverter.data.persistance.cache.ratios.RatiosTimeDTO

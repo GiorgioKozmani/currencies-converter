@@ -1,6 +1,6 @@
 package com.mieszko.currencyconverter.domain.repository
 
-import com.mieszko.currencyconverter.common.SupportedCode
+import com.mieszko.currencyconverter.common.model.SupportedCode
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single

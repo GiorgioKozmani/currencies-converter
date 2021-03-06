@@ -1,6 +1,6 @@
 package com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud
 
-import com.mieszko.currencyconverter.common.SupportedCode
+import com.mieszko.currencyconverter.common.model.SupportedCode
 import com.mieszko.currencyconverter.domain.repository.ITrackedCodesRepository
 import io.reactivex.rxjava3.core.Completable
 

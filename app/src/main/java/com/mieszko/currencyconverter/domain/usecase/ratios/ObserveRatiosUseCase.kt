@@ -1,6 +1,6 @@
 package com.mieszko.currencyconverter.domain.usecase.ratios
 
-import com.mieszko.currencyconverter.common.SupportedCode
+import com.mieszko.currencyconverter.common.model.SupportedCode
 import com.mieszko.currencyconverter.domain.model.RatiosTime
 import com.mieszko.currencyconverter.domain.repository.IRatiosRepository
 import io.reactivex.rxjava3.core.Observable

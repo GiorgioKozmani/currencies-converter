@@ -1,7 +1,6 @@
 package com.mieszko.currencyconverter.presentation.home.list
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -9,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mieszko.currencyconverter.R
 import com.mieszko.currencyconverter.domain.model.list.HomeListModel
-import com.mieszko.currencyconverter.common.Resource
+import com.mieszko.currencyconverter.common.model.Resource
 import com.mieszko.currencyconverter.presentation.home.list.adapter.HomeCurrenciesListAdapter
 import com.mieszko.currencyconverter.presentation.util.CurrenciesListDragHelper
 import com.mieszko.currencyconverter.presentation.home.HomeViewModel

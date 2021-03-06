@@ -2,7 +2,7 @@ package com.mieszko.currencyconverter.data.repository
 
 import com.mieszko.CurrenciesApp
 import com.mieszko.currencyconverter.R
-import com.mieszko.currencyconverter.common.SupportedCode
+import com.mieszko.currencyconverter.common.model.SupportedCode
 import com.mieszko.currencyconverter.data.model.CodeData
 import com.mieszko.currencyconverter.domain.repository.ICodesDataRepository
 import java.util.*

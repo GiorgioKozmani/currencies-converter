@@ -2,9 +2,9 @@ package com.mieszko.currencyconverter.presentation.tracking
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.mieszko.currencyconverter.common.BaseViewModel
-import com.mieszko.currencyconverter.common.IDisposablesBag
-import com.mieszko.currencyconverter.common.SupportedCode
+import com.mieszko.currencyconverter.common.base.BaseViewModel
+import com.mieszko.currencyconverter.common.util.IDisposablesBag
+import com.mieszko.currencyconverter.common.model.SupportedCode
 import com.mieszko.currencyconverter.domain.model.list.AllCurrenciesListModel
 import com.mieszko.currencyconverter.domain.model.list.TrackedCurrenciesListModel
 import com.mieszko.currencyconverter.domain.repository.ICodesDataRepository

@@ -1,10 +1,9 @@
 package com.mieszko.currencyconverter.data.repository
 
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.mieszko.currencyconverter.common.SupportedCode
+import com.mieszko.currencyconverter.common.model.SupportedCode
 import com.mieszko.currencyconverter.data.persistance.ISharedPrefsManager
 import com.mieszko.currencyconverter.domain.repository.ITrackedCodesRepository
 import io.reactivex.rxjava3.core.Completable

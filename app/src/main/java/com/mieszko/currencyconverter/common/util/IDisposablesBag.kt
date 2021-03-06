@@ -1,4 +1,4 @@
-package com.mieszko.currencyconverter.common
+package com.mieszko.currencyconverter.common.util
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
