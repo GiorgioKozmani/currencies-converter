@@ -147,7 +147,7 @@ class HomeViewModel(
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { isLoadingLiveData.value = true }
-                .doOnComplete { isLoadingLiveData.value = false }
+                .doOnTerminate { isLoadingLiveData.value = false }
                 .subscribeBy(
                     onComplete = {},
                     onError = { emitError(it) }

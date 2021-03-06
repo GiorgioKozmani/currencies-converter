@@ -18,6 +18,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.Subject
 
+//TODO STEP AWAY FROM TRACKED CURRENCIES AND INTRODUCE FILTER BUTTON INSTEAD!
 class TrackingViewModel(
     disposablesBag: IDisposablesBag,
     observeTrackedCodesUseCase: IObserveTrackedCodesUseCase,

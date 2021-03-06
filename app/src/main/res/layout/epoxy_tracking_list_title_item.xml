@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-medium"
         android:textAllCaps="true"
-        android:textColor="@color/darker_grey"
+        android:textColor="@color/darkerGrey"
         android:layout_marginTop="32dp"
         android:layout_marginStart="16dp"
         android:textSize="14sp" />
