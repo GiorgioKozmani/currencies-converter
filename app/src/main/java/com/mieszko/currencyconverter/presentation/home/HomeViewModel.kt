@@ -49,6 +49,8 @@ class HomeViewModel(
         MutableLiveData()
     private val lastUpdatedLiveData: MutableLiveData<Date> =
         MutableLiveData()
+    private val isLoadingLiveData: MutableLiveData<Boolean> =
+        MutableLiveData()
 
     //Exposing only LiveData
     fun getCurrenciesLiveData(): LiveData<Resource<List<HomeListModel>>> =
@@ -56,6 +58,9 @@ class HomeViewModel(
 
     fun getLastUpdatedLiveData(): LiveData<Date> =
         lastUpdatedLiveData
+
+    fun getIsLoadingLiveData(): LiveData<Boolean> =
+        isLoadingLiveData
 
     private val baseAmountChange: Subject<Double> =
         BehaviorSubject.createDefault(DEFAULT_BASE_AMOUNT)
@@ -69,7 +74,7 @@ class HomeViewModel(
             //todo use RxRelay with default of loading?
             Observable.combineLatest(
                 // CODES RATIOS CHANGED
-              Observable.combineLatest(
+                Observable.combineLatest(
                     observeRatiosUseCase()
                         .subscribeOn(Schedulers.io())
                         .observeOn(Schedulers.computation())
@@ -131,20 +136,23 @@ class HomeViewModel(
         fetchRemoteRatios()
     }
 
+    fun reloadCurrencies() {
+        fetchRemoteRatios()
+    }
+
     private fun fetchRemoteRatios() {
         disposablesBag.add(
             fetchRemoteRatiosUseCase()
-                    //todo loading?
+                //todo loading?
                 .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { isLoadingLiveData.value = true }
+                .doOnComplete { isLoadingLiveData.value = false }
                 .subscribeBy(
                     onComplete = {},
                     onError = { emitError(it) }
                 )
         )
-    }
-
-    fun reloadCurrencies() {
-        fetchRemoteRatios()
     }
 
     fun setBaseCurrencyAmount(newAmount: Double) {
