@@ -17,7 +17,7 @@ class CurrenciesListDragHelper(itemMovedAction: (from: Int, to: Int) -> Unit) {
     }
 
     private val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
-        ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.START or ItemTouchHelper.END,
+        ItemTouchHelper.UP or ItemTouchHelper.DOWN,
         0
     ) {
         override fun onSelectedChanged(
