@@ -2,6 +2,7 @@ package com.mieszko.currencyconverter.presentation.util
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.card.MaterialCardView
 
 class CurrenciesListDragHelper(itemMovedAction: (from: Int, to: Int) -> Unit) {
     // helper flag for managing scrolling to top
@@ -26,7 +27,12 @@ class CurrenciesListDragHelper(itemMovedAction: (from: Int, to: Int) -> Unit) {
             when (actionState) {
                 ItemTouchHelper.ACTION_STATE_DRAG -> {
                     isUserDraggingItem = true
-                    viewHolder?.itemView?.alpha = 0.5f
+                    val view = viewHolder?.itemView
+                    view?.animate()?.scaleX(1.015f)?.scaleY(1.015f)
+
+                    if (view is MaterialCardView) {
+                        view.isDragged = true
+                    }
                 }
             }
             super.onSelectedChanged(viewHolder, actionState)
@@ -36,7 +42,12 @@ class CurrenciesListDragHelper(itemMovedAction: (from: Int, to: Int) -> Unit) {
             recyclerView: RecyclerView,
             viewHolder: RecyclerView.ViewHolder
         ) {
-            viewHolder.itemView.alpha = 1.0f
+            val view = viewHolder.itemView
+            view.animate()?.scaleX(1f)?.scaleY(1f)
+
+            if (view is MaterialCardView) {
+                view.isDragged = false
+            }
             isUserDraggingItem = false
             super.clearView(recyclerView, viewHolder)
         }
