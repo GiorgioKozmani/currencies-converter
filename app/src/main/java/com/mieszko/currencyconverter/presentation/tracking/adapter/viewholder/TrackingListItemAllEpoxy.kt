@@ -1,15 +1,10 @@
 package com.mieszko.currencyconverter.presentation.tracking.adapter.viewholder
 
-import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
-import androidx.core.content.ContextCompat
-import com.airbnb.epoxy.EpoxyAttribute
-import com.airbnb.epoxy.EpoxyHolder
-import com.airbnb.epoxy.EpoxyModelClass
-import com.airbnb.epoxy.EpoxyModelWithHolder
+import com.airbnb.epoxy.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.mieszko.currencyconverter.R
@@ -22,21 +17,28 @@ abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListAllIt
     @EpoxyAttribute
     lateinit var model: AllCurrenciesListModel
 
-    //todo this should be contained in model
-    //   todo investigate @EpoxyAttribute(DoNotHash)
-    @EpoxyAttribute
+    //todo look for emplate project if we could benefit from that too
+    @EpoxyAttribute(EpoxyAttribute.Option.DoNotHash)
     lateinit var clickAction: () -> Unit
 
     override fun bind(holder: TrackingListAllItemViewHolder) {
         with(model) {
             setCodeText(holder, code.name)
             setNameText(holder, codeData.name)
-            handleSelection(holder, isTracked)
+            setSelectionIcon(holder, isTracked)
             loadCurrencyFlag(holder, codeData.flagResId)
         }
 
-        //todo investigate DONOTHASH
         holder.view.setOnClickListener { clickAction.invoke() }
+    }
+
+    override fun bind(holder: TrackingListAllItemViewHolder, previouslyBoundModel: EpoxyModel<*>) {
+        if (previouslyBoundModel is TrackingListAllItemEpoxy && model.isTracked != previouslyBoundModel.model.isTracked) {
+            animateSelectionChange(holder, model.isTracked)
+            holder.view.setOnClickListener { clickAction.invoke() }
+        } else {
+            super.bind(holder, previouslyBoundModel)
+        }
     }
 
     override fun unbind(holder: TrackingListAllItemViewHolder) {
@@ -46,14 +48,24 @@ abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListAllIt
 //        holder.button.setImageDrawable(null)
     }
 
-    private fun handleSelection(holder: TrackingListAllItemViewHolder, isSelected: Boolean) {
-        //todo implement correctly
-        val testColor = if (isSelected) {
-            ContextCompat.getColor(holder.view.context, R.color.colorAccent)
+    private fun animateSelectionChange(holder: TrackingListAllItemViewHolder, isSelected: Boolean) {
+        if (isSelected) {
+            holder.animateSelected()
         } else {
-            ContextCompat.getColor(holder.view.context, R.color.colorPrimary)
+            holder.animateUnselected()
         }
-        holder.selectedCheckbox.background = ColorDrawable(testColor)
+    }
+
+    private fun setSelectionIcon(holder: TrackingListAllItemViewHolder, isSelected: Boolean) {
+        with(holder.selectedCheckbox) {
+            if (isSelected) {
+                scaleX = 1f
+                scaleY = 1f
+            } else {
+                scaleX = 0f
+                scaleY = 0f
+            }
+        }
     }
 
     private fun setNameText(
@@ -82,6 +94,36 @@ class TrackingListAllItemViewHolder : EpoxyHolder() {
     lateinit var codeTV: TextView
 
     lateinit var view: View
+
+    private val shortAnimTime = 150L
+    private val mediumAnimTime = 200L
+
+    //TODO INTRODUCE INTERPOLATOR, factor out
+    fun animateSelected() {
+        selectedCheckbox.animate()
+            .scaleX(1.3f)
+            .scaleY(1.3f)
+            .setDuration(mediumAnimTime)
+            .withEndAction {
+                selectedCheckbox.animate()
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .duration = shortAnimTime
+            }
+    }
+
+    fun animateUnselected() {
+        selectedCheckbox.animate()
+            .scaleX(1.3f)
+            .scaleY(1.3f)
+            .setDuration(mediumAnimTime)
+            .withEndAction {
+                selectedCheckbox.animate()
+                    .scaleX(0f)
+                    .scaleY(0f)
+                    .duration = shortAnimTime
+            }
+    }
 
     override fun bindView(itemView: View) {
         view = itemView

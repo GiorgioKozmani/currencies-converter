@@ -19,9 +19,7 @@ abstract class TrackingListItemEpoxy : EpoxyModelWithHolder<TrackingListItemView
     @EpoxyAttribute
     lateinit var model: TrackedCurrenciesListModel
 
-    //todo this should be contained in model
-    //   todo investigate @EpoxyAttribute(DoNotHash)
-    @EpoxyAttribute
+    @EpoxyAttribute(EpoxyAttribute.Option.DoNotHash)
     lateinit var clickAction: () -> Unit
 
     override fun bind(holder: TrackingListItemViewHolder) {

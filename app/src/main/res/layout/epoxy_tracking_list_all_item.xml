@@ -21,9 +21,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:textStyle="bold"
         android:textColor="@android:color/black"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/country_flag"
         app:layout_constraintTop_toTopOf="parent"
@@ -34,6 +34,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:fontFamily="sans-serif-medium"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -44,23 +45,24 @@
 
     <ImageView
         android:id="@+id/selected_checkbox"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
         android:layout_margin="16dp"
+        android:src="@drawable/round_star_black_48"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/gold" />
 
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
-        android:layout_marginHorizontal="12dp"
         android:layout_height="1dp"
         android:layout_gravity="bottom"
+        android:layout_marginHorizontal="12dp"
         android:background="@color/darkerGrey"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!--todo checkbot, preferably a star-->
 </androidx.constraintlayout.widget.ConstraintLayout>
