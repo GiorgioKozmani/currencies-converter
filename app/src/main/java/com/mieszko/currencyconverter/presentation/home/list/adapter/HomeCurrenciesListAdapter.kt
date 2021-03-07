@@ -38,15 +38,16 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
         // NOT RIGHT, AS IT'S EASY TO FORGET
         holder.bind(
             currencyModel = currencyModel,
-            baseValueChangeAction = { newText -> viewModel.setBaseCurrencyAmount(newText) })
+            baseValueChangeAction = { newText -> viewModel.setBaseCurrencyAmount(newText) },
+            clickAction = { viewModel.listItemClicked(currencyModel.code) })
         // TODO MERGE INTO ONE
         when (currencyModel) {
             is HomeListModel.Base -> {
-                holder.setClickAction {}
+                //TODO CLICK ACTION SHOULD BE ONLY LETTING VM KNOW WHAT ITEM GOT CLICKED! IT'LL DECIDE WHETHER TO MAKE IT
+                // BASE OR IGNORE
                 holder.setupBaseItem()
             }
             is HomeListModel.NonBase -> {
-                holder.setClickAction { viewModel.setBaseCurrency(currencyModel.code) }
                 holder.setupNonBaseItem(currencyModel)
             }
         }
@@ -63,8 +64,6 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
             //TODO STEP AWAY FROM HAVING "SETITEMTYPE" METHOD, AND CALL CONFIG METHODS DIRECTLY FROM HERE?
             when (val lastPayload = payloads.last()) {
                 is NonBaseCurrencyChange -> {
-                    holder.setClickAction { viewModel.setBaseCurrency(currency.code) }
-
                     lastPayload.run {
                         // don't update value of base currency
                         if (position != 0) {
@@ -75,15 +74,11 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
                     }
                 }
                 is ChangedToBase -> {
-                    holder.setClickAction {}
-
                     // don't update value of base currency
                     holder.setupBaseItem()
                 }
                 is ChangedToNonBase -> {
                     //todo rethink if it's not better to set it once as lambda
-                    holder.setClickAction { viewModel.setBaseCurrency(currency.code) }
-
                     // don't update value of base currency
                     holder.setupNonBaseItem(currency as HomeListModel.NonBase)
                 }

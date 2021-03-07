@@ -158,10 +158,13 @@ class HomeViewModel(
         baseAmountChange.onNext(newAmount)
     }
 
-    fun setBaseCurrency(newBaseCurrency: SupportedCode) {
-        moveTrackedCodeToTopUseCase(newBaseCurrency)
-            .subscribeOn(Schedulers.io())
-            .subscribe()
+    fun listItemClicked(newBaseCurrency: SupportedCode) {
+        // ignore base item clicks
+        if (currenciesListModels.isNotEmpty() && currenciesListModels.first().code != newBaseCurrency) {
+            moveTrackedCodeToTopUseCase(newBaseCurrency)
+                .subscribeOn(Schedulers.io())
+                .subscribe()
+        }
     }
 
     fun moveItem(from: Int, to: Int) {

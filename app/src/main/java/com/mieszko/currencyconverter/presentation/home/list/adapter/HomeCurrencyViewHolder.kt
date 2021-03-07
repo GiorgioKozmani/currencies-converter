@@ -44,7 +44,12 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
 
     // TODO HAVE THIS TEXTWATCHER BEING INIT ONLY ONCE AND SHARED ACROSS VHs
     //TODO DECOUPLE FOCUS FROM BASE / REGULAR
-    fun bind(currencyModel: HomeListModel, baseValueChangeAction: ((Double) -> Unit)) {
+    fun bind(
+        currencyModel: HomeListModel,
+        baseValueChangeAction: ((Double) -> Unit),
+        clickAction: () -> Unit
+    ) {
+        itemView.setOnClickListener { clickAction() }
         baseTextTextChangeAction = baseValueChangeAction
 
         with(currencyModel) {
@@ -54,19 +59,12 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
         }
     }
 
-    fun setClickAction(clickAction: () -> Unit) {
-        //todo factor out sanitizing
-        itemView.setOnClickListener { clickAction.invoke() }
-    }
-
     @SuppressLint("ClickableViewAccessibility")
     fun setupBaseItem() {
         amountET.removeTextChangedListener(baseTextWatcher)
         baseTextWatcher = amountET.doAfterTextChanged {
             baseTextTextChangeAction?.let { changeAction ->
-                changeAction(
-                    it.toString().sanitizeCurrencyValue().toDouble()
-                )
+                changeAction(it.toString().sanitizeCurrencyValue().toDouble())
             }
         }
 
