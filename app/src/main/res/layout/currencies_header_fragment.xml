@@ -58,6 +58,7 @@
         android:layout_height="wrap_content"
         android:indeterminate="true"
         app:hideAnimationBehavior="inward"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:minHideDelay="1000"
         app:showAnimationBehavior="outward" />

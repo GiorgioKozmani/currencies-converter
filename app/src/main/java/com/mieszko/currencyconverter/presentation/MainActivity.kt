@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
                 setReorderingAllowed(true)
-                add(R.id.fragment_container_view, HomeFragment())
+                replace(R.id.fragment_container_view, HomeFragment())
             }
         }
     }
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             addToBackStack(SELECTION_FRAGMENT)
-            add(R.id.fragment_container_view, TrackingFragment())
+            replace(R.id.fragment_container_view, TrackingFragment())
         }
     }
 }
