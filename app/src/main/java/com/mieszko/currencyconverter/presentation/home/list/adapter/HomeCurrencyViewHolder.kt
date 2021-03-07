@@ -40,16 +40,12 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
         itemView.context.resources.getDimension(R.dimen.regular_currency_name_text_size)
 
     private var baseTextWatcher: TextWatcher? = null
+    private var baseTextTextChangeAction: ((Double) -> Unit)? = null
 
     // TODO HAVE THIS TEXTWATCHER BEING INIT ONLY ONCE AND SHARED ACROSS VHs
-
     //TODO DECOUPLE FOCUS FROM BASE / REGULAR
     fun bind(currencyModel: HomeListModel, baseValueChangeAction: ((Double) -> Unit)) {
-        baseTextWatcher = amountET.doAfterTextChanged {
-            baseValueChangeAction(it.toString().sanitizeCurrencyValue().toDouble())
-        }
-        // remove it until it is attached for base currency
-        amountET.removeTextChangedListener(baseTextWatcher)
+        baseTextTextChangeAction = baseValueChangeAction
 
         with(currencyModel) {
             setNameText(this.codeData.name)
@@ -65,10 +61,18 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
 
     @SuppressLint("ClickableViewAccessibility")
     fun setupBaseItem() {
-        amountET.addTextChangedListener(baseTextWatcher)
+        amountET.removeTextChangedListener(baseTextWatcher)
+        baseTextWatcher = amountET.doAfterTextChanged {
+            baseTextTextChangeAction?.let { changeAction ->
+                changeAction(
+                    it.toString().sanitizeCurrencyValue().toDouble()
+                )
+            }
+        }
 
         amountET.postDelayed({
             amountET.isFocusableInTouchMode = true
+            amountET.setTextIsSelectable(true)
             amountET.requestFocusFromTouch()
             amountET.showKeyboard()
         }, 100)
@@ -80,18 +84,19 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
     @SuppressLint("ClickableViewAccessibility")
     fun setupNonBaseItem(currencyModel: HomeListModel.NonBase) {
         amountET.removeTextChangedListener(baseTextWatcher)
+
         amountET.setOnTouchListener { _, event ->
             // make parent duplicate touch events so it can be dragged by ET
             itemView.onTouchEvent(event)
             // do not consume event
             false
         }
+
         amountET.isFocusableInTouchMode = false
         amountET.setTextIsSelectable(false)
         amountET.clearFocus()
 
         setThisToBaseText(currencyModel.thisToBaseText)
-        setBaseToThisText(currencyModel.baseToThisText)
         setBaseToThisText(currencyModel.baseToThisText)
 
         setNonBaseUI()
@@ -99,7 +104,6 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
 
     private fun setBaseUI() {
         //todo gradient?
-
         baseToThisTV.visibility = View.GONE
         thisToBaseTV.visibility = View.GONE
         nameTV.setTextSize(textSizeUnit, baseCurrencyTextSize)

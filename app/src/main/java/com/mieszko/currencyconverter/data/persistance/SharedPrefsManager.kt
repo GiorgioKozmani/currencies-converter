@@ -6,7 +6,7 @@ import android.preference.PreferenceManager
 
 interface ISharedPrefsManager {
     //STRING
-    fun put(key: Key, toPut: String?)
+    fun put(key: Key, toPut: String)
     fun getString(key: Key): String?
     fun getString(key: Key, defValue: String): String?
 
@@ -25,7 +25,7 @@ class SharedPrefsManager(context: Application) : ISharedPrefsManager {
         get() = mSharedPrefs.edit()
 
     //STRING
-    override fun put(key: ISharedPrefsManager.Key, toPut: String?) {
+    override fun put(key: ISharedPrefsManager.Key, toPut: String) {
         editor.putString(key.value, toPut).apply()
     }
 
