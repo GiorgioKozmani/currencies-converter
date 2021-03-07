@@ -7,11 +7,11 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mieszko.currencyconverter.R
-import com.mieszko.currencyconverter.domain.model.list.HomeListModel
 import com.mieszko.currencyconverter.common.model.Resource
+import com.mieszko.currencyconverter.domain.model.list.HomeListModel
+import com.mieszko.currencyconverter.presentation.home.HomeViewModel
 import com.mieszko.currencyconverter.presentation.home.list.adapter.HomeCurrenciesListAdapter
 import com.mieszko.currencyconverter.presentation.util.CurrenciesListDragHelper
-import com.mieszko.currencyconverter.presentation.home.HomeViewModel
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class HomeListFragment : Fragment(R.layout.currencies_list_fragment) {
@@ -30,18 +30,19 @@ class HomeListFragment : Fragment(R.layout.currencies_list_fragment) {
         // TODO VIEWBINDING
         recyclerView = view.findViewById(R.id.currencies_rv)
         rvAdapter = HomeCurrenciesListAdapter(viewModel)
-        rvManager = LinearLayoutManager(view.context)
+        rvManager = LinearLayoutManager(context)
         rvDragHelper = CurrenciesListDragHelper { from, to -> viewModel.moveItem(from, to) }
         setupRecyclerView()
         observeViewModel()
     }
 
     private fun observeViewModel() {
-            viewModel.getCurrenciesLiveData()
-                .observe(viewLifecycleOwner, { handleNewResults(it) })
+        viewModel.getCurrenciesLiveData()
+            .observe(viewLifecycleOwner, { handleNewResults(it) })
     }
 
     private fun setupRecyclerView() {
+        recyclerView.setItemViewCacheSize(30)
         recyclerView.adapter = rvAdapter
         recyclerView.layoutManager = rvManager
         rvDragHelper.attachToRecyclerView(recyclerView)

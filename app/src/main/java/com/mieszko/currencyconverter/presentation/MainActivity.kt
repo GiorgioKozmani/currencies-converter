@@ -26,8 +26,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     fun openSelectCurrenciesFragment() {
-        currentFocus?.clearFocus()
-        hideKeyboard()
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             addToBackStack(SELECTION_FRAGMENT)

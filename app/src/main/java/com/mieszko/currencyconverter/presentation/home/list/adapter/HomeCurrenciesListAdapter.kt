@@ -28,27 +28,28 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
 
     override fun onViewRecycled(holder: HomeCurrencyViewHolder) {
         super.onViewRecycled(holder)
-        holder.resetBaseOverlayImmediately()
+        holder.removeBaseOverlayInstantly()
     }
 
     override fun onBindViewHolder(holder: HomeCurrencyViewHolder, position: Int) {
         val currencyModel = currentListData[position]
-        val isBase = position == 0
-        val clickAction = if (isBase) {
-            // base currency has no click effect
-            {}
-        } else {
-            { viewModel.setBaseCurrency(currencyModel.code) }
-        }
-        val valueChangeAction: ((Double) -> Unit) = if (isBase) {
-            { newText -> viewModel.setBaseCurrencyAmount(newText) }
-        } else {
-            {}
-        }
 
-        holder.bind(currencyModel = currencyModel)
-        holder.setClickAction(clickAction)
-        holder.setValueChangeAction(valueChangeAction, isBase)
+        // TODO THIS IS TO BE CHANGED AS CURRENTLY I HAVE TO CALL BIND BEFORE SETUP FOR IT TO WORK. THIS IS
+        // NOT RIGHT, AS IT'S EASY TO FORGET
+        holder.bind(
+            currencyModel = currencyModel,
+            baseValueChangeAction = { newText -> viewModel.setBaseCurrencyAmount(newText) })
+        // TODO MERGE INTO ONE
+        when (currencyModel) {
+            is HomeListModel.Base -> {
+                holder.setClickAction {}
+                holder.setupBaseItem()
+            }
+            is HomeListModel.NonBase -> {
+                holder.setClickAction { viewModel.setBaseCurrency(currencyModel.code) }
+                holder.setupNonBaseItem(currencyModel)
+            }
+        }
     }
 
     override fun onBindViewHolder(
@@ -57,23 +58,13 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
         payloads: MutableList<Any>
     ) {
         val currency = currentListData[position]
-        val isBase = position == 0
-        val clickAction = if (isBase) {
-            // base currency has no click effect
-            {}
-        } else {
-            { viewModel.setBaseCurrency(currency.code) }
-        }
-        val valueChangeAction: ((Double) -> Unit) = if (isBase) {
-            { newText -> viewModel.setBaseCurrencyAmount(newText) }
-        } else {
-            {}
-        }
 
         if (payloads.isNotEmpty()) {
             //TODO STEP AWAY FROM HAVING "SETITEMTYPE" METHOD, AND CALL CONFIG METHODS DIRECTLY FROM HERE?
             when (val lastPayload = payloads.last()) {
                 is NonBaseCurrencyChange -> {
+                    holder.setClickAction { viewModel.setBaseCurrency(currency.code) }
+
                     lastPayload.run {
                         // don't update value of base currency
                         if (position != 0) {
@@ -84,22 +75,38 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
                     }
                 }
                 is ChangedToBase -> {
+                    holder.setClickAction {}
+
                     // don't update value of base currency
-                    holder.isBase(true)
+                    holder.setupBaseItem()
                 }
                 is ChangedToNonBase -> {
+                    //todo rethink if it's not better to set it once as lambda
+                    holder.setClickAction { viewModel.setBaseCurrency(currency.code) }
+
                     // don't update value of base currency
-                    holder.isBase(false)
-                    holder.setThisToBaseText(lastPayload.thisToBaseText)
-                    holder.setBaseToThisText(lastPayload.baseToThisText)
+                    holder.setupNonBaseItem(currency as HomeListModel.NonBase)
                 }
             }
+        } else super.onBindViewHolder(holder, position, payloads)
+    }
 
-            //todo this might be overkill, as i set it again always even for same items
-            holder.setClickAction(clickAction)
-            holder.setValueChangeAction(valueChangeAction, isBase)
-        } else
-            super.onBindViewHolder(holder, position, payloads)
+    override fun onViewDetachedFromWindow(holder: HomeCurrencyViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        holder.run {
+            if (adapterPosition == 0) {
+                clearFocusAndHideKeyboard()
+            }
+        }
+    }
+
+    override fun onViewAttachedToWindow(holder: HomeCurrencyViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        holder.run {
+            if (adapterPosition == 0) {
+                requestFocusAndShowKeyboard()
+            }
+        }
     }
 
     override fun getItemId(position: Int): Long {
@@ -117,11 +124,13 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
         override fun getOldListSize(): Int = oldList.size
         override fun getNewListSize(): Int = newList.size
 
+        // calls onBindViewHolder with no payload
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             // items represent the same currency
             return oldList[oldItemPosition].code == newList[newItemPosition].code
         }
 
+        // calls onBindViewHolder with payload
         override fun areContentsTheSame(oldPosition: Int, newPosition: Int): Boolean {
             return oldList[oldPosition] == newList[newPosition]
         }
@@ -134,7 +143,7 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
                 // do nothing if body changed as it is most probably amount change
             }
 
-            if (newObj is HomeListModel.Regular && oldObj is HomeListModel.Regular) {
+            if (newObj is HomeListModel.NonBase && oldObj is HomeListModel.NonBase) {
                 return NonBaseCurrencyChange().apply {
                     if (oldObj.amount != newObj.amount) {
                         amount = newObj.amount
@@ -150,7 +159,7 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
 
             return when (newObj) {
                 is HomeListModel.Base -> ChangedToBase
-                is HomeListModel.Regular -> ChangedToNonBase(
+                is HomeListModel.NonBase -> ChangedToNonBase(
                     newObj.thisToBaseText,
                     newObj.baseToThisText
                 )
@@ -160,7 +169,6 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
 
     object ChangedToBase
 
-    //todo rethink if this shouldn't be replaced with NONBASECURRENCYCHANGE
     data class ChangedToNonBase(var thisToBaseText: String, var baseToThisText: String)
 
     // null represents NO CHANGE state

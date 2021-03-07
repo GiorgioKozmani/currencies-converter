@@ -15,7 +15,7 @@ sealed class HomeListModel {
         override val amount: Double,
     ) : HomeListModel()
 
-    data class Regular(
+    data class NonBase(
         override val code: SupportedCode,
         override val codeData: CodeData,
         override val amount: Double,

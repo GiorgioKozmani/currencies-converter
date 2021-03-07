@@ -14,11 +14,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.mieszko.currencyconverter.R
+import com.mieszko.currencyconverter.common.util.hideKeyboard
+import com.mieszko.currencyconverter.common.util.showKeyboard
 import com.mieszko.currencyconverter.domain.model.list.HomeListModel
 import de.hdodenhof.circleimageview.CircleImageView
 import java.text.DecimalFormat
 
 
+// TODO THINGS NEED TO BE SIMPLIFIED HERE, IT TAKES WAY TOO LONG TIME TO BIND THIS VIEWH HOLDER, AND FIRST SCROLLING IS SLOW
 class HomeCurrencyViewHolder private constructor(itemView: View) :
     RecyclerView.ViewHolder(itemView) {
     //todo bug, now some random keboard is showing when scrolling
@@ -36,27 +39,17 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
     private val regularCurrencyTextSize =
         itemView.context.resources.getDimension(R.dimen.regular_currency_name_text_size)
 
-    private var textWatcher: TextWatcher? = null
+    private var baseTextWatcher: TextWatcher? = null
+
+    // TODO HAVE THIS TEXTWATCHER BEING INIT ONLY ONCE AND SHARED ACROSS VHs
 
     //TODO DECOUPLE FOCUS FROM BASE / REGULAR
-    fun bind(currencyModel: HomeListModel) {
-        //todo think of 2 separate methods bind base bind regular
-        amountET.removeTextChangedListener(textWatcher)
-
-        when (currencyModel) {
-            is HomeListModel.Base -> {
-                isBase(true)
-
-                //todo hide ttb and btt
-            }
-            is HomeListModel.Regular -> {
-                isBase(false)
-
-                setThisToBaseText(currencyModel.thisToBaseText)
-                setBaseToThisText(currencyModel.baseToThisText)
-            }
+    fun bind(currencyModel: HomeListModel, baseValueChangeAction: ((Double) -> Unit)) {
+        baseTextWatcher = amountET.doAfterTextChanged {
+            baseValueChangeAction(it.toString().sanitizeCurrencyValue().toDouble())
         }
-
+        // remove it until it is attached for base currency
+        amountET.removeTextChangedListener(baseTextWatcher)
 
         with(currencyModel) {
             setNameText(this.codeData.name)
@@ -70,60 +63,64 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
         itemView.setOnClickListener { clickAction.invoke() }
     }
 
-    //todo rethink, why to reset it if i could remove from adapter
-    fun setValueChangeAction(afterTextChangeAction: ((Double) -> Unit), isBaseCurrency: Boolean) {
-        amountET.removeTextChangedListener(textWatcher)
+    @SuppressLint("ClickableViewAccessibility")
+    fun setupBaseItem() {
+        amountET.addTextChangedListener(baseTextWatcher)
 
-        if (isBaseCurrency) {
-            textWatcher = amountET.doAfterTextChanged {
-                afterTextChangeAction(it.toString().sanitizeCurrencyValue().toDouble())
-            }
-        }
-    }
+        amountET.postDelayed({
+            amountET.isFocusableInTouchMode = true
+            amountET.requestFocusFromTouch()
+            amountET.showKeyboard()
+        }, 100)
 
-    fun resetBaseOverlayImmediately() {
-        baseBackgroundOverlay.alpha = 0f
+        amountET.setOnTouchListener { _, _ -> false }
+        setBaseUI()
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    fun isBase(isBaseCurrency: Boolean) {
-        if (isBaseCurrency) {
-            amountET.setOnTouchListener { _, _ ->
-                false
-            }
-
-            amountET.isFocusableInTouchMode = true
-            amountET.requestFocusFromTouch()
-
-            //todo fade in, don't just set color
-            //todo gradient?
-
-
-            baseBackgroundOverlay.animate().alpha(1f).setDuration(BASE_OVERLAY_TRANSITION_DURATION)
-                .setListener(null)
-
-            baseToThisTV.visibility = View.GONE
-            thisToBaseTV.visibility = View.GONE
-            nameTV.setTextSize(textSizeUnit, baseCurrencyTextSize)
-        } else {
-            amountET.setOnTouchListener { v, event ->
-                itemView.onTouchEvent(event)
-                // do not consume event
-                false
-            }
-            amountET.isFocusableInTouchMode = false
-            amountET.setTextIsSelectable(false)
-            amountET.clearFocus()
-
-
-            baseBackgroundOverlay.animate().alpha(0f).setDuration(BASE_OVERLAY_TRANSITION_DURATION)
-                .setListener(null)
-
-
-            nameTV.setTextSize(textSizeUnit, regularCurrencyTextSize)
-            baseToThisTV.visibility = View.VISIBLE
-            thisToBaseTV.visibility = View.VISIBLE
+    fun setupNonBaseItem(currencyModel: HomeListModel.NonBase) {
+        amountET.removeTextChangedListener(baseTextWatcher)
+        amountET.setOnTouchListener { _, event ->
+            // make parent duplicate touch events so it can be dragged by ET
+            itemView.onTouchEvent(event)
+            // do not consume event
+            false
         }
+        amountET.isFocusableInTouchMode = false
+        amountET.setTextIsSelectable(false)
+        amountET.clearFocus()
+
+        setThisToBaseText(currencyModel.thisToBaseText)
+        setBaseToThisText(currencyModel.baseToThisText)
+        setBaseToThisText(currencyModel.baseToThisText)
+
+        setNonBaseUI()
+    }
+
+    private fun setBaseUI() {
+        //todo gradient?
+
+        baseToThisTV.visibility = View.GONE
+        thisToBaseTV.visibility = View.GONE
+        nameTV.setTextSize(textSizeUnit, baseCurrencyTextSize)
+        baseBackgroundOverlay.animate()
+            .alpha(1f)
+            .setDuration(BASE_OVERLAY_TRANSITION_DURATION)
+            .setListener(null)
+    }
+
+    private fun setNonBaseUI() {
+        nameTV.setTextSize(textSizeUnit, regularCurrencyTextSize)
+        baseToThisTV.visibility = View.VISIBLE
+        thisToBaseTV.visibility = View.VISIBLE
+        baseBackgroundOverlay.animate()
+            .alpha(0f)
+            .setDuration(BASE_OVERLAY_TRANSITION_DURATION)
+            .setListener(null)
+    }
+
+    fun removeBaseOverlayInstantly() {
+        baseBackgroundOverlay.alpha = 0f
     }
 
     private fun setNameText(currencyName: String) {
@@ -144,8 +141,6 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
     }
 
     fun setThisToBaseText(newThisToBase: String) {
-        //todo think if this effect is desirable
-//        thisToBaseTV.fadeInText(newThisToBase)
         thisToBaseTV.text = newThisToBase
     }
 
@@ -208,6 +203,16 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
         }
 
         return strToReturn
+    }
+
+    fun requestFocusAndShowKeyboard() {
+        amountET.requestFocus()
+        amountET.showKeyboard()
+    }
+
+    fun clearFocusAndHideKeyboard() {
+        amountET.clearFocus()
+        amountET.hideKeyboard()
     }
 
     companion object {

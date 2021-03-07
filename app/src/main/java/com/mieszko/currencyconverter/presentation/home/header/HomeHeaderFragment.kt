@@ -10,6 +10,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.mieszko.currencyconverter.R
 import com.mieszko.currencyconverter.presentation.home.HomeViewModel
+import com.mieszko.currencyconverter.presentation.util.fadeInText
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import java.util.*
 
@@ -68,7 +69,7 @@ class HomeHeaderFragment : Fragment(R.layout.currencies_header_fragment) {
 
     private fun handleNewDate(updateDate: Date) {
         //todo use https://github.com/daimajia/AndroidViewAnimations to bounce in new date or anim myself
-        lastUpdatedTV.text = DateFormat.format("yyyy-MM-dd hh:mm:ss a", updateDate)
+        lastUpdatedTV.fadeInText(DateFormat.format("yyyy-MM-dd hh:mm:ss a", updateDate).toString())
     }
 
 }

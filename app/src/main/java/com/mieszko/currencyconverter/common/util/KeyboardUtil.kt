@@ -1,15 +1,15 @@
 package com.mieszko.currencyconverter.common.util
 
-import android.app.Activity
 import android.content.Context
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 
-fun Context.showKeyboard() {
-    val imm = this.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-    imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
+fun EditText.showKeyboard() {
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
 }
 
-fun Context.hideKeyboard() {
-    val imm = this.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-    imm.toggleSoftInput(0, InputMethodManager.HIDE_IMPLICIT_ONLY)
+fun EditText.hideKeyboard() {
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.hideSoftInputFromWindow(this.windowToken, 0)
 }

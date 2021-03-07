@@ -233,7 +233,7 @@ class HomeViewModel(
                     amount = baseAmount
                 )
             } else {
-                HomeListModel.Regular(
+                HomeListModel.NonBase(
                     code = newCurrencyCode,
                     codeData = newCurrencyData,
                     amount = calculateCurrencyAmount(
