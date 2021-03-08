@@ -68,12 +68,10 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
             }
         }
 
-        amountET.postDelayed({
             amountET.isFocusableInTouchMode = true
             amountET.setTextIsSelectable(true)
             amountET.requestFocusFromTouch()
             amountET.showKeyboard()
-        }, 100)
 
         amountET.setOnTouchListener { _, _ -> false }
         setBaseUI()

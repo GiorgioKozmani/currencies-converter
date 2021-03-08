@@ -50,7 +50,7 @@ class HomeListFragment : Fragment(R.layout.currencies_list_fragment) {
             override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
                 super.onItemRangeMoved(fromPosition, toPosition, itemCount)
                 if (!rvDragHelper.isUserDraggingItem() || toPosition == 0) {
-                    recyclerView.post { recyclerView.scrollToPosition(0) }
+                    recyclerView.postOnAnimation { recyclerView.scrollToPosition(0) }
                 }
             }
         })
