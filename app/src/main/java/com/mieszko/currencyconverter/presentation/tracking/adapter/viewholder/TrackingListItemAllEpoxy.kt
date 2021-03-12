@@ -8,20 +8,20 @@ import com.airbnb.epoxy.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.mieszko.currencyconverter.R
-import com.mieszko.currencyconverter.domain.model.list.AllCurrenciesListModel
+import com.mieszko.currencyconverter.domain.model.list.TrackingCurrenciesModel
 import de.hdodenhof.circleimageview.CircleImageView
 
-@EpoxyModelClass(layout = R.layout.epoxy_tracking_list_all_item)
-abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListAllItemViewHolder>() {
+@EpoxyModelClass(layout = R.layout.epoxy_tracking_list_tem)
+abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListItemViewHolder>() {
 
     @EpoxyAttribute
-    lateinit var model: AllCurrenciesListModel
+    lateinit var model: TrackingCurrenciesModel
 
     //todo look for emplate project if we could benefit from that too
     @EpoxyAttribute(EpoxyAttribute.Option.DoNotHash)
     lateinit var clickAction: () -> Unit
 
-    override fun bind(holder: TrackingListAllItemViewHolder) {
+    override fun bind(holder: TrackingListItemViewHolder) {
         with(model) {
             setCodeText(holder, code.name)
             setNameText(holder, codeData.name)
@@ -32,7 +32,7 @@ abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListAllIt
         holder.view.setOnClickListener { clickAction.invoke() }
     }
 
-    override fun bind(holder: TrackingListAllItemViewHolder, previouslyBoundModel: EpoxyModel<*>) {
+    override fun bind(holder: TrackingListItemViewHolder, previouslyBoundModel: EpoxyModel<*>) {
         if (previouslyBoundModel is TrackingListAllItemEpoxy && model.isTracked != previouslyBoundModel.model.isTracked) {
             animateSelectionChange(holder, model.isTracked)
             holder.view.setOnClickListener { clickAction.invoke() }
@@ -41,14 +41,14 @@ abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListAllIt
         }
     }
 
-    override fun unbind(holder: TrackingListAllItemViewHolder) {
+    override fun unbind(holder: TrackingListItemViewHolder) {
         //todo implement
         // Release resources and don't leak listeners as this view goes back to the view pool
 //        holder.button.setOnClickListener(null)
 //        holder.button.setImageDrawable(null)
     }
 
-    private fun animateSelectionChange(holder: TrackingListAllItemViewHolder, isSelected: Boolean) {
+    private fun animateSelectionChange(holder: TrackingListItemViewHolder, isSelected: Boolean) {
         if (isSelected) {
             holder.animateSelected()
         } else {
@@ -56,7 +56,7 @@ abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListAllIt
         }
     }
 
-    private fun setSelectionIcon(holder: TrackingListAllItemViewHolder, isSelected: Boolean) {
+    private fun setSelectionIcon(holder: TrackingListItemViewHolder, isSelected: Boolean) {
         with(holder.selectedCheckbox) {
             if (isSelected) {
                 scaleX = 1f
@@ -69,17 +69,17 @@ abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListAllIt
     }
 
     private fun setNameText(
-        holder: TrackingListAllItemViewHolder,
+        holder: TrackingListItemViewHolder,
         currencyName: String
     ) {
         holder.nameTV.text = currencyName
     }
 
-    private fun setCodeText(holder: TrackingListAllItemViewHolder, currencyCode: String) {
+    private fun setCodeText(holder: TrackingListItemViewHolder, currencyCode: String) {
         holder.codeTV.text = currencyCode
     }
 
-    private fun loadCurrencyFlag(holder: TrackingListAllItemViewHolder, @DrawableRes flagRes: Int) {
+    private fun loadCurrencyFlag(holder: TrackingListItemViewHolder, @DrawableRes flagRes: Int) {
         Glide.with(holder.view.context)
             .load(flagRes)
             .apply(RequestOptions().apply { centerCrop() })
@@ -87,7 +87,7 @@ abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListAllIt
     }
 }
 
-class TrackingListAllItemViewHolder : EpoxyHolder() {
+class TrackingListItemViewHolder : EpoxyHolder() {
     lateinit var flagIV: CircleImageView
     lateinit var selectedCheckbox: ImageView
     lateinit var nameTV: TextView

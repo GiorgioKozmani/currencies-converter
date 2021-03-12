@@ -5,8 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.mieszko.currencyconverter.common.base.BaseViewModel
 import com.mieszko.currencyconverter.common.util.IDisposablesBag
 import com.mieszko.currencyconverter.common.model.SupportedCode
-import com.mieszko.currencyconverter.domain.model.list.AllCurrenciesListModel
-import com.mieszko.currencyconverter.domain.model.list.TrackedCurrenciesListModel
+import com.mieszko.currencyconverter.domain.model.list.TrackingCurrenciesModel
 import com.mieszko.currencyconverter.domain.repository.ICodesDataRepository
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.IAddTrackedCodesUseCase
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.IObserveTrackedCodesUseCase
@@ -28,11 +27,11 @@ class TrackingViewModel(
     private val codesDataRepository: ICodesDataRepository
 ) : BaseViewModel(disposablesBag) {
 
-    private val trackedCurrenciesLiveData: MutableLiveData<Pair<List<TrackedCurrenciesListModel>, List<AllCurrenciesListModel>>> =
+    private val trackedCurrenciesLiveData: MutableLiveData<List<TrackingCurrenciesModel>> =
         MutableLiveData()
 
     //Exposing only LiveData
-    fun getTrackedCurrenciesLiveData(): LiveData<Pair<List<TrackedCurrenciesListModel>, List<AllCurrenciesListModel>>> =
+    fun getTrackedCurrenciesLiveData(): LiveData<List<TrackingCurrenciesModel>> =
         trackedCurrenciesLiveData
 
     private val searchQueryChange: Subject<String> = BehaviorSubject.createDefault("")
@@ -46,34 +45,35 @@ class TrackingViewModel(
                     .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.computation())
                     .flatMapSingle { trackedCodes ->
-                        //todo this is a good example for usecase
-                        Single.zip(
-                            getTrackedCurrenciesModels(trackedCodes)
-                                .subscribeOn(Schedulers.computation()),
-                            getAllCurrenciesModels(trackedCodes)
-                                .subscribeOn(Schedulers.computation()),
-                            { trackedModels, allModels -> Pair(trackedModels, allModels) }
-                        )
+                        getAllCurrenciesModels(trackedCodes)
+                            .subscribeOn(Schedulers.computation())
                     },
-//                    .map { listItems -> Pair(System.nanoTime(), listItems) },
                 searchQueryChange
                     .subscribeOn(Schedulers.computation())
                     .observeOn(Schedulers.computation()),
-//                    .map { query -> Pair(System.nanoTime(), query.trim()) },
-                { fullData, searchQuery ->
+                { allItems, searchQuery ->
                     if (searchQuery.isNotEmpty()) {
-                        Pair(
-                            listOf(),
-                            //TODO FOR SEARCH TO WORK I NEED TO STRINGS ALREADY, NOT RESOURCES
-                            //todo allow also search by country
-                            fullData.second.filter {
-                                it.code.name.contains(
-                                    searchQuery,
-                                    true
-                                ) || it.codeData.name.contains(searchQuery, true)
-                            })
+                        //TODO FOR SEARCH TO WORK I NEED TO STRINGS ALREADY, NOT RESOURCES
+                        //todo allow also search by country
+                        allItems.filter {
+                            it.code.name.contains(
+                                searchQuery,
+                                true
+                            ) || it.codeData.name.contains(searchQuery, true)
+                        }
                     } else {
-                        fullData
+                        val trackedItems = allItems
+                            .filter { it.isTracked }
+                            .sortedBy { it.codeData.name }
+
+                        val notTrackedItems = allItems
+                            .subtract(trackedItems)
+                            .sortedBy { it.codeData.name }
+
+                        mutableListOf<TrackingCurrenciesModel>().apply {
+                            addAll(trackedItems)
+                            addAll(notTrackedItems)
+                        }
                     }
                 })
                 .subscribeOn(Schedulers.computation())
@@ -88,29 +88,17 @@ class TrackingViewModel(
         )
     }
 
-    //todo this should be handled by separate usecase
-    private fun getTrackedCurrenciesModels(trackedCodes: List<SupportedCode>) =
-        Single.fromCallable {
-            trackedCodes.mapNotNull { trackedCode ->
-                codesDataRepository.getCodeStaticData(trackedCode)?.let { staticData ->
-                    TrackedCurrenciesListModel(
-                        trackedCode,
-                        staticData
-                    )
-                }
-            }
-        }
 
 
     // TODO NEW MODEL FOR THIS CASE CONTAINTING COUNTRY (COUNTRIES?) SO WE CAN QUERY AGAINST THEM
-    private fun getAllCurrenciesModels(trackedCurrencies: List<SupportedCode>): Single<List<AllCurrenciesListModel>> =
+    private fun getAllCurrenciesModels(trackedCurrencies: List<SupportedCode>): Single<List<TrackingCurrenciesModel>> =
         //todo check if there's any difference between this and Single.just()
         Single.fromCallable {
             SupportedCode
                 .values()
                 .mapNotNull { code ->
                     codesDataRepository.getCodeStaticData(code)?.let { staticData ->
-                        AllCurrenciesListModel(
+                        TrackingCurrenciesModel(
                             code,
                             staticData,
                             trackedCurrencies.contains(code)
@@ -119,26 +107,19 @@ class TrackingViewModel(
                 }
         }
 
-    private fun emitData(data: Pair<List<TrackedCurrenciesListModel>, List<AllCurrenciesListModel>>) {
+    private fun emitData(data: List<TrackingCurrenciesModel>) {
         trackedCurrenciesLiveData.postValue(data)
     }
 
-    //todo usecase
-    fun trackedCurrenciesItemClicked(currency: TrackedCurrenciesListModel) {
-        removeTrackedCodesUseCase(currency.code)
-            .subscribeOn(Schedulers.io())
-            .subscribe()
-    }
-
-    fun allCurrenciesItemClicked(allCurrenciesListModel: AllCurrenciesListModel) {
-        if (allCurrenciesListModel.isTracked) {
+    fun allCurrenciesItemClicked(trackingCurrenciesModel: TrackingCurrenciesModel) {
+        if (trackingCurrenciesModel.isTracked) {
             //todo usecase
-            removeTrackedCodesUseCase(allCurrenciesListModel.code)
+            removeTrackedCodesUseCase(trackingCurrenciesModel.code)
                 .subscribeOn(Schedulers.io())
                 .subscribe()
         } else {
             //todo usecase
-            addTrackedCodesUseCase(allCurrenciesListModel.code)
+            addTrackedCodesUseCase(trackingCurrenciesModel.code)
                 .subscribeOn(Schedulers.io())
                 .subscribe()
         }

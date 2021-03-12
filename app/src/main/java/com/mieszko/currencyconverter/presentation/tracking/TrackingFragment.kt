@@ -7,19 +7,20 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import com.airbnb.epoxy.EpoxyRecyclerView
-import com.airbnb.epoxy.Typed2EpoxyController
+import com.airbnb.epoxy.TypedEpoxyController
 import com.mieszko.currencyconverter.R
-import com.mieszko.currencyconverter.domain.model.list.AllCurrenciesListModel
-import com.mieszko.currencyconverter.domain.model.list.TrackedCurrenciesListModel
+import com.mieszko.currencyconverter.domain.model.list.TrackingCurrenciesModel
 import com.mieszko.currencyconverter.presentation.tracking.adapter.TrackingListController
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TrackingFragment : Fragment() {
 
     private val viewModel by viewModel<TrackingViewModel>()
-    private val epoxyController: Typed2EpoxyController<
-            List<TrackedCurrenciesListModel>,
-            List<AllCurrenciesListModel>> by lazy { TrackingListController(viewModel) }
+    private val epoxyController: TypedEpoxyController<List<TrackingCurrenciesModel>> by lazy {
+        TrackingListController(
+            viewModel
+        )
+    }
 
     private val searchView: SearchView by lazy { requireView().findViewById(R.id.currency_search_view) }
 
@@ -36,7 +37,9 @@ class TrackingFragment : Fragment() {
 
         observeViewModel()
         view.findViewById<EpoxyRecyclerView>(R.id.selection_epoxy_rv).setController(epoxyController)
-        epoxyController.setData(listOf(), listOf())
+
+        // TODO THINK OF INITIAL DATA
+        epoxyController.setData(listOf())
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -59,7 +62,7 @@ class TrackingFragment : Fragment() {
             .observe(viewLifecycleOwner, { updateTrackedCurrenciesList(it) })
     }
 
-    private fun updateTrackedCurrenciesList(items: Pair<List<TrackedCurrenciesListModel>, List<AllCurrenciesListModel>>) {
-        epoxyController.setData(items.first, items.second)
+    private fun updateTrackedCurrenciesList(items: List<TrackingCurrenciesModel>) {
+        epoxyController.setData(items)
     }
 }
