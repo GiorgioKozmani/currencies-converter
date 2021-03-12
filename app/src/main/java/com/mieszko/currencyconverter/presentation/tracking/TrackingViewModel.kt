@@ -45,35 +45,24 @@ class TrackingViewModel(
                     .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.computation())
                     .flatMapSingle { trackedCodes ->
-                        getAllCurrenciesModels(trackedCodes)
+                        getCurrenciesModels(trackedCodes)
                             .subscribeOn(Schedulers.computation())
                     },
                 searchQueryChange
                     .subscribeOn(Schedulers.computation())
                     .observeOn(Schedulers.computation()),
-                { allItems, searchQuery ->
+                { sortedItems, searchQuery ->
                     if (searchQuery.isNotEmpty()) {
                         //TODO FOR SEARCH TO WORK I NEED TO STRINGS ALREADY, NOT RESOURCES
                         //todo allow also search by country
-                        allItems.filter {
+                        sortedItems.filter {
                             it.code.name.contains(
                                 searchQuery,
                                 true
                             ) || it.codeData.name.contains(searchQuery, true)
                         }
                     } else {
-                        val trackedItems = allItems
-                            .filter { it.isTracked }
-                            .sortedBy { it.codeData.name }
-
-                        val notTrackedItems = allItems
-                            .subtract(trackedItems)
-                            .sortedBy { it.codeData.name }
-
-                        mutableListOf<TrackingCurrenciesModel>().apply {
-                            addAll(trackedItems)
-                            addAll(notTrackedItems)
-                        }
+                        sortedItems
                     }
                 })
                 .subscribeOn(Schedulers.computation())
@@ -89,13 +78,21 @@ class TrackingViewModel(
     }
 
 
-
+    // TODO ONLY GET CURRENCIES THAT WE HAVE RATIOS AND DATA FOR? (NEW DEFINITION OF SUPPORTED CURRENCY)
     // TODO NEW MODEL FOR THIS CASE CONTAINTING COUNTRY (COUNTRIES?) SO WE CAN QUERY AGAINST THEM
-    private fun getAllCurrenciesModels(trackedCurrencies: List<SupportedCode>): Single<List<TrackingCurrenciesModel>> =
+    private fun getCurrenciesModels(trackedCurrencies: List<SupportedCode>): Single<List<TrackingCurrenciesModel>> =
         //todo check if there's any difference between this and Single.just()
         Single.fromCallable {
-            SupportedCode
-                .values()
+            val allCurrencies = SupportedCode.values()
+
+            val notTrackedCodes = allCurrencies
+                .subtract(trackedCurrencies)
+
+            // this way we persist the order of tracked currencies
+            mutableListOf<SupportedCode>().apply {
+                addAll(trackedCurrencies)
+                addAll(notTrackedCodes)
+            }
                 .mapNotNull { code ->
                     codesDataRepository.getCodeStaticData(code)?.let { staticData ->
                         TrackingCurrenciesModel(
