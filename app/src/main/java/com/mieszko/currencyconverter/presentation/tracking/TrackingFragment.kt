@@ -23,7 +23,7 @@ class TrackingFragment : Fragment() {
     }
 
     private val searchView: SearchView by lazy { requireView().findViewById(R.id.currency_search_view) }
-
+    private val epoxyRV: EpoxyRecyclerView by lazy { requireView().findViewById(R.id.selection_epoxy_rv) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,10 +36,14 @@ class TrackingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         observeViewModel()
-        view.findViewById<EpoxyRecyclerView>(R.id.selection_epoxy_rv).setController(epoxyController)
+        epoxyRV.setController(epoxyController)
 
         // TODO THINK OF INITIAL DATA
         epoxyController.setData(listOf())
+
+        epoxyController.addModelBuildListener {
+            epoxyRV.smoothScrollToPosition(0)
+        }
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
