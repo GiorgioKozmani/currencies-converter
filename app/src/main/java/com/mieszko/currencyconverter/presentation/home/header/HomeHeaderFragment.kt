@@ -14,7 +14,7 @@ import com.mieszko.currencyconverter.presentation.util.fadeInText
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import java.util.*
 
-class HomeHeaderFragment : Fragment(R.layout.currencies_header_fragment) {
+class HomeHeaderFragment : Fragment(R.layout.home_header_fragment) {
     private val viewModel by sharedViewModel<HomeViewModel>()
 
     private lateinit var loadingIndicator: LinearProgressIndicator

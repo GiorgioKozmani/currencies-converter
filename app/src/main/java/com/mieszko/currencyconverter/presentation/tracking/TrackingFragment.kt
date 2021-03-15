@@ -29,7 +29,7 @@ class TrackingFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.epoxy_tracking_fragment, container, false)
+        return inflater.inflate(R.layout.tracking_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

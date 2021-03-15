@@ -221,7 +221,7 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
         fun from(parent: ViewGroup): HomeCurrencyViewHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
             val itemView: View =
-                layoutInflater.inflate(R.layout.home_currency_list_item, parent, false)
+                layoutInflater.inflate(R.layout.home_list_item, parent, false)
             return HomeCurrencyViewHolder(itemView)
         }
     }

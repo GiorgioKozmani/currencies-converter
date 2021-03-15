@@ -14,7 +14,7 @@ import com.mieszko.currencyconverter.presentation.home.list.adapter.HomeCurrenci
 import com.mieszko.currencyconverter.presentation.util.CurrenciesListDragHelper
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-class HomeListFragment : Fragment(R.layout.currencies_list_fragment) {
+class HomeListFragment : Fragment(R.layout.home_list_fragment) {
     private val viewModel by sharedViewModel<HomeViewModel>()
 
     // TODO RECONSIDER LATEINITS

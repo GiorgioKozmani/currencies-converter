@@ -9,7 +9,7 @@ import com.mieszko.currencyconverter.presentation.MainActivity
 import com.mieszko.currencyconverter.presentation.home.header.HomeHeaderFragment
 import com.mieszko.currencyconverter.presentation.home.list.HomeListFragment
 
-class HomeFragment : Fragment(R.layout.currencies_tab_fragment) {
+class HomeFragment : Fragment(R.layout.home_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
