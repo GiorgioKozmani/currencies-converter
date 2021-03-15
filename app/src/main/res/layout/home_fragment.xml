@@ -7,6 +7,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/currencies_list_container"
+        android:name="com.mieszko.currencyconverter.presentation.home.list.HomeListFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -16,20 +17,11 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/currencies_header_container"
+        android:name="com.mieszko.currencyconverter.presentation.home.header.HomeHeaderFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/select_currencies_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="test"
-        app:icon="@drawable/abc_vector_test"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
