@@ -16,6 +16,8 @@ import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class HomeListFragment : Fragment(R.layout.currencies_list_fragment) {
     private val viewModel by sharedViewModel<HomeViewModel>()
+
+    // TODO RECONSIDER LATEINITS
     private lateinit var recyclerView: RecyclerView
     private lateinit var rvAdapter: HomeCurrenciesListAdapter
     private lateinit var rvManager: LinearLayoutManager

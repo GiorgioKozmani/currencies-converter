@@ -17,11 +17,11 @@ class TrackingFragment : Fragment() {
 
     private val viewModel by viewModel<TrackingViewModel>()
     private val epoxyController: TypedEpoxyController<List<TrackingCurrenciesModel>> by lazy {
-        TrackingListController(
-            viewModel
-        )
+        TrackingListController(viewModel)
     }
 
+    //TODO REMOVE BACK ARROW?
+    private val backArrow: View by lazy { requireView().findViewById(R.id.back_arrow_btn) }
     private val searchView: SearchView by lazy { requireView().findViewById(R.id.currency_search_view) }
     private val epoxyRV: EpoxyRecyclerView by lazy { requireView().findViewById(R.id.selection_epoxy_rv) }
 
@@ -35,19 +35,25 @@ class TrackingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        backArrow.setOnClickListener {
+            activity?.onBackPressed()
+        }
+
         observeViewModel()
         epoxyRV.setController(epoxyController)
 
         // TODO THINK OF INITIAL DATA
-        epoxyController.setData(listOf())
-
-        epoxyController.addModelBuildListener {
-            epoxyRV.smoothScrollToPosition(0)
+        epoxyController.run {
+            setData(listOf())
+            addModelBuildListener {
+                epoxyRV.scrollToPosition(0)
+            }
         }
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                TODO("Not yet implemented")
+                // perform default action
+                return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
@@ -55,7 +61,6 @@ class TrackingFragment : Fragment() {
                     viewModel.searchQueryChanged(newText)
                 }
 
-                //todo think of suggestions
                 return true
             }
         })

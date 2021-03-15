@@ -13,20 +13,10 @@ class TrackingListController(private val viewModel: TrackingViewModel) :
 
     override fun buildModels(trackingCurrencies: List<TrackingCurrenciesModel>) {
 
-        //todo add no tracked currencies item if no tracked items
-        //TODO REMOVE EPOX MODEL
-//        trackedCurrencies.forEach {
-//            trackingListItem {
-//                id(it.code.name + "tracked")
-//                model(it)
-//                clickAction { viewModel.trackedCurrenciesItemClicked(it) }
-//            }
+//        trackingListHeader {
+//            id("tr_a")
+//            title(CurrenciesApp.resourses.getString(R.string.all_currencies))
 //        }
-
-        trackingListHeader {
-            id("tr_a")
-            title(CurrenciesApp.resourses.getString(R.string.all_currencies))
-        }
 
         trackingCurrencies.forEach {
             trackingListAllItem {

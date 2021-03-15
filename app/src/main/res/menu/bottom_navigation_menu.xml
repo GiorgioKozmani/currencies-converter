@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/tab_home"
-        android:icon="@drawable/abc_vector_test"
+        android:id="@+id/tab_calculator"
+        android:icon="@drawable/round_swap_horiz_black_24"
+        android:title="@string/nav_bar_calculator" />
+    <item
+        android:id="@+id/tab_currencies"
+        android:icon="@drawable/round_euro_black_24"
         android:title="@string/nav_bar_currencies" />
+
     <item
         android:id="@+id/tab_more"
-        android:icon="@drawable/abc_vector_test"
+        android:icon="@drawable/round_settings_black_24"
         android:title="@string/nav_bar_settings" />
 </menu>
