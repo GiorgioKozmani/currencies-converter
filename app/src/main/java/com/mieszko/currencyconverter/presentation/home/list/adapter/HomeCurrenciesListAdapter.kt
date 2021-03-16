@@ -95,15 +95,6 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
         }
     }
 
-    override fun onViewAttachedToWindow(holder: HomeCurrencyViewHolder) {
-        super.onViewAttachedToWindow(holder)
-        holder.run {
-            if (adapterPosition == 0) {
-                requestFocusAndShowKeyboard()
-            }
-        }
-    }
-
     override fun getItemId(position: Int): Long {
         return currentListData[position].code.ordinal.toLong()
     }

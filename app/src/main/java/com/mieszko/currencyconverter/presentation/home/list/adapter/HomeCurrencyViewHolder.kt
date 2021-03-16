@@ -70,8 +70,11 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
 
             amountET.isFocusableInTouchMode = true
             amountET.setTextIsSelectable(true)
-            amountET.requestFocusFromTouch()
+
+        amountET.post {
+            amountET.requestFocus()
             amountET.showKeyboard()
+        }
 
         amountET.setOnTouchListener { _, _ -> false }
         setBaseUI()
@@ -203,11 +206,6 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
         }
 
         return strToReturn
-    }
-
-    fun requestFocusAndShowKeyboard() {
-        amountET.requestFocus()
-        amountET.showKeyboard()
     }
 
     fun clearFocusAndHideKeyboard() {

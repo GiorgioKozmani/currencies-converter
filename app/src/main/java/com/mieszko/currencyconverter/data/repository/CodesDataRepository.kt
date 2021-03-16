@@ -112,7 +112,7 @@ class CodesDataRepository : ICodesDataRepository {
                     SupportedCode.HRK,
                     CodeData(
                         resources.getString(R.string.hrk_full),
-                        R.drawable.hong_kong
+                        R.drawable.croatia
                     )
                 )
                 put(
