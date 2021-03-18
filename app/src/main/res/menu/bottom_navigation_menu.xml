@@ -9,8 +9,8 @@
         android:icon="@drawable/round_euro_black_24"
         android:title="@string/nav_bar_currencies" />
 
-<!--    <item-->
-<!--        android:id="@+id/tab_more"-->
-<!--        android:icon="@drawable/round_settings_black_24"-->
-<!--        android:title="@string/nav_bar_settings" />-->
+    <item
+        android:id="@+id/moreFragment"
+        android:icon="@drawable/round_menu_black_24"
+        android:title="@string/nav_bar_more" />
 </menu>

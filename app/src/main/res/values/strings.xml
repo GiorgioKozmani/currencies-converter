@@ -70,6 +70,6 @@
     <string name="empty_amount_placeholder">0</string>
     <string name="nav_bar_calculator">Calculator</string>
     <string name="nav_bar_currencies">Currencies</string>
-    <string name="nav_bar_settings">Settings</string>
+    <string name="nav_bar_more">More</string>
     <string name="okay">Okay</string>
 </resources>

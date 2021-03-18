@@ -4,7 +4,6 @@ import android.app.Activity
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -38,14 +37,11 @@ class MainActivity : AppCompatActivity(R.layout.activity_main),
             when (item.itemId) {
                 R.id.homeFragment -> {
                     // TODO ON RESELECTION CALL FRAGMENT METHOD TO CLICK REFRESH
-//                    Toast.makeText(this, "1", Toast.LENGTH_SHORT).show()
                 }
                 R.id.trackingFragment -> {
                     // TODO ON RESELECTION CLEAR SEARCH, HIDE KEYBOARD AND SCROLL TOP
-//                    Toast.makeText(this, "2", Toast.LENGTH_SHORT).show()
                 }
 //                R.id.tab_more -> {
-//                    Toast.makeText(this, "3", Toast.LENGTH_SHORT).show()
 //                }
             }
         }
@@ -57,7 +53,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main),
         arguments: Bundle?
     ) {
         // Managing the keyboard is never easy ;)
-        if (destination.label == "TrackingFragment"){
+        if (destination.label != "HomeFragment") {
             currentFocus?.hideKeyboard()
         }
     }

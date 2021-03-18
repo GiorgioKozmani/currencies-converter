@@ -53,8 +53,6 @@ class TrackingViewModel(
                     .observeOn(Schedulers.computation()),
                 { sortedItems, searchQuery ->
                     if (searchQuery.isNotEmpty()) {
-                        //TODO FOR SEARCH TO WORK I NEED TO STRINGS ALREADY, NOT RESOURCES
-                        //todo allow also search by country
                         sortedItems.filter {
                             it.code.name.contains(
                                 searchQuery,
