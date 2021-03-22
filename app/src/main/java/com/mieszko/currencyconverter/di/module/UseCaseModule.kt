@@ -49,7 +49,7 @@ val useCaseModule = module {
     }
 
     factory<ISaveTrackedCodesUseCase> {
-        SaveTrackedCodesUseCase(trackedCodesRepository = get())
+        SaveTrackedCodesUseCase(trackedCodesRepository = get(), get())
     }
 
     factory<IMoveTrackedCodeToTopUseCase> {

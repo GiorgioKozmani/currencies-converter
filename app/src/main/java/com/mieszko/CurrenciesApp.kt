@@ -23,7 +23,8 @@ class CurrenciesApp : Application() {
                     cacheModule,
                     viewModelModule,
                     sharedPrefsModule,
-                    useCaseModule
+                    useCaseModule,
+                    analyticsModule
                 )
             )
         }

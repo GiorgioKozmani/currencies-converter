@@ -1,4 +1,4 @@
-package com.mieszko.currencyconverter.presentation.tracking.adapter.viewholder
+package com.mieszko.currencyconverter.presentation.selection.adapter.viewholder
 
 import android.view.View
 import android.widget.TextView

@@ -38,7 +38,7 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
         // NOT RIGHT, AS IT'S EASY TO FORGET
         holder.bind(
             currencyModel = currencyModel,
-            baseValueChangeAction = { newText -> viewModel.setBaseCurrencyAmount(newText) },
+            baseValueChangeAction = { newText -> viewModel.baseCurrencyAmountChanged(newText) },
             clickAction = { viewModel.listItemClicked(currencyModel.code) })
         // TODO MERGE INTO ONE
         when (currencyModel) {

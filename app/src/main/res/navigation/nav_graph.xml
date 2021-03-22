@@ -13,13 +13,13 @@
 
     <fragment
         android:id="@+id/trackingFragment"
-        android:name="com.mieszko.currencyconverter.presentation.tracking.TrackingFragment"
+        android:name="com.mieszko.currencyconverter.presentation.selection.SelectionFragment"
         android:label="TrackingFragment"
-        tools:layout="@layout/tracking_fragment" />
+        tools:layout="@layout/selection_fragment" />
 
     <fragment
         android:id="@+id/moreFragment"
-        android:name="com.mieszko.currencyconverter.presentation.home.more.MoreFragment"
+        android:name="com.mieszko.currencyconverter.presentation.more.MoreFragment"
         android:label="MoreFragment"
         tools:layout="@layout/more_fragment" />
 </navigation>

@@ -1,14 +1,11 @@
-package com.mieszko.currencyconverter.presentation.tracking.adapter
+package com.mieszko.currencyconverter.presentation.selection.adapter
 
 import com.airbnb.epoxy.TypedEpoxyController
-import com.mieszko.CurrenciesApp
-import com.mieszko.currencyconverter.R
 import com.mieszko.currencyconverter.domain.model.list.TrackingCurrenciesModel
-import com.mieszko.currencyconverter.presentation.tracking.TrackingViewModel
-import com.mieszko.currencyconverter.presentation.tracking.adapter.viewholder.trackingListAllItem
-import com.mieszko.currencyconverter.presentation.tracking.adapter.viewholder.trackingListHeader
+import com.mieszko.currencyconverter.presentation.selection.SelectionViewModel
+import com.mieszko.currencyconverter.presentation.selection.adapter.viewholder.trackingListAllItem
 
-class TrackingListController(private val viewModel: TrackingViewModel) :
+class TrackingListController(private val viewModel: SelectionViewModel) :
     TypedEpoxyController<List<TrackingCurrenciesModel>>() {
 
     override fun buildModels(trackingCurrencies: List<TrackingCurrenciesModel>) {

@@ -33,7 +33,7 @@ class HomeListFragment : Fragment(R.layout.home_list_fragment) {
         recyclerView = view.findViewById(R.id.currencies_rv)
         rvAdapter = HomeCurrenciesListAdapter(viewModel)
         rvManager = LinearLayoutManager(context)
-        rvDragHelper = CurrenciesListDragHelper { from, to -> viewModel.moveItem(from, to) }
+        rvDragHelper = CurrenciesListDragHelper { from, to -> viewModel.itemDragged(from, to) }
         setupRecyclerView()
         observeViewModel()
     }

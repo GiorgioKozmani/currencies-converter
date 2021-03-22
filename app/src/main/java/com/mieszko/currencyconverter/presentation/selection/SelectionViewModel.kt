@@ -1,4 +1,4 @@
-package com.mieszko.currencyconverter.presentation.tracking
+package com.mieszko.currencyconverter.presentation.selection
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -18,7 +18,7 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.Subject
 
 //TODO STEP AWAY FROM TRACKED CURRENCIES AND INTRODUCE FILTER BUTTON INSTEAD!
-class TrackingViewModel(
+class SelectionViewModel(
     disposablesBag: IDisposablesBag,
     observeTrackedCodesUseCase: IObserveTrackedCodesUseCase,
     private val removeTrackedCodesUseCase: IRemoveTrackedCodesUseCase,

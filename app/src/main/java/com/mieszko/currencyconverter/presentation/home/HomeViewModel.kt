@@ -154,7 +154,7 @@ class HomeViewModel(
         )
     }
 
-    fun setBaseCurrencyAmount(newAmount: Double) {
+    fun baseCurrencyAmountChanged(newAmount: Double) {
         baseAmountChange.onNext(newAmount)
     }
 
@@ -167,7 +167,7 @@ class HomeViewModel(
         }
     }
 
-    fun moveItem(from: Int, to: Int) {
+    fun itemDragged(from: Int, to: Int) {
         swapTrackedCodesUseCase(
             currenciesListModels[from].code,
             currenciesListModels[to].code
