@@ -4,14 +4,14 @@ import com.mieszko.currencyconverter.domain.analytics.base.FirebaseAnalyticsEven
 import com.mieszko.currencyconverter.domain.analytics.common.params.FirebaseParameter
 import com.mieszko.currencyconverter.domain.analytics.constants.AnalyticsConstants
 
-class ScreenViewEvent(
-    screen: AnalyticsConstants.Events.ScreenView.Screen
+class SearchTermEvent(
+    searchTerm: String
 ) : FirebaseAnalyticsEvent(
-    AnalyticsConstants.Events.ScreenView.EVENT,
+    AnalyticsConstants.Events.SearchTerm.EVENT,
     listOf(
         FirebaseParameter.StringParameter(
-            AnalyticsConstants.Events.ScreenView.Params.SCREEN_NAME,
-            screen.name
+            AnalyticsConstants.Events.SearchTerm.Params.SEARCH_TERM,
+            searchTerm
         )
     )
 )

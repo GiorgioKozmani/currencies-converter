@@ -26,7 +26,8 @@ val viewModelModule = module {
             observeTrackedCodesUseCase = get(),
             codesDataRepository = get(),
             addTrackedCodesUseCase = get(),
-            removeTrackedCodesUseCase = get()
+            removeTrackedCodesUseCase = get(),
+            eventsLogger = get()
         )
     }
     factory<IDisposablesBag> { DisposablesBag(CompositeDisposable()) }

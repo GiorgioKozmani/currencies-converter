@@ -19,7 +19,7 @@ class TrackingListController(private val viewModel: SelectionViewModel) :
             trackingListAllItem {
                 id(it.code.name)
                 model(it)
-                clickAction { viewModel.allCurrenciesItemClicked(it) }
+                clickAction { viewModel.itemClicked(it) }
             }
         }
     }

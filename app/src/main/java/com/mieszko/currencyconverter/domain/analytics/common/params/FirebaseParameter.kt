@@ -10,4 +10,8 @@ sealed class FirebaseParameter {
     data class StringParameter(override val key: String, val value: String) : FirebaseParameter() {
         override fun addToBundle(bundle: Bundle): Bundle = bundle.apply { putString(key, value) }
     }
+
+    data class DoubleParameter(override val key: String, val value: Double) : FirebaseParameter() {
+        override fun addToBundle(bundle: Bundle): Bundle = bundle.apply { putDouble(key, value) }
+    }
 }

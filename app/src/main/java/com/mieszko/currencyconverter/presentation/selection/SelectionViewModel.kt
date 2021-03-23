@@ -5,6 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import com.mieszko.currencyconverter.common.base.BaseViewModel
 import com.mieszko.currencyconverter.common.model.SupportedCode
 import com.mieszko.currencyconverter.common.util.IDisposablesBag
+import com.mieszko.currencyconverter.domain.analytics.IFirebaseEventsLogger
+import com.mieszko.currencyconverter.domain.analytics.common.events.CodeTrackedEvent
+import com.mieszko.currencyconverter.domain.analytics.common.events.CodeUntrackedEvent
+import com.mieszko.currencyconverter.domain.analytics.common.events.SearchTermEvent
 import com.mieszko.currencyconverter.domain.model.list.TrackingCurrenciesModel
 import com.mieszko.currencyconverter.domain.repository.ICodesDataRepository
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.IAddTrackedCodesUseCase
@@ -15,7 +19,7 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import io.reactivex.rxjava3.subjects.Subject
+import java.util.concurrent.TimeUnit
 
 // TODO STEP AWAY FROM TRACKED CURRENCIES AND INTRODUCE FILTER BUTTON INSTEAD!
 class SelectionViewModel(
@@ -24,7 +28,8 @@ class SelectionViewModel(
     private val removeTrackedCodesUseCase: IRemoveTrackedCodesUseCase,
     private val addTrackedCodesUseCase: IAddTrackedCodesUseCase,
     // TODO USE USECASES INSTEAD
-    private val codesDataRepository: ICodesDataRepository
+    private val codesDataRepository: ICodesDataRepository,
+    private val eventsLogger: IFirebaseEventsLogger
 ) : BaseViewModel(disposablesBag) {
 
     private val trackedCurrenciesLiveData: MutableLiveData<List<TrackingCurrenciesModel>> =
@@ -34,11 +39,19 @@ class SelectionViewModel(
     fun getTrackedCurrenciesLiveData(): LiveData<List<TrackingCurrenciesModel>> =
         trackedCurrenciesLiveData
 
-    private val searchQueryChange: Subject<String> = BehaviorSubject.createDefault("")
+    private val searchQueryChange: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 
-    // TODO GO FOR ENUM MAP AGAIN
-    // TODO GET THREADING RIGHT
     init {
+        setupListDataSource(disposablesBag, observeTrackedCodesUseCase)
+        setupSearchQueryLogging(disposablesBag)
+    }
+
+    private fun setupListDataSource(
+        disposablesBag: IDisposablesBag,
+        observeTrackedCodesUseCase: IObserveTrackedCodesUseCase
+    ) {
+        // TODO GO FOR ENUM MAP AGAIN
+        // TODO GET THREADING RIGHT
         disposablesBag.add(
             Observable.combineLatest(
                 observeTrackedCodesUseCase()
@@ -66,13 +79,23 @@ class SelectionViewModel(
             )
                 .subscribeOn(Schedulers.computation())
                 .subscribeBy(
-                    onNext = { data ->
-                        emitData(data)
-                    },
+                    onNext = { data -> emitData(data) },
                     onError = {
                         // todo handle
                     }
                 )
+        )
+    }
+
+    private fun setupSearchQueryLogging(disposablesBag: IDisposablesBag) {
+        disposablesBag.add(
+            searchQueryChange
+                .subscribeOn(Schedulers.computation())
+                .observeOn(Schedulers.computation())
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .filter { it.isNotBlank() }
+                .doOnNext { eventsLogger.logEvent(SearchTermEvent(it)) }
+                .subscribe()
         )
     }
 
@@ -106,16 +129,35 @@ class SelectionViewModel(
         trackedCurrenciesLiveData.postValue(data)
     }
 
-    fun allCurrenciesItemClicked(trackingCurrenciesModel: TrackingCurrenciesModel) {
+    //TODO LOG CLICKED ITEM OR FOLLOW / UNFOLLOW.
+    // TODO IMPORTANT NOTE -> ADD CURRENT QUERY EVENT TO THE EVENT
+    // TODO USE CURRENCY AS THE ARGUMENT
+    fun itemClicked(trackingCurrenciesModel: TrackingCurrenciesModel) {
         if (trackingCurrenciesModel.isTracked) {
             // todo usecase
             removeTrackedCodesUseCase(trackingCurrenciesModel.code)
                 .subscribeOn(Schedulers.io())
+                .doOnComplete {
+                    eventsLogger.logEvent(
+                        CodeUntrackedEvent(
+                            trackingCurrenciesModel.code,
+                            searchQueryChange.value
+                        )
+                    )
+                }
                 .subscribe()
         } else {
             // todo usecase
             addTrackedCodesUseCase(trackingCurrenciesModel.code)
                 .subscribeOn(Schedulers.io())
+                .doOnComplete {
+                    eventsLogger.logEvent(
+                        CodeTrackedEvent(
+                            trackingCurrenciesModel.code,
+                            searchQueryChange.value
+                        )
+                    )
+                }
                 .subscribe()
         }
     }

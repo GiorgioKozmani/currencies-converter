@@ -24,6 +24,7 @@ class SelectionFragment : Fragment(R.layout.selection_fragment) {
     }
 
     // TODO CONSIDER MATERIAL SEARCHVIEW
+    // todo first back click clears searchview
     private val viewModel by viewModel<SelectionViewModel>()
     private val epoxyController: TypedEpoxyController<List<TrackingCurrenciesModel>> by lazy {
         TrackingListController(viewModel)
