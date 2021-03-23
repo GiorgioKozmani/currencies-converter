@@ -8,7 +8,7 @@ import com.mieszko.currencyconverter.domain.analytics.base.FirebaseAnalyticsEven
 interface IFirebaseEventsLogger {
     fun logEvent(event: FirebaseAnalyticsEvent)
 
-    //todo refactor so it's generic
+    // todo refactor so it's generic
     fun setBaseCurrencyUserProperty(baseCurrency: SupportedCode?)
 }
 
@@ -19,7 +19,8 @@ class FirebaseAnalyticsSender(
     override fun logEvent(event: FirebaseAnalyticsEvent) {
         firebaseAnalytics.logEvent(
             event.name,
-            Bundle().apply { event.params.forEach { it.addToBundle(this) } })
+            Bundle().apply { event.params.forEach { it.addToBundle(this) } }
+        )
     }
 
     override fun setBaseCurrencyUserProperty(baseCurrency: SupportedCode?) {

@@ -4,7 +4,7 @@ import androidx.annotation.WorkerThread
 import com.mieszko.currencyconverter.common.model.SupportedCode
 import com.mieszko.currencyconverter.domain.model.CodeWithData
 import com.mieszko.currencyconverter.domain.repository.ICodesDataRepository
-import java.util.*
+import java.util.EnumMap
 
 class MapDataToCodesUseCase(
     private val codesDataRepository: ICodesDataRepository
@@ -18,7 +18,7 @@ class MapDataToCodesUseCase(
         codes.mapNotNull { code ->
             // TODO CHECK THREADING!
             val toUahRatio = allRatios[code]
-            //todo rename
+            // todo rename
             val data = codesDataRepository.getCodeStaticData(code)
 
             if (toUahRatio != null && data != null) {
@@ -27,7 +27,6 @@ class MapDataToCodesUseCase(
                 null
             }
         }
-
 }
 
 interface IMapDataToCodesUseCase {

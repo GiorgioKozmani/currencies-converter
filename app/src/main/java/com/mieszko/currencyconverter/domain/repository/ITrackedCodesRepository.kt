@@ -6,7 +6,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 
 interface ITrackedCodesRepository {
-    //todo javadoc
+    // todo javadoc
     fun saveTrackedCodes(trackedCodes: List<SupportedCode>): Completable
 
     fun getTrackedCodesOnce(): Single<List<SupportedCode>>

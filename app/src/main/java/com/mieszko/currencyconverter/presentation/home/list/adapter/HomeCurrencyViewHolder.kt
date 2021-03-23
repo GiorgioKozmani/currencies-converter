@@ -20,11 +20,10 @@ import com.mieszko.currencyconverter.domain.model.list.HomeListModel
 import de.hdodenhof.circleimageview.CircleImageView
 import java.text.DecimalFormat
 
-
 // TODO THINGS NEED TO BE SIMPLIFIED HERE, IT TAKES WAY TOO LONG TIME TO BIND THIS VIEWH HOLDER, AND FIRST SCROLLING IS SLOW
 class HomeCurrencyViewHolder private constructor(itemView: View) :
     RecyclerView.ViewHolder(itemView) {
-    //todo bug, now some random keboard is showing when scrolling
+    // todo bug, now some random keboard is showing when scrolling
 
     private val baseBackgroundOverlay = itemView.findViewById<View>(R.id.base_background_overlay)
     private val amountET = itemView.findViewById<EditText>(R.id.currency_amount)
@@ -43,7 +42,7 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
     private var baseTextTextChangeAction: ((Double) -> Unit)? = null
 
     // TODO HAVE THIS TEXTWATCHER BEING INIT ONLY ONCE AND SHARED ACROSS VHs
-    //TODO DECOUPLE FOCUS FROM BASE / REGULAR
+    // TODO DECOUPLE FOCUS FROM BASE / REGULAR
     fun bind(
         currencyModel: HomeListModel,
         baseValueChangeAction: ((Double) -> Unit),
@@ -68,8 +67,8 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
             }
         }
 
-            amountET.isFocusableInTouchMode = true
-            amountET.setTextIsSelectable(true)
+        amountET.isFocusableInTouchMode = true
+        amountET.setTextIsSelectable(true)
 
         amountET.post {
             amountET.requestFocus()
@@ -102,7 +101,7 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
     }
 
     private fun setBaseUI() {
-        //todo gradient?
+        // todo gradient?
         baseToThisTV.visibility = View.GONE
         thisToBaseTV.visibility = View.GONE
         nameTV.setTextSize(textSizeUnit, baseCurrencyTextSize)
@@ -137,7 +136,7 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
         }
     }
 
-    //todo rename, this can be lifted up to have format only init once
+    // todo rename, this can be lifted up to have format only init once
     private fun formatValue(value: Double): String {
         // Here you can also deal with rounding if you wish..
         return DecimalFormat("0.00").format(value)

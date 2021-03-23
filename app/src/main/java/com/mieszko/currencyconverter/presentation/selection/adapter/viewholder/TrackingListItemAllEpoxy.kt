@@ -4,7 +4,11 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
-import com.airbnb.epoxy.*
+import com.airbnb.epoxy.EpoxyAttribute
+import com.airbnb.epoxy.EpoxyHolder
+import com.airbnb.epoxy.EpoxyModel
+import com.airbnb.epoxy.EpoxyModelClass
+import com.airbnb.epoxy.EpoxyModelWithHolder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.mieszko.currencyconverter.R
@@ -17,7 +21,7 @@ abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListItemV
     @EpoxyAttribute
     lateinit var model: TrackingCurrenciesModel
 
-    //todo look for emplate project if we could benefit from that too
+    // todo look for emplate project if we could benefit from that too
     @EpoxyAttribute(EpoxyAttribute.Option.DoNotHash)
     lateinit var clickAction: () -> Unit
 
@@ -42,7 +46,7 @@ abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListItemV
     }
 
     override fun unbind(holder: TrackingListItemViewHolder) {
-        //todo implement
+        // todo implement
         // Release resources and don't leak listeners as this view goes back to the view pool
 //        holder.button.setOnClickListener(null)
 //        holder.button.setImageDrawable(null)
@@ -98,7 +102,7 @@ class TrackingListItemViewHolder : EpoxyHolder() {
     private val shortAnimTime = 150L
     private val mediumAnimTime = 200L
 
-    //TODO INTRODUCE INTERPOLATOR, factor out
+    // TODO INTRODUCE INTERPOLATOR, factor out
     fun animateSelected() {
         selectedCheckbox.animate()
             .scaleX(1.3f)

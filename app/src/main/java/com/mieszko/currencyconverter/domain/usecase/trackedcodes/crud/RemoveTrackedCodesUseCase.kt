@@ -13,8 +13,8 @@ class RemoveTrackedCodesUseCase(
     override fun invoke(codeToRemove: SupportedCode): Completable =
         getTrackedCodesOnceUseCase()
             .flatMapCompletable { currentTrackedCodes ->
-                //todo check thread
-                //todo some errors would be nice
+                // todo check thread
+                // todo some errors would be nice
                 Single.fromCallable {
                     currentTrackedCodes.let { currentList ->
                         if (currentList.contains(codeToRemove)) {
@@ -30,7 +30,6 @@ class RemoveTrackedCodesUseCase(
                             .subscribeOn(Schedulers.io())
                     }
             }
-
 }
 
 interface IRemoveTrackedCodesUseCase {

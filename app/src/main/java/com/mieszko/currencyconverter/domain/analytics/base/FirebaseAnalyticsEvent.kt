@@ -6,4 +6,3 @@ abstract class FirebaseAnalyticsEvent(
     val name: String,
     val params: List<FirebaseParameter>
 )
-

@@ -5,12 +5,12 @@ import android.content.SharedPreferences
 import android.preference.PreferenceManager
 
 interface ISharedPrefsManager {
-    //STRING
+    // STRING
     fun put(key: Key, toPut: String)
     fun getString(key: Key): String?
     fun getString(key: Key, defValue: String): String?
 
-    //KEYS
+    // KEYS
     enum class Key(val value: String) {
         CachedRatios("CACHED_RATIOS"),
         TrackedCurrencies("TRACKED_CURRENCIES")
@@ -24,7 +24,7 @@ class SharedPrefsManager(context: Application) : ISharedPrefsManager {
     private val editor: SharedPreferences.Editor
         get() = mSharedPrefs.edit()
 
-    //STRING
+    // STRING
     override fun put(key: ISharedPrefsManager.Key, toPut: String) {
         editor.putString(key.value, toPut).apply()
     }

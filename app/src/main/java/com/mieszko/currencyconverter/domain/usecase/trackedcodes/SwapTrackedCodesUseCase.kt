@@ -6,7 +6,7 @@ import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.ISaveTrack
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
-import java.util.*
+import java.util.Collections
 
 class SwapTrackedCodesUseCase(
     private val getTrackedCodesOnceUseCase: IGetTrackedCodesOnceUseCase,
@@ -37,5 +37,5 @@ class SwapTrackedCodesUseCase(
 }
 
 interface ISwapTrackedCodesUseCase {
-   operator fun invoke(firstCurrency: SupportedCode, secondCurrency: SupportedCode): Completable
+    operator fun invoke(firstCurrency: SupportedCode, secondCurrency: SupportedCode): Completable
 }

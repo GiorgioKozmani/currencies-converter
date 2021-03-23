@@ -22,18 +22,18 @@ object AnalyticsConstants {
         }
 
         object SearchTerm {
-            //todo
+            // todo
         }
 
         object ItemClicked {
-            //todo
+            // todo
         }
 
         object ItemDragged {
-            //todo
+            // todo
         }
 
-        //todo Manually track screens
+        // todo Manually track screens
 
         object BaseValueChanged {
             // todo if params will be applied properly, this will not need currency parameter
@@ -47,7 +47,6 @@ object AnalyticsConstants {
             }
         }
     }
-
 
     /**
      *  List of user properties

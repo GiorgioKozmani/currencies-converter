@@ -12,7 +12,7 @@ import com.mieszko.currencyconverter.R
 import com.mieszko.currencyconverter.presentation.home.HomeViewModel
 import com.mieszko.currencyconverter.presentation.util.fadeInText
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
-import java.util.*
+import java.util.Date
 
 class HomeHeaderFragment : Fragment(R.layout.home_header_fragment) {
     private val viewModel by sharedViewModel<HomeViewModel>()
@@ -22,7 +22,7 @@ class HomeHeaderFragment : Fragment(R.layout.home_header_fragment) {
     private lateinit var refreshButton: ImageButton
     private lateinit var refreshInfoButton: ImageButton
 
-    //todo think of the way to handle errors, maybe in parent fragment?
+    // todo think of the way to handle errors, maybe in parent fragment?
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // TODO VIEWBINDING
@@ -68,8 +68,7 @@ class HomeHeaderFragment : Fragment(R.layout.home_header_fragment) {
     }
 
     private fun handleNewDate(updateDate: Date) {
-        //todo use https://github.com/daimajia/AndroidViewAnimations to bounce in new date or anim myself
+        // todo use https://github.com/daimajia/AndroidViewAnimations to bounce in new date or anim myself
         lastUpdatedTV.fadeInText(DateFormat.format("yyyy-MM-dd hh:mm:ss a", updateDate).toString())
     }
-
 }

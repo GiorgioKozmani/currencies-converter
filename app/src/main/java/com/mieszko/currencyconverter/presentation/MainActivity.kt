@@ -10,16 +10,13 @@ import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.logEvent
 import com.mieszko.currencyconverter.R
-import org.koin.android.ext.android.inject
 
-
-class MainActivity : AppCompatActivity(R.layout.activity_main),
+class MainActivity :
+    AppCompatActivity(R.layout.activity_main),
     NavController.OnDestinationChangedListener {
     // CAN BE ACCESSED IN FRAGMENT ALSOin on attach
-    //TODO INJECT? BUT THIS WILL HAVE TO BE SCOPED TO THE ACTIVITY
+    // TODO INJECT? BUT THIS WILL HAVE TO BE SCOPED TO THE ACTIVITY
     // MAKE VIEWMODELS TALKING TO USECASES / INTERACTORS NOT LOGGER DIRECTLY
 
     private val bottomNavigation: BottomNavigationView by lazy { findViewById(R.id.bottom_navigation) }

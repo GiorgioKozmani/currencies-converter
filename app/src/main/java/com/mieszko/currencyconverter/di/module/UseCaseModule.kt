@@ -10,7 +10,16 @@ import com.mieszko.currencyconverter.domain.usecase.trackedcodes.IMoveTrackedCod
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.ISwapTrackedCodesUseCase
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.MoveTrackedCodeToTopUseCase
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.SwapTrackedCodesUseCase
-import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.*
+import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.AddTrackedCodesUseCase
+import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.GetTrackedCodesOnceUseCase
+import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.IAddTrackedCodesUseCase
+import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.IGetTrackedCodesOnceUseCase
+import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.IObserveTrackedCodesUseCase
+import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.IRemoveTrackedCodesUseCase
+import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.ISaveTrackedCodesUseCase
+import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.ObserveTrackedCodesUseCase
+import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.RemoveTrackedCodesUseCase
+import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.SaveTrackedCodesUseCase
 import org.koin.dsl.module
 
 /**

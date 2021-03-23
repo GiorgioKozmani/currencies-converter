@@ -39,11 +39,12 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
         holder.bind(
             currencyModel = currencyModel,
             baseValueChangeAction = { newText -> viewModel.baseCurrencyAmountChanged(newText) },
-            clickAction = { viewModel.listItemClicked(currencyModel.code) })
+            clickAction = { viewModel.listItemClicked(currencyModel.code) }
+        )
         // TODO MERGE INTO ONE
         when (currencyModel) {
             is HomeListModel.Base -> {
-                //TODO CLICK ACTION SHOULD BE ONLY LETTING VM KNOW WHAT ITEM GOT CLICKED! IT'LL DECIDE WHETHER TO MAKE IT
+                // TODO CLICK ACTION SHOULD BE ONLY LETTING VM KNOW WHAT ITEM GOT CLICKED! IT'LL DECIDE WHETHER TO MAKE IT
                 // BASE OR IGNORE
                 holder.setupBaseItem()
             }
@@ -61,7 +62,7 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
         val currency = currentListData[position]
 
         if (payloads.isNotEmpty()) {
-            //TODO STEP AWAY FROM HAVING "SETITEMTYPE" METHOD, AND CALL CONFIG METHODS DIRECTLY FROM HERE?
+            // TODO STEP AWAY FROM HAVING "SETITEMTYPE" METHOD, AND CALL CONFIG METHODS DIRECTLY FROM HERE?
             when (val lastPayload = payloads.last()) {
                 is NonBaseCurrencyChange -> {
                     lastPayload.run {
@@ -78,7 +79,7 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
                     holder.setupBaseItem()
                 }
                 is ChangedToNonBase -> {
-                    //todo rethink if it's not better to set it once as lambda
+                    // todo rethink if it's not better to set it once as lambda
                     // don't update value of base currency
                     holder.setupNonBaseItem(currency as HomeListModel.NonBase)
                 }

@@ -1,6 +1,8 @@
 package com.mieszko.currencyconverter.di.module
 
-import com.mieszko.currencyconverter.data.repository.*
+import com.mieszko.currencyconverter.data.repository.CodesDataRepository
+import com.mieszko.currencyconverter.data.repository.RatiosRepository
+import com.mieszko.currencyconverter.data.repository.TrackedCodesRepository
 import com.mieszko.currencyconverter.domain.repository.ICodesDataRepository
 import com.mieszko.currencyconverter.domain.repository.IRatiosRepository
 import com.mieszko.currencyconverter.domain.repository.ITrackedCodesRepository

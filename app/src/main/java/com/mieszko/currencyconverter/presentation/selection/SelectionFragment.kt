@@ -23,12 +23,13 @@ class SelectionFragment : Fragment(R.layout.selection_fragment) {
         eventsLogger.logEvent(ScreenViewEvent(AnalyticsConstants.Events.ScreenView.Screen.SELECTION))
     }
 
+    // TODO CONSIDER MATERIAL SEARCHVIEW
     private val viewModel by viewModel<SelectionViewModel>()
     private val epoxyController: TypedEpoxyController<List<TrackingCurrenciesModel>> by lazy {
         TrackingListController(viewModel)
     }
 
-    //TODO REMOVE BACK ARROW?
+    // TODO REMOVE BACK ARROW?
     private val backArrow: View by lazy { requireView().findViewById(R.id.back_arrow_btn) }
     private val searchView: SearchView by lazy { requireView().findViewById(R.id.currency_search_view) }
     private val epoxyRV: EpoxyRecyclerView by lazy { requireView().findViewById(R.id.selection_epoxy_rv) }

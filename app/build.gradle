@@ -2,6 +2,23 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.firebase.firebase-perf'
+apply plugin: 'com.diffplug.spotless'
+
+spotless {
+    java {
+        target '**/*.java'
+        removeUnusedImports()
+        endWithNewline()
+        trimTrailingWhitespace()
+    }
+
+    kotlin {
+        target '**/*.kt'
+        trimTrailingWhitespace()
+        ktlint('0.40.0')
+    }
+}
 
 android {
     compileSdkVersion 30
@@ -111,6 +128,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:26.7.0')
     // When using the BoM, don't specify versions in Firebase dependencies
     implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-perf'
 
     testImplementation 'org.koin:koin-test:2.2.2'
     testImplementation 'junit:junit:4.+'

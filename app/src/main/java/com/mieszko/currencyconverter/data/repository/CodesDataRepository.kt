@@ -5,7 +5,7 @@ import com.mieszko.currencyconverter.R
 import com.mieszko.currencyconverter.common.model.SupportedCode
 import com.mieszko.currencyconverter.data.model.CodeData
 import com.mieszko.currencyconverter.domain.repository.ICodesDataRepository
-import java.util.*
+import java.util.EnumMap
 
 /**
  * Codes data repository
@@ -18,7 +18,7 @@ class CodesDataRepository : ICodesDataRepository {
     // TODO If an app does not have a remote API, it does not need a Repository. !!!!!!!!
     override fun getCodeStaticData(code: SupportedCode): CodeData? = supportedCodeDataMap[code]
 
-    //todo rework
+    // todo rework
 
     private companion object {
         private val resources = CurrenciesApp.resourses
@@ -27,7 +27,7 @@ class CodesDataRepository : ICodesDataRepository {
 // TODO THIS COULD BE CACHED, BUT COULD ALSO COME FROM FIREBASE FOR EXAMPLE! IT MIGHT BE WORTH CONSIDERING TO HAVE THIS CHANGEABLE ON DEMAND
 // WHEN FOR EXAMPLE THESE IMAGES BECOME OUTDATED
 // ANOTHER IDEA (PROBABLY BETTER) WOULD BE TO HAVE THESE ICONS SAVED LOCALLY
-//TODO IMPORTANT NOTE! WHEN THE APP ENABLES MONETIZATION, I MIGHT NEED TO BUY LICENCE FOR THESE! IT'S 1$/EACH, AND IT'D LOAD IMMEDIATELY SO IT'S WORTH IT IMO
+// TODO IMPORTANT NOTE! WHEN THE APP ENABLES MONETIZATION, I MIGHT NEED TO BUY LICENCE FOR THESE! IT'S 1$/EACH, AND IT'D LOAD IMMEDIATELY SO IT'S WORTH IT IMO
 // or just search for free ones, like https://www.flaticon.com/packs/countrys-flags/
         val supportedCodeDataMap: EnumMap<SupportedCode, CodeData> =
             EnumMap<SupportedCode, CodeData>(SupportedCode::class.java).apply {
@@ -404,13 +404,12 @@ class CodesDataRepository : ICodesDataRepository {
                 )
             }
 
-//TODO NOT SUPPORTED BY UKRAINIAN SERVICE
+// TODO NOT SUPPORTED BY UKRAINIAN SERVICE
 //    ISK(_root_ide_package_.com.mieszko.resources.getString(R.string.isk_full), R.drawable.
 //    PHP(_root_ide_package_.com.mieszko.resources.getString(R.string.php_full), R.drawable.
 
 // TODO CONSIDER WHAT TO DO WITH THESE
 //    XAU(_root_ide_package_.com.mieszko.resources.getString(R.string.gold_full), "https://img.freeflagicons.com/thumb/round_icon/georgia/georgia_64.png"),
 //    XAG(_root_ide_package_.com.mieszko.resources.getString(R.string.silver_full), "https://img.freeflagicons.com/thumb/round_icon/georgia/georgia_64.png"),
-
     }
 }

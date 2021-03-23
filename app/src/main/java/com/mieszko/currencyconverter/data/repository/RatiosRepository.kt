@@ -8,7 +8,7 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
-//TODO JAVADOC EXPLAINING TE IMPLEMENTATION
+// TODO JAVADOC EXPLAINING TE IMPLEMENTATION
 // TODO REMOVE THIS REPOSITORY, REPLACE WITH USECASES
 class RatiosRepository(
     private val currenciesApi: CurrenciesApi,
@@ -33,5 +33,3 @@ class RatiosRepository(
             .flatMapCompletable { cache.saveTrackedCodes(it) }
     }
 }
-
-

@@ -5,7 +5,7 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 
-//todo add note that it's added to the end of the list javadoc
+// todo add note that it's added to the end of the list javadoc
 class AddTrackedCodesUseCase(
     private val getTrackedCodesOnceUseCase: IGetTrackedCodesOnceUseCase,
     private val saveTrackedCodesUseCase: ISaveTrackedCodesUseCase,
@@ -14,8 +14,8 @@ class AddTrackedCodesUseCase(
     override fun invoke(codeToAdd: SupportedCode): Completable =
         getTrackedCodesOnceUseCase()
             .flatMapCompletable { currentTrackedCodes ->
-                //todo check thread
-                //todo some errors would be nice
+                // todo check thread
+                // todo some errors would be nice
                 Single.fromCallable {
                     currentTrackedCodes.let { currentList ->
                         if (!currentList.contains(codeToAdd)) {
@@ -31,7 +31,6 @@ class AddTrackedCodesUseCase(
                             .subscribeOn(Schedulers.io())
                     }
             }
-
 }
 
 interface IAddTrackedCodesUseCase {

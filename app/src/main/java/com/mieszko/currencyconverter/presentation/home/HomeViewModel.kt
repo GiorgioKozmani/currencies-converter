@@ -22,16 +22,17 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.Subject
 import java.net.UnknownHostException
-import java.util.*
+import java.util.Date
+import java.util.NoSuchElementException
 import kotlin.math.pow
 import kotlin.math.roundToLong
 
 // TODO
-//https://proandroiddev.com/anemic-repositories-mvi-and-rxjava-induced-design-damage-and-how-aac-viewmodel-is-silently-1762caa70e13
-//The take-away here is that if:
-//you don’t have a saveState/restoreState function on your ViewModel
-//you don’t have an initialState: Bundle? constructor argument on your ViewModel (passed in from the ViewModelProvider.Factory in your Activity/Fragment as a dynamic argument)
-//you don’t use SavedStateHandle.getLiveData("key") nor SavedStateHandle.get("key")/set("key")
+// https://proandroiddev.com/anemic-repositories-mvi-and-rxjava-induced-design-damage-and-how-aac-viewmodel-is-silently-1762caa70e13
+// The take-away here is that if:
+// you don’t have a saveState/restoreState function on your ViewModel
+// you don’t have an initialState: Bundle? constructor argument on your ViewModel (passed in from the ViewModelProvider.Factory in your Activity/Fragment as a dynamic argument)
+// you don’t use SavedStateHandle.getLiveData("key") nor SavedStateHandle.get("key")/set("key")
 // https://developer.android.com/jetpack/androidx/releases/lifecycle#version_230_3
 // there are some changes to saving state made recently
 
@@ -52,7 +53,7 @@ class HomeViewModel(
     private val isLoadingLiveData: MutableLiveData<Boolean> =
         MutableLiveData()
 
-    //Exposing only LiveData
+    // Exposing only LiveData
     fun getCurrenciesLiveData(): LiveData<Resource<List<HomeListModel>>> =
         currenciesListModelsLiveData
 
@@ -71,7 +72,7 @@ class HomeViewModel(
     init {
         // emit list items when ratios or tracking order or base amount changes
         disposablesBag.add(
-            //todo use RxRelay with default of loading?
+            // todo use RxRelay with default of loading?
             Observable.combineLatest(
                 // CODES RATIOS CHANGED
                 Observable.combineLatest(
@@ -87,7 +88,7 @@ class HomeViewModel(
                         mapCodeToDataUseCase(codes = trackedCodes, allRatios = allRatios.ratios)
                     }
                 )
-                    //TODO STEP AWAY FROM PAIR
+                    // TODO STEP AWAY FROM PAIR
                     .map { newAmount -> Pair(System.nanoTime(), newAmount) },
                 // USER INPUT NEW BASE CURRENCY
                 baseAmountChange
@@ -120,7 +121,8 @@ class HomeViewModel(
                             )
                         }
                     }
-                })
+                }
+            )
                 .doOnNext { listItems -> currenciesListModels = listItems }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
@@ -130,7 +132,8 @@ class HomeViewModel(
                     onError = {
                         emitError(it)
                     }
-                ))
+                )
+        )
 
         // ATTEMPT FETCHING FRESH DATA FROM NETWORK
         fetchRemoteRatios()
@@ -186,14 +189,13 @@ class HomeViewModel(
             (baseToUahRatio / currToUahRatio * baseAmount)
                 .roundToDecimals(2)
         } catch (t: Throwable) {
-            //todo TO CRASHLYTICS
+            // todo TO CRASHLYTICS
             0.0
         }
 
-
-    //TODO REWORK
+    // TODO REWORK
     private fun emitError(t: Throwable?) {
-        //todo strings, revise
+        // todo strings, revise
 
         // REVISE
         val errorMessage = when (t) {
@@ -211,7 +213,7 @@ class HomeViewModel(
     }
 
     private fun emitModels(listItemsModels: List<HomeListModel>) {
-        //todo step away from emitting resource from here
+        // todo step away from emitting resource from here
         currenciesListModelsLiveData.value = Resource.Success(listItemsModels)
     }
 
@@ -260,7 +262,7 @@ class HomeViewModel(
         }
     }
 
-    //todo extract to usecase
+    // todo extract to usecase
     @WorkerThread
     private fun makeRatioString(
         firstCurrencyCode: SupportedCode,
@@ -269,11 +271,11 @@ class HomeViewModel(
         secondCurrencyToUahRatio: Double
     ) = if (secondCurrencyToUahRatio != 0.0) {
         "1 $firstCurrencyCode ≈ ${
-            (firstCurrencyToUahRatio / secondCurrencyToUahRatio)
-                .roundToDecimals(3)
+        (firstCurrencyToUahRatio / secondCurrencyToUahRatio)
+            .roundToDecimals(3)
         } $secondCurrencyCode"
     } else {
-        //todo TO CRASHLYTICS
+        // todo TO CRASHLYTICS
         ""
     }
 

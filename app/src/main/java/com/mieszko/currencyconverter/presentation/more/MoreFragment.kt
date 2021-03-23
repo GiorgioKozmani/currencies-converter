@@ -15,9 +15,8 @@ class MoreFragment : Fragment(R.layout.more_fragment) {
         super.onResume()
         eventsLogger.logEvent(ScreenViewEvent(AnalyticsConstants.Events.ScreenView.Screen.MORE))
     }
-
 }
-//TODO IDEAS
+// TODO IDEAS
 // RATE APP + SEPARATE LEAVE FEEDBACK / REPORT PROBLEMS
 // SHARE APP
 // SEARCH ICON INSTEAD OF EURO ,EURO FOR HOME PAGE?
@@ -25,8 +24,8 @@ class MoreFragment : Fragment(R.layout.more_fragment) {
 // TODO NICE IDEA!
 // HAVE CALCULATOR IN THE MIDDLE, AND BOTH MORE AND CURRENCIES ON SIDES (IN BOTTOM NAVIGATION) THEN USE EURO FOR HOMELIST AND LOUPE FOR SEARCH
 
-//todo look for some lottie animations, maybe something would fit
+// todo look for some lottie animations, maybe something would fit
 
-//TODO PROGUARD! OR R8?
+// TODO PROGUARD! OR R8?
 
-//https://firebase.google.com/support/guides/launch-checklist?authuser=0
+// https://firebase.google.com/support/guides/launch-checklist?authuser=0

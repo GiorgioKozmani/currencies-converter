@@ -13,7 +13,7 @@ fun TextView.fadeInText(newText: String, animDuration: Long? = null) {
         .alpha(0f)
         .scaleX(1.2f)
         .scaleY(1.2f)
-//todo check out interpolators, Z index
+// todo check out interpolators, Z index
         .withEndAction {
             text = newText
             animate().setDuration(fadeInDur)

@@ -72,7 +72,7 @@ class HomeListFragment : Fragment(R.layout.home_list_fragment) {
         }
     }
 
-    //todo step away from synthetics, go for viewbinding
+    // todo step away from synthetics, go for viewbinding
     private fun updateListData(response: Resource<List<HomeListModel>>) {
         // this is a workaround for issue with dragging 1st item of the list
         // https://issuetracker.google.com/issues/37018279

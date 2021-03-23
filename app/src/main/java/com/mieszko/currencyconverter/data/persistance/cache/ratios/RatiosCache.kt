@@ -8,17 +8,17 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import java.lang.reflect.Type
-import java.util.*
+import java.util.Date
 
 class RatiosCache(private val sharedPrefsManager: ISharedPrefsManager) : IRatiosCache {
     private val type: Type = object : TypeToken<RatiosTimeDTO>() {}.type
     private val gson = GsonBuilder().create()
 
-    //todo check
+    // todo check
 //    One of the issues with Subject is that after it receives onComplete() or onError() – it's no longer able to move data. Sometimes it's the desired behavior, but sometimes it's not.
 //    In cases when such behavior isn't desired, we should consider using RxRelay.
 //    https://www.baeldung.com/rx-relay
-    //TODO INSTEAD OF ERROR GO FOR RXRELAY!!
+    // TODO INSTEAD OF ERROR GO FOR RXRELAY!!
     private val source: BehaviorSubject<RatiosTimeDTO> =
         BehaviorSubject.createDefault(
             try {
@@ -46,7 +46,6 @@ class RatiosCache(private val sharedPrefsManager: ISharedPrefsManager) : IRatios
             )
             source.onNext(ratiosTime)
         }
-
 }
 
 interface IRatiosCache {
