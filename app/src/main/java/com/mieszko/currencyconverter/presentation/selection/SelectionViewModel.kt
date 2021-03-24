@@ -6,9 +6,9 @@ import com.mieszko.currencyconverter.common.base.BaseViewModel
 import com.mieszko.currencyconverter.common.model.SupportedCode
 import com.mieszko.currencyconverter.common.util.IDisposablesBag
 import com.mieszko.currencyconverter.domain.analytics.IFirebaseEventsLogger
-import com.mieszko.currencyconverter.domain.analytics.common.events.CodeTrackedEvent
-import com.mieszko.currencyconverter.domain.analytics.common.events.CodeUntrackedEvent
-import com.mieszko.currencyconverter.domain.analytics.common.events.SearchTermEvent
+import com.mieszko.currencyconverter.domain.analytics.events.CodeTrackedEvent
+import com.mieszko.currencyconverter.domain.analytics.events.CodeUntrackedEvent
+import com.mieszko.currencyconverter.domain.analytics.events.SearchTermEvent
 import com.mieszko.currencyconverter.domain.model.list.TrackingCurrenciesModel
 import com.mieszko.currencyconverter.domain.repository.ICodesDataRepository
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.IAddTrackedCodesUseCase
@@ -90,12 +90,19 @@ class SelectionViewModel(
     private fun setupSearchQueryLogging(disposablesBag: IDisposablesBag) {
         disposablesBag.add(
             searchQueryChange
-                .subscribeOn(Schedulers.computation())
-                .observeOn(Schedulers.computation())
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .filter { it.isNotBlank() }
-                .doOnNext { eventsLogger.logEvent(SearchTermEvent(it)) }
-                .subscribe()
+                .doOnNext { }
+                .subscribeBy(
+                    onNext = { searchTerm ->
+                        eventsLogger.logEvent(SearchTermEvent(searchTerm))
+                    },
+                    onError = {
+                        // ignore
+                    }
+                )
         )
     }
 
@@ -129,7 +136,7 @@ class SelectionViewModel(
         trackedCurrenciesLiveData.postValue(data)
     }
 
-    //TODO LOG CLICKED ITEM OR FOLLOW / UNFOLLOW.
+    // TODO LOG CLICKED ITEM OR FOLLOW / UNFOLLOW.
     // TODO IMPORTANT NOTE -> ADD CURRENT QUERY EVENT TO THE EVENT
     // TODO USE CURRENCY AS THE ARGUMENT
     fun itemClicked(trackingCurrenciesModel: TrackingCurrenciesModel) {

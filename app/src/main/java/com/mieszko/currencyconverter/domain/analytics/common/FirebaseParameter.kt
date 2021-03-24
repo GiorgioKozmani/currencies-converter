@@ -1,4 +1,4 @@
-package com.mieszko.currencyconverter.domain.analytics.common.params
+package com.mieszko.currencyconverter.domain.analytics.common
 
 import android.os.Bundle
 

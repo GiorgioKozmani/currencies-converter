@@ -3,8 +3,8 @@ package com.mieszko.currencyconverter.presentation.home
 import androidx.fragment.app.Fragment
 import com.mieszko.currencyconverter.R
 import com.mieszko.currencyconverter.domain.analytics.IFirebaseEventsLogger
-import com.mieszko.currencyconverter.domain.analytics.common.events.ScreenViewEvent
 import com.mieszko.currencyconverter.domain.analytics.constants.AnalyticsConstants
+import com.mieszko.currencyconverter.domain.analytics.events.ScreenViewEvent
 import org.koin.android.ext.android.inject
 
 class HomeFragment : Fragment(R.layout.home_fragment) {

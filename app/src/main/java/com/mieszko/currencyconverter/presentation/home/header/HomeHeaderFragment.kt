@@ -9,12 +9,16 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.mieszko.currencyconverter.R
+import com.mieszko.currencyconverter.domain.analytics.IFirebaseEventsLogger
+import com.mieszko.currencyconverter.domain.analytics.events.ButtonClickedEvent
 import com.mieszko.currencyconverter.presentation.home.HomeViewModel
 import com.mieszko.currencyconverter.presentation.util.fadeInText
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import java.util.Date
 
 class HomeHeaderFragment : Fragment(R.layout.home_header_fragment) {
+    private val eventsLogger: IFirebaseEventsLogger by inject()
     private val viewModel by sharedViewModel<HomeViewModel>()
 
     private lateinit var loadingIndicator: LinearProgressIndicator
@@ -34,13 +38,17 @@ class HomeHeaderFragment : Fragment(R.layout.home_header_fragment) {
         observeViewModel()
 
         view.findViewById<View>(R.id.refresh_rates_button).setOnClickListener {
-            viewModel.reloadCurrencies()
+            eventsLogger.logEvent(ButtonClickedEvent("refresh_button"))
+            viewModel.refreshButtonClicked()
         }
 
         view.findViewById<View>(R.id.refresh_info_button).setOnClickListener {
+            eventsLogger.logEvent(ButtonClickedEvent("info_button"))
+
             MaterialAlertDialogBuilder(requireContext())
 //                .setTitle(resources.getString(R.string.title))
                 .setTitle("Todo title")
+                // TODO STRINGS
                 .setMessage("TODO CHANGE THIS TEXT The reference rates are usually updated around 16:00 CET on every working day, except on TARGET closing days. They are based on a regular daily concertation procedure between central banks across Europe, which normally takes place at 14:15 CET.")
                 .setPositiveButton(resources.getString(R.string.okay)) { dialog, which ->
                     // Respond to positive button press
@@ -69,6 +77,10 @@ class HomeHeaderFragment : Fragment(R.layout.home_header_fragment) {
 
     private fun handleNewDate(updateDate: Date) {
         // todo use https://github.com/daimajia/AndroidViewAnimations to bounce in new date or anim myself
-        lastUpdatedTV.fadeInText(DateFormat.format("yyyy-MM-dd hh:mm:ss a", updateDate).toString())
+        // todo colors after update? for a whole and back to gray
+        lastUpdatedTV.fadeInText(
+            DateFormat.format("yyyy-MM-dd hh:mm:ss a", updateDate).toString(),
+            resources.getInteger(android.R.integer.config_longAnimTime).toLong()
+        )
     }
 }

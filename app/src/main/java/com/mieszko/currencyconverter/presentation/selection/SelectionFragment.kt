@@ -8,8 +8,8 @@ import com.airbnb.epoxy.EpoxyRecyclerView
 import com.airbnb.epoxy.TypedEpoxyController
 import com.mieszko.currencyconverter.R
 import com.mieszko.currencyconverter.domain.analytics.IFirebaseEventsLogger
-import com.mieszko.currencyconverter.domain.analytics.common.events.ScreenViewEvent
 import com.mieszko.currencyconverter.domain.analytics.constants.AnalyticsConstants
+import com.mieszko.currencyconverter.domain.analytics.events.ScreenViewEvent
 import com.mieszko.currencyconverter.domain.model.list.TrackingCurrenciesModel
 import com.mieszko.currencyconverter.presentation.selection.adapter.TrackingListController
 import org.koin.android.ext.android.inject
@@ -30,17 +30,11 @@ class SelectionFragment : Fragment(R.layout.selection_fragment) {
         TrackingListController(viewModel)
     }
 
-    // TODO REMOVE BACK ARROW?
-    private val backArrow: View by lazy { requireView().findViewById(R.id.back_arrow_btn) }
     private val searchView: SearchView by lazy { requireView().findViewById(R.id.currency_search_view) }
     private val epoxyRV: EpoxyRecyclerView by lazy { requireView().findViewById(R.id.selection_epoxy_rv) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        backArrow.setOnClickListener {
-            activity?.onBackPressed()
-        }
 
         observeViewModel()
         epoxyRV.setController(epoxyController)

@@ -1,6 +1,6 @@
 package com.mieszko.currencyconverter.domain.analytics.base
 
-import com.mieszko.currencyconverter.domain.analytics.common.params.FirebaseParameter
+import com.mieszko.currencyconverter.domain.analytics.common.FirebaseParameter
 
 abstract class FirebaseAnalyticsEvent(
     val name: String,

@@ -15,17 +15,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/back_arrow_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:src="@drawable/round_arrow_back_ios_new_black_18"
-            app:layout_constraintBottom_toBottomOf="@+id/title"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/title"
-            app:tint="@color/colorPrimary" />
-
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
@@ -45,8 +34,8 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginVertical="24dp"
-            app:cardCornerRadius="20dp"
             android:background="@color/white"
+            app:cardCornerRadius="20dp"
             app:cardElevation="@dimen/cardview_default_elevation"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -57,12 +46,12 @@
                 android:id="@+id/currency_search_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:queryHint="Search by code, name or country"
+                android:background="@color/colorPrimary"
                 android:focusable="false"
                 android:focusableInTouchMode="true"
+                android:inputType="text"
                 app:iconifiedByDefault="false"
-                android:background="@color/colorPrimary"
-                android:inputType="text" />
+                app:queryHint="Search by code, name or country" />
         </com.google.android.material.card.MaterialCardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

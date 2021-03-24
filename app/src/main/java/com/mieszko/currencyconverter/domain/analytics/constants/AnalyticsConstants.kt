@@ -34,6 +34,7 @@ object AnalyticsConstants {
             object Params { // this is an object which contains possible parameters. Note: it's not a final list of possible parameters,
                 // some parameters can be re-used from other events. The point is to keep all possible constants in this class
                 const val CODE = FirebaseAnalytics.Param.CURRENCY
+
                 // todo reuse this code
                 const val SEARCH_TERM = FirebaseAnalytics.Param.SEARCH_TERM
             }
@@ -45,23 +46,32 @@ object AnalyticsConstants {
             object Params { // this is an object which contains possible parameters. Note: it's not a final list of possible parameters,
                 // some parameters can be re-used from other events. The point is to keep all possible constants in this class
                 const val CODE = FirebaseAnalytics.Param.CURRENCY
+
                 // todo reuse this code
                 const val SEARCH_TERM = FirebaseAnalytics.Param.SEARCH_TERM
             }
         }
 
-        object ItemClicked {
-            // todo
+        object BaseValueChanged {
+            const val EVENT = "base_value_changed"
+
+            object Params {
+                const val CODE = FirebaseAnalytics.Param.CURRENCY
+                const val VALUE = FirebaseAnalytics.Param.VALUE
+            }
+        }
+
+        object ButtonClicked {
+            const val EVENT = "button_clicked"
+
+            object Params {
+                // TODO INTRODUCE COMMON PARAMS
+                const val NAME = FirebaseAnalytics.Param.ITEM_NAME
+            }
         }
 
         object ItemDragged {
             // todo
-        }
-
-        // todo Manually track screens
-
-        object BaseValueChanged {
-            // todo if params will be applied properly, this will not need currency parameter
         }
 
         object SendClicked {

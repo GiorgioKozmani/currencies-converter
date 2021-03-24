@@ -17,7 +17,8 @@ val viewModelModule = module {
             moveTrackedCodeToTopUseCase = get(),
             observeTrackedCodesUseCase = get(),
             swapTrackedCodesUseCase = get(),
-            observeRatiosUseCase = get()
+            observeRatiosUseCase = get(),
+            eventsLogger = get()
         )
     }
     viewModel {

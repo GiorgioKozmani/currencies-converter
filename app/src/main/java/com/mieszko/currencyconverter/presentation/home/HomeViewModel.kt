@@ -7,6 +7,8 @@ import com.mieszko.currencyconverter.common.base.BaseViewModel
 import com.mieszko.currencyconverter.common.model.Resource
 import com.mieszko.currencyconverter.common.model.SupportedCode
 import com.mieszko.currencyconverter.common.util.IDisposablesBag
+import com.mieszko.currencyconverter.domain.analytics.IFirebaseEventsLogger
+import com.mieszko.currencyconverter.domain.analytics.events.BaseValueChangedEvent
 import com.mieszko.currencyconverter.domain.model.CodeWithData
 import com.mieszko.currencyconverter.domain.model.list.HomeListModel
 import com.mieszko.currencyconverter.domain.usecase.IMapDataToCodesUseCase
@@ -24,6 +26,7 @@ import io.reactivex.rxjava3.subjects.Subject
 import java.net.UnknownHostException
 import java.util.Date
 import java.util.NoSuchElementException
+import java.util.concurrent.TimeUnit
 import kotlin.math.pow
 import kotlin.math.roundToLong
 
@@ -43,7 +46,8 @@ class HomeViewModel(
     private val fetchRemoteRatiosUseCase: IFetchRemoteRatiosUseCase,
     private val moveTrackedCodeToTopUseCase: IMoveTrackedCodeToTopUseCase,
     private val swapTrackedCodesUseCase: ISwapTrackedCodesUseCase,
-    private val mapCodeToDataUseCase: IMapDataToCodesUseCase
+    private val mapCodeToDataUseCase: IMapDataToCodesUseCase,
+    eventsLogger: IFirebaseEventsLogger
 ) : BaseViewModel(disposablesBag) {
 
     private val currenciesListModelsLiveData: MutableLiveData<Resource<List<HomeListModel>>> =
@@ -71,6 +75,44 @@ class HomeViewModel(
 
     init {
         // emit list items when ratios or tracking order or base amount changes
+        setupListDataSource(disposablesBag, observeRatiosUseCase, observeTrackedCodesUseCase)
+
+        // ATTEMPT FETCHING FRESH DATA FROM NETWORK
+        fetchRemoteRatios()
+
+        setupBaseValueChangeLogging(disposablesBag, eventsLogger)
+    }
+
+    private fun setupBaseValueChangeLogging(
+        disposablesBag: IDisposablesBag,
+        eventsLogger: IFirebaseEventsLogger
+    ) {
+        disposablesBag.add(
+            baseAmountChange
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .subscribeBy(
+                    onNext = { baseValue ->
+                        eventsLogger.logEvent(
+                            BaseValueChangedEvent(
+                                currenciesListModels.first().code,
+                                baseValue
+                            )
+                        )
+                    },
+                    onError = {
+                        // ignore
+                    }
+                )
+        )
+    }
+
+    private fun setupListDataSource(
+        disposablesBag: IDisposablesBag,
+        observeRatiosUseCase: IObserveRatiosUseCase,
+        observeTrackedCodesUseCase: IObserveTrackedCodesUseCase
+    ) {
         disposablesBag.add(
             // todo use RxRelay with default of loading?
             Observable.combineLatest(
@@ -134,12 +176,9 @@ class HomeViewModel(
                     }
                 )
         )
-
-        // ATTEMPT FETCHING FRESH DATA FROM NETWORK
-        fetchRemoteRatios()
     }
 
-    fun reloadCurrencies() {
+    fun refreshButtonClicked() {
         fetchRemoteRatios()
     }
 
