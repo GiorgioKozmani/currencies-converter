@@ -23,7 +23,6 @@ import java.text.DecimalFormat
 // TODO THINGS NEED TO BE SIMPLIFIED HERE, IT TAKES WAY TOO LONG TIME TO BIND THIS VIEWH HOLDER, AND FIRST SCROLLING IS SLOW
 class HomeCurrencyViewHolder private constructor(itemView: View) :
     RecyclerView.ViewHolder(itemView) {
-    // todo bug, now some random keboard is showing when scrolling
 
     private val baseBackgroundOverlay = itemView.findViewById<View>(R.id.base_background_overlay)
     private val amountET = itemView.findViewById<EditText>(R.id.currency_amount)
@@ -204,6 +203,12 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
             }
         }
 
+        val stringValue = strToReturn.toDouble()
+
+        if (stringValue >= MAX_CURRENCY_VALUE) {
+            return "0.00"
+        }
+
         return strToReturn
     }
 
@@ -213,6 +218,7 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
     }
 
     companion object {
+        private const val MAX_CURRENCY_VALUE = 1000000000000000.00
         private const val BASE_OVERLAY_TRANSITION_DURATION: Long = 250
 
         fun from(parent: ViewGroup): HomeCurrencyViewHolder {
