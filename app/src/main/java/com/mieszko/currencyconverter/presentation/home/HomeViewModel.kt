@@ -23,6 +23,8 @@ import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.Subject
+import java.math.BigDecimal
+import java.math.MathContext
 import java.net.UnknownHostException
 import java.util.Date
 import java.util.NoSuchElementException
@@ -302,13 +304,38 @@ class HomeViewModel(
         secondCurrencyCode: SupportedCode,
         secondCurrencyToUahRatio: Double
     ) = if (secondCurrencyToUahRatio != 0.0) {
-        "1 $firstCurrencyCode ≈ ${
-            (firstCurrencyToUahRatio / secondCurrencyToUahRatio)
-                .roundToDecimals(3)
-        } $secondCurrencyCode"
+        getReadableRatio(firstCurrencyToUahRatio, secondCurrencyToUahRatio).let {
+            "${it.first} $firstCurrencyCode ≈ ${it.second.roundToDecimals(3)} $secondCurrencyCode"
+        }
+
     } else {
         // todo TO CRASHLYTICS
         ""
+    }
+
+    private fun getReadableRatio(
+        firstCurrencyToUahRatio: Double,
+        secondCurrencyToUahRatio: Double
+    ): Pair<Int, Double> {
+        var roundedRatio = BigDecimal(firstCurrencyToUahRatio / secondCurrencyToUahRatio)
+        // round to 3 significant figures
+        roundedRatio = roundedRatio.round(MathContext(3))
+
+        return prettifyRatio(Pair(1, roundedRatio.toDouble()))
+    }
+
+    // TODO MOVE TO USECASE!
+    /**
+     * Recursive method that multiplies both Pair(A: Int, B: Double) values by 10
+     * until B >= 0.01
+     * for example Pair(1, 0.00001) into Pair(100, 0.001)
+     */
+    private fun prettifyRatio(pair: Pair<Int, Double>): Pair<Int, Double> {
+        return if (pair.second < 0.01) {
+            prettifyRatio(Pair(pair.first * 10, pair.second * 10))
+        } else {
+            pair
+        }
     }
 
     @WorkerThread
