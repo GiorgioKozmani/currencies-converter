@@ -22,7 +22,7 @@ class MapDataToCodesUseCase(
             val data = codesDataRepository.getCodeStaticData(code)
 
             if (toUahRatio != null && data != null) {
-                CodeWithData(code = code, toUahRatio = toUahRatio, data = data)
+                CodeWithData(code = code, toUahRatio = toUahRatio, staticData = data)
             } else {
                 null
             }

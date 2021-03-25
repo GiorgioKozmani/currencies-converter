@@ -30,6 +30,7 @@ class RatiosRepository(
     override fun fetchRemoteRatios(): Completable {
         return currenciesApi.getCodeRatios()
             .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
             .flatMapCompletable { cache.saveTrackedCodes(it) }
     }
 }

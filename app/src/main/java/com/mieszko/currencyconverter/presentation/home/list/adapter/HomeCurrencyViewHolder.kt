@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.core.widget.doAfterTextChanged
@@ -17,7 +18,6 @@ import com.mieszko.currencyconverter.R
 import com.mieszko.currencyconverter.common.util.hideKeyboard
 import com.mieszko.currencyconverter.common.util.showKeyboard
 import com.mieszko.currencyconverter.domain.model.list.HomeListModel
-import de.hdodenhof.circleimageview.CircleImageView
 import java.text.DecimalFormat
 
 // TODO THINGS NEED TO BE SIMPLIFIED HERE, IT TAKES WAY TOO LONG TIME TO BIND THIS VIEWH HOLDER, AND FIRST SCROLLING IS SLOW
@@ -30,7 +30,7 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
     private val nameTV = itemView.findViewById<TextView>(R.id.currency_full_name)
     private val baseToThisTV = itemView.findViewById<TextView>(R.id.base_to_this)
     private val thisToBaseTV = itemView.findViewById<TextView>(R.id.this_to_base)
-    private val flagIV = itemView.findViewById<CircleImageView>(R.id.country_flag)
+    private val flagIV = itemView.findViewById<ImageView>(R.id.country_flag)
 
     private val textSizeUnit = TypedValue.COMPLEX_UNIT_PX
     private val baseCurrencyTextSize =
@@ -52,9 +52,9 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
         baseTextTextChangeAction = baseValueChangeAction
 
         with(currencyModel) {
-            setNameText(this.codeData.name)
+            setNameText(this.codeStaticData.name)
             setAmount(this.amount)
-            loadCurrencyFlag(this.codeData.flagResId)
+            loadCurrencyFlag(this.codeStaticData.flagResId)
         }
     }
 

@@ -13,10 +13,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.mieszko.currencyconverter.R
 import com.mieszko.currencyconverter.domain.model.list.TrackingCurrenciesModel
-import de.hdodenhof.circleimageview.CircleImageView
 
-@EpoxyModelClass(layout = R.layout.epoxy_tracking_list_tem)
-abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListItemViewHolder>() {
+@EpoxyModelClass(layout = R.layout.epoxy_tracking_list_item)
+abstract class TrackingListItemEpoxy : EpoxyModelWithHolder<TrackingListItemViewHolder>() {
 
     @EpoxyAttribute
     lateinit var model: TrackingCurrenciesModel
@@ -28,16 +27,16 @@ abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListItemV
     override fun bind(holder: TrackingListItemViewHolder) {
         with(model) {
             setCodeText(holder, code.name)
-            setNameText(holder, codeData.name)
+            setNameText(holder, codeStaticData.name)
             setSelectionIcon(holder, isTracked)
-            loadCurrencyFlag(holder, codeData.flagResId)
+            loadCurrencyFlag(holder, codeStaticData.flagResId)
         }
 
         holder.view.setOnClickListener { clickAction.invoke() }
     }
 
     override fun bind(holder: TrackingListItemViewHolder, previouslyBoundModel: EpoxyModel<*>) {
-        if (previouslyBoundModel is TrackingListAllItemEpoxy && model.isTracked != previouslyBoundModel.model.isTracked) {
+        if (previouslyBoundModel is TrackingListItemEpoxy && model.isTracked != previouslyBoundModel.model.isTracked) {
             animateSelectionChange(holder, model.isTracked)
             holder.view.setOnClickListener { clickAction.invoke() }
         } else {
@@ -48,8 +47,8 @@ abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListItemV
     override fun unbind(holder: TrackingListItemViewHolder) {
         // todo implement
         // Release resources and don't leak listeners as this view goes back to the view pool
-//        holder.button.setOnClickListener(null)
-//        holder.button.setImageDrawable(null)
+        holder.view.setOnClickListener(null)
+        Glide.with(holder.view.context).clear(holder.flagIV)
     }
 
     private fun animateSelectionChange(holder: TrackingListItemViewHolder, isSelected: Boolean) {
@@ -92,7 +91,7 @@ abstract class TrackingListAllItemEpoxy : EpoxyModelWithHolder<TrackingListItemV
 }
 
 class TrackingListItemViewHolder : EpoxyHolder() {
-    lateinit var flagIV: CircleImageView
+    lateinit var flagIV: ImageView
     lateinit var selectedCheckbox: ImageView
     lateinit var nameTV: TextView
     lateinit var codeTV: TextView

@@ -163,7 +163,7 @@ class HomeViewModel(
                         emitModels(listItems)
                     },
                     onError = {
-                        eventsLogger.logError(it, "HOME LIST DATA SOURCE ERROR")
+                        eventsLogger.logNonFatalError(it, "HOME LIST DATA SOURCE ERROR")
                         emitError(it)
                     }
                 )
@@ -182,7 +182,7 @@ class HomeViewModel(
                 .doOnSubscribe { isLoadingLiveData.value = true }
                 .doOnTerminate { isLoadingLiveData.value = false }
                 .subscribeBy(onError = {
-                    eventsLogger.logError(it, "REMOTE RATIOS REQUEST FAILED")
+                    eventsLogger.logNonFatalError(it, "REMOTE RATIOS REQUEST FAILED")
                     emitError(it)
                 }
                 )
@@ -260,18 +260,18 @@ class HomeViewModel(
         return trackedCodesWithData.mapIndexed { index, trackedCodeWithData ->
             val newCurrencyCode = trackedCodeWithData.code
             val newCurrencyRatio = trackedCodeWithData.toUahRatio
-            val newCurrencyData = trackedCodeWithData.data
+            val newCurrencyData = trackedCodeWithData.staticData
 
             if (index == 0) {
                 HomeListModel.Base(
                     code = baseCode,
-                    codeData = newCurrencyData,
+                    codeStaticData = newCurrencyData,
                     amount = baseAmount
                 )
             } else {
                 HomeListModel.NonBase(
                     code = newCurrencyCode,
-                    codeData = newCurrencyData,
+                    codeStaticData = newCurrencyData,
                     amount = calculateCurrencyAmount(
                         currToUahRatio = newCurrencyRatio,
                         baseToUahRatio = baseToUahRatio,

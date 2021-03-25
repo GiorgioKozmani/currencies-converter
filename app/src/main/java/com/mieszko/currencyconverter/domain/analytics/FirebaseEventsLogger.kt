@@ -8,14 +8,15 @@ import com.mieszko.currencyconverter.domain.analytics.base.FirebaseAnalyticsEven
 
 interface IFirebaseEventsLogger {
     fun logEvent(event: FirebaseAnalyticsEvent)
-    fun logError(throwable: Throwable, customMessage: String)
+    fun logNonFatalError(throwable: Throwable, customMessage: String)
 
     // todo refactor so it's generic
     fun setBaseCurrencyUserProperty(baseCurrency: SupportedCode?)
 }
 
-class FirebaseAnalyticsSender(
-    private val firebaseAnalytics: FirebaseAnalytics
+class FirebaseEventsLogger(
+    private val firebaseAnalytics: FirebaseAnalytics,
+    private val firebaseCrashlytics: FirebaseCrashlytics
 ) : IFirebaseEventsLogger {
 
     override fun logEvent(event: FirebaseAnalyticsEvent) {
@@ -25,8 +26,8 @@ class FirebaseAnalyticsSender(
         )
     }
 
-    override fun logError(throwable: Throwable, customMessage: String) {
-        FirebaseCrashlytics.getInstance().run {
+    override fun logNonFatalError(throwable: Throwable, customMessage: String) {
+        firebaseCrashlytics.run {
             log(customMessage)
             recordException(throwable)
         }

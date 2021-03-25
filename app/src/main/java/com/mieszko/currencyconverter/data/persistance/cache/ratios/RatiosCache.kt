@@ -14,11 +14,7 @@ class RatiosCache(private val sharedPrefsManager: ISharedPrefsManager) : IRatios
     private val type: Type = object : TypeToken<RatiosTimeDTO>() {}.type
     private val gson = GsonBuilder().create()
 
-    // todo check
-//    One of the issues with Subject is that after it receives onComplete() or onError() – it's no longer able to move data. Sometimes it's the desired behavior, but sometimes it's not.
-//    In cases when such behavior isn't desired, we should consider using RxRelay.
-//    https://www.baeldung.com/rx-relay
-    // TODO INSTEAD OF ERROR GO FOR RXRELAY!!
+
     private val source: BehaviorSubject<RatiosTimeDTO> =
         BehaviorSubject.createDefault(
             try {
@@ -27,6 +23,7 @@ class RatiosCache(private val sharedPrefsManager: ISharedPrefsManager) : IRatios
                     type
                 )
             } catch (e: Exception) {
+                // TODO STATIC FILE WITH OLD STATIC DATE AS A FALLBACK! LOG NON FATAL TO FIREBASE
                 RatiosTimeDTO(listOf(), Date())
             }
         )

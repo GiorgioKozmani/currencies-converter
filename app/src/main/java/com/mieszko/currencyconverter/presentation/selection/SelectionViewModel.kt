@@ -21,7 +21,6 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import java.util.concurrent.TimeUnit
 
-// TODO STEP AWAY FROM TRACKED CURRENCIES AND INTRODUCE FILTER BUTTON INSTEAD!
 class SelectionViewModel(
     disposablesBag: IDisposablesBag,
     observeTrackedCodesUseCase: IObserveTrackedCodesUseCase,
@@ -70,7 +69,7 @@ class SelectionViewModel(
                             it.code.name.contains(
                                 searchQuery,
                                 true
-                            ) || it.codeData.name.contains(searchQuery, true)
+                            ) || it.codeStaticData.name.contains(searchQuery, true)
                         }
                     } else {
                         sortedItems
@@ -136,12 +135,8 @@ class SelectionViewModel(
         trackedCurrenciesLiveData.postValue(data)
     }
 
-    // TODO LOG CLICKED ITEM OR FOLLOW / UNFOLLOW.
-    // TODO IMPORTANT NOTE -> ADD CURRENT QUERY EVENT TO THE EVENT
-    // TODO USE CURRENCY AS THE ARGUMENT
     fun itemClicked(trackingCurrenciesModel: TrackingCurrenciesModel) {
         if (trackingCurrenciesModel.isTracked) {
-            // todo usecase
             removeTrackedCodesUseCase(trackingCurrenciesModel.code)
                 .subscribeOn(Schedulers.io())
                 .doOnComplete {
@@ -154,7 +149,6 @@ class SelectionViewModel(
                 }
                 .subscribe()
         } else {
-            // todo usecase
             addTrackedCodesUseCase(trackingCurrenciesModel.code)
                 .subscribeOn(Schedulers.io())
                 .doOnComplete {
