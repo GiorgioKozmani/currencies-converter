@@ -47,7 +47,7 @@ class HomeViewModel(
     private val moveTrackedCodeToTopUseCase: IMoveTrackedCodeToTopUseCase,
     private val swapTrackedCodesUseCase: ISwapTrackedCodesUseCase,
     private val mapCodeToDataUseCase: IMapDataToCodesUseCase,
-    eventsLogger: IFirebaseEventsLogger
+    private val eventsLogger: IFirebaseEventsLogger
 ) : BaseViewModel(disposablesBag) {
 
     private val currenciesListModelsLiveData: MutableLiveData<Resource<List<HomeListModel>>> =
@@ -75,41 +75,32 @@ class HomeViewModel(
 
     init {
         // emit list items when ratios or tracking order or base amount changes
-        setupListDataSource(disposablesBag, observeRatiosUseCase, observeTrackedCodesUseCase)
+        setupListDataSource(observeRatiosUseCase, observeTrackedCodesUseCase)
 
         // ATTEMPT FETCHING FRESH DATA FROM NETWORK
         fetchRemoteRatios()
 
-        setupBaseValueChangeLogging(disposablesBag, eventsLogger)
+        setupBaseValueChangeLogging()
     }
 
-    private fun setupBaseValueChangeLogging(
-        disposablesBag: IDisposablesBag,
-        eventsLogger: IFirebaseEventsLogger
-    ) {
+    private fun setupBaseValueChangeLogging() {
         disposablesBag.add(
             baseAmountChange
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .debounce(500, TimeUnit.MILLISECONDS)
-                .subscribeBy(
-                    onNext = { baseValue ->
-                        eventsLogger.logEvent(
-                            BaseValueChangedEvent(
-                                currenciesListModels.first().code,
-                                baseValue
-                            )
+                .subscribeBy(onNext = { baseValue ->
+                    eventsLogger.logEvent(
+                        BaseValueChangedEvent(
+                            currenciesListModels.first().code,
+                            baseValue
                         )
-                    },
-                    onError = {
-                        // ignore
-                    }
-                )
+                    )
+                })
         )
     }
 
     private fun setupListDataSource(
-        disposablesBag: IDisposablesBag,
         observeRatiosUseCase: IObserveRatiosUseCase,
         observeTrackedCodesUseCase: IObserveTrackedCodesUseCase
     ) {
@@ -172,6 +163,7 @@ class HomeViewModel(
                         emitModels(listItems)
                     },
                     onError = {
+                        eventsLogger.logError(it, "HOME LIST DATA SOURCE ERROR")
                         emitError(it)
                     }
                 )
@@ -189,9 +181,10 @@ class HomeViewModel(
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { isLoadingLiveData.value = true }
                 .doOnTerminate { isLoadingLiveData.value = false }
-                .subscribeBy(
-                    onComplete = {},
-                    onError = { emitError(it) }
+                .subscribeBy(onError = {
+                    eventsLogger.logError(it, "REMOTE RATIOS REQUEST FAILED")
+                    emitError(it)
+                }
                 )
         )
     }
@@ -310,8 +303,8 @@ class HomeViewModel(
         secondCurrencyToUahRatio: Double
     ) = if (secondCurrencyToUahRatio != 0.0) {
         "1 $firstCurrencyCode ≈ ${
-        (firstCurrencyToUahRatio / secondCurrencyToUahRatio)
-            .roundToDecimals(3)
+            (firstCurrencyToUahRatio / secondCurrencyToUahRatio)
+                .roundToDecimals(3)
         } $secondCurrencyCode"
     } else {
         // todo TO CRASHLYTICS
