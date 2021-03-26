@@ -15,7 +15,7 @@ import org.koin.core.context.startKoin
 
 class CurrenciesApp : Application() {
 
-    //TODO ADD
+    // TODO ADD
     // - IF IT'S FIRST RUN < EFFECTIVELY ALSO AFTER DATA CLEAR >
     // TODO HANDLE THIS INSIDE OF THE REPOS, NOT HERE!
     // a) set selected currencies to something (for example euro, dollar, gbp, chinese)

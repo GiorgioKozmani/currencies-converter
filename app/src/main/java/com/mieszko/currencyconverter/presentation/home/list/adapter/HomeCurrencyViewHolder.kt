@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.mieszko.currencyconverter.R
-import com.mieszko.currencyconverter.common.util.hideKeyboard
 import com.mieszko.currencyconverter.common.util.showKeyboard
 import com.mieszko.currencyconverter.domain.model.list.HomeListModel
 import java.text.DecimalFormat
@@ -214,7 +213,6 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
 
     fun clearFocusAndHideKeyboard() {
         amountET.clearFocus()
-        amountET.hideKeyboard()
     }
 
     companion object {

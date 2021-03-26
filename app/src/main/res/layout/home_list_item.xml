@@ -72,7 +72,7 @@
             app:layout_constraintTop_toBottomOf="@+id/this_to_base"
             tools:text="1 eur = 5 pln" />
 
-        <androidx.appcompat.widget.AppCompatEditText
+        <com.mieszko.currencyconverter.common.util.ClearingFocusEditText
             android:id="@+id/currency_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -81,8 +81,8 @@
             android:imeOptions="actionDone"
             android:importantForAutofill="no"
             android:inputType="numberDecimal"
-            android:selectAllOnFocus="true"
             android:maxWidth="150dp"
+            android:selectAllOnFocus="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

@@ -14,7 +14,6 @@ class RatiosCache(private val sharedPrefsManager: ISharedPrefsManager) : IRatios
     private val type: Type = object : TypeToken<RatiosTimeDTO>() {}.type
     private val gson = GsonBuilder().create()
 
-
     private val source: BehaviorSubject<RatiosTimeDTO> =
         BehaviorSubject.createDefault(
             try {

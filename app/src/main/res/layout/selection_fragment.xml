@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:fontFamily="sans-serif-medium"
-            android:text="Select currencies*"
+            android:text="TODO Select currencies*"
             android:textColor="@color/colorPrimary"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -51,7 +51,7 @@
                 android:focusableInTouchMode="true"
                 android:inputType="text"
                 app:iconifiedByDefault="false"
-                app:queryHint="Search by code, name or country" />
+                app:queryHint="TODO Search by code, name or country" />
         </com.google.android.material.card.MaterialCardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

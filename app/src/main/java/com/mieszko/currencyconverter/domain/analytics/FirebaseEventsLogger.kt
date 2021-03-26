@@ -31,7 +31,6 @@ class FirebaseEventsLogger(
             log(customMessage)
             recordException(throwable)
         }
-
     }
 
     override fun setBaseCurrencyUserProperty(baseCurrency: SupportedCode?) {

@@ -91,14 +91,16 @@ class HomeViewModel(
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .debounce(500, TimeUnit.MILLISECONDS)
-                .subscribeBy(onNext = { baseValue ->
-                    eventsLogger.logEvent(
-                        BaseValueChangedEvent(
-                            currenciesListModels.first().code,
-                            baseValue
+                .subscribeBy(
+                    onNext = { baseValue ->
+                        eventsLogger.logEvent(
+                            BaseValueChangedEvent(
+                                currenciesListModels.first().code,
+                                baseValue
+                            )
                         )
-                    )
-                })
+                    }
+                )
         )
     }
 
@@ -183,10 +185,11 @@ class HomeViewModel(
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { isLoadingLiveData.value = true }
                 .doOnTerminate { isLoadingLiveData.value = false }
-                .subscribeBy(onError = {
-                    eventsLogger.logNonFatalError(it, "REMOTE RATIOS REQUEST FAILED")
-                    emitError(it)
-                }
+                .subscribeBy(
+                    onError = {
+                        eventsLogger.logNonFatalError(it, "REMOTE RATIOS REQUEST FAILED")
+                        emitError(it)
+                    }
                 )
         )
     }
@@ -307,7 +310,6 @@ class HomeViewModel(
         getReadableRatio(firstCurrencyToUahRatio, secondCurrencyToUahRatio).let {
             "${it.first} $firstCurrencyCode ≈ ${it.second.roundToDecimals(3)} $secondCurrencyCode"
         }
-
     } else {
         // todo TO CRASHLYTICS
         ""

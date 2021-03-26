@@ -47,20 +47,32 @@ class SelectionFragment : Fragment(R.layout.selection_fragment) {
             }
         }
 
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                // perform default action
-                return false
-            }
+        setupSearchView()
+    }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText != null) {
-                    viewModel.searchQueryChanged(newText)
+    private fun setupSearchView() {
+        searchView.apply {
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    // perform default action
+                    return false
                 }
 
-                return true
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    if (newText != null) {
+                        viewModel.searchQueryChanged(newText)
+                    }
+
+                    return true
+                }
+            })
+
+            setOnQueryTextFocusChangeListener { v, hasFocus ->
+                if (!hasFocus) {
+                    setQuery("", true)
+                }
             }
-        })
+        }
     }
 
     private fun observeViewModel() {

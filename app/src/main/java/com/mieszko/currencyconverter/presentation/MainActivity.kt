@@ -15,10 +15,6 @@ import com.mieszko.currencyconverter.R
 class MainActivity :
     AppCompatActivity(R.layout.activity_main),
     NavController.OnDestinationChangedListener {
-    // CAN BE ACCESSED IN FRAGMENT ALSOin on attach
-    // TODO INJECT? BUT THIS WILL HAVE TO BE SCOPED TO THE ACTIVITY
-    // MAKE VIEWMODELS TALKING TO USECASES / INTERACTORS NOT LOGGER DIRECTLY
-
     private val bottomNavigation: BottomNavigationView by lazy { findViewById(R.id.bottom_navigation) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
