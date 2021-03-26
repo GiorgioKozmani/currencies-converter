@@ -46,8 +46,7 @@ class HomeHeaderFragment : Fragment(R.layout.home_header_fragment) {
             eventsLogger.logEvent(ButtonClickedEvent("info_button"))
 
             MaterialAlertDialogBuilder(requireContext())
-//                .setTitle(resources.getString(R.string.title))
-                .setTitle("Todo title")
+                .setTitle(R.string.home_info_dialog_title)
                 // TODO STRINGS
                 .setMessage("TODO CHANGE THIS TEXT The reference rates are usually updated around 16:00 CET on every working day, except on TARGET closing days. They are based on a regular daily concertation procedure between central banks across Europe, which normally takes place at 14:15 CET.")
                 .setPositiveButton(resources.getString(R.string.okay)) { dialog, which ->

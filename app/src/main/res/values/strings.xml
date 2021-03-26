@@ -72,4 +72,7 @@
     <string name="nav_bar_currencies">Currencies</string>
     <string name="nav_bar_more">More</string>
     <string name="okay">Okay</string>
+    <string name="select_currencies_search_hint">Search by name or code</string>
+    <string name="select_currencies_title">Select currencies</string>
+    <string name="home_info_dialog_title">Important info</string>
 </resources>
