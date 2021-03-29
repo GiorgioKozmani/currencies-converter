@@ -13,8 +13,10 @@
 
     <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <item name="alertDialogStyle">@style/MaterialAlertDialog.App</item>
-        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.App.Title.Text</item>
-        <item name="materialAlertDialogBodyTextStyle">@style/MaterialAlertDialog.App.Body.Text</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.App.Title.Text
+        </item>
+        <item name="materialAlertDialogBodyTextStyle">@style/MaterialAlertDialog.App.Body.Text
+        </item>
         <item name="buttonBarPositiveButtonStyle">@style/ThemeOverlay.App.Button.TextButton</item>
     </style>
 
@@ -35,6 +37,14 @@
         <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:layout_marginBottom">2dp</item>
+    </style>
+
+    <style name="TabTitleText">
+        <item name="android:padding">16dp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textSize">20sp</item>
     </style>
 
     <style name="MaterialAlertDialog.App.Title.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">

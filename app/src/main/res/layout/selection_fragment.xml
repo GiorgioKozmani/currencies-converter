@@ -8,7 +8,6 @@
         android:id="@+id/selection_tracking"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:animateLayoutChanges="true"
         android:background="@color/white"
         android:elevation="@dimen/base_elevation"
         app:layout_constraintEnd_toEndOf="parent"
@@ -17,13 +16,10 @@
 
         <TextView
             android:id="@+id/title"
+            style="@style/TabTitleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:fontFamily="sans-serif-medium"
             android:text="@string/select_currencies_title"
-            android:textColor="@color/colorPrimary"
-            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -33,7 +29,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"
             android:background="@color/white"
             app:cardCornerRadius="20dp"
             app:cardElevation="@dimen/cardview_default_elevation"
