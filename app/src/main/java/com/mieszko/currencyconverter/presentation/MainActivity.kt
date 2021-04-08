@@ -39,7 +39,8 @@ class MainActivity :
                 R.id.trackingFragment -> {
                     // TODO ON RESELECTION CLEAR SEARCH, HIDE KEYBOARD AND SCROLL TOP
                 }
-//                R.id.tab_more -> {
+//                R.id.moreFragment -> {
+//                    // TODO THINK WHAT TO DO THERE
 //                }
             }
         }
@@ -52,6 +53,7 @@ class MainActivity :
     ) {
         // Managing the keyboard is never easy ;)
         if (destination.label != "HomeFragment") {
+            currentFocus?.clearFocus()
             currentFocus?.hideKeyboard()
         }
     }

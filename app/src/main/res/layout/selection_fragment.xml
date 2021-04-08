@@ -8,7 +8,7 @@
         android:id="@+id/selection_tracking"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="@color/colorPrimary"
         android:elevation="@dimen/base_elevation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,7 +31,6 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="24dp"
-            android:background="@color/white"
             app:cardCornerRadius="20dp"
             app:cardElevation="@dimen/cardview_default_elevation"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -43,11 +42,11 @@
                 android:id="@+id/currency_search_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
                 android:focusable="false"
                 android:focusableInTouchMode="true"
                 android:inputType="text"
                 app:iconifiedByDefault="false"
+                app:queryBackground="@null"
                 app:queryHint="@string/select_currencies_search_hint" />
         </com.google.android.material.card.MaterialCardView>
 

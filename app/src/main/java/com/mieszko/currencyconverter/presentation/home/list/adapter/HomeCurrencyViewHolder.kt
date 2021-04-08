@@ -46,7 +46,13 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
         baseValueChangeAction: ((Double) -> Unit),
         clickAction: () -> Unit
     ) {
-        itemView.setOnClickListener { clickAction() }
+        itemView.setOnClickListener {
+            amountET.postDelayed({
+                amountET.requestFocus()
+                amountET.showKeyboard()
+            }, KEYBOARD_OPEN_DELAY_MS)
+            clickAction()
+        }
         baseTextTextChangeAction = baseValueChangeAction
 
         with(currencyModel) {
@@ -68,10 +74,10 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
         amountET.isFocusableInTouchMode = true
         amountET.setTextIsSelectable(true)
 
-        amountET.post {
-            amountET.requestFocus()
-            amountET.showKeyboard()
-        }
+//        amountET.post {
+//            amountET.requestFocus()
+//            amountET.showKeyboard()
+//        }
 
         amountET.setOnTouchListener { _, _ -> false }
         setBaseUI()
@@ -104,9 +110,7 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
         thisToBaseTV.visibility = View.GONE
         nameTV.setTextSize(textSizeUnit, baseCurrencyTextSize)
         baseBackgroundOverlay.animate()
-            .alpha(1f)
-            .setDuration(BASE_OVERLAY_TRANSITION_DURATION)
-            .setListener(null)
+            .alpha(BASE_OVERLAY_OPACITY).duration = BASE_OVERLAY_TRANSITION_DURATION_MS
     }
 
     private fun setNonBaseUI() {
@@ -114,9 +118,7 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
         baseToThisTV.visibility = View.VISIBLE
         thisToBaseTV.visibility = View.VISIBLE
         baseBackgroundOverlay.animate()
-            .alpha(0f)
-            .setDuration(BASE_OVERLAY_TRANSITION_DURATION)
-            .setListener(null)
+            .alpha(0f).duration = BASE_OVERLAY_TRANSITION_DURATION_MS
     }
 
     fun removeBaseOverlayInstantly() {
@@ -217,7 +219,9 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
 
     companion object {
         private const val MAX_CURRENCY_VALUE = 1000000000000000.00
-        private const val BASE_OVERLAY_TRANSITION_DURATION: Long = 250
+        private const val KEYBOARD_OPEN_DELAY_MS: Long = 75
+        private const val BASE_OVERLAY_TRANSITION_DURATION_MS: Long = 250
+        private const val BASE_OVERLAY_OPACITY: Float = 0.65f
 
         fun from(parent: ViewGroup): HomeCurrencyViewHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
