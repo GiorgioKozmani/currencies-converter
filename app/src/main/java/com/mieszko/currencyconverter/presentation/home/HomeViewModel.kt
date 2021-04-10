@@ -72,7 +72,6 @@ class HomeViewModel(
     private val baseAmountChange: Subject<Double> =
         BehaviorSubject.createDefault(DEFAULT_BASE_AMOUNT)
 
-    // TODO HANDLE ALL !!s
     private var currenciesListModels = listOf<HomeListModel>()
 
     init {
@@ -93,12 +92,15 @@ class HomeViewModel(
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .subscribeBy(
                     onNext = { baseValue ->
-                        eventsLogger.logEvent(
-                            BaseValueChangedEvent(
-                                currenciesListModels.first().code,
-                                baseValue
+                        val baseCurrency = currenciesListModels.firstOrNull()
+                        if (baseCurrency != null) {
+                            eventsLogger.logEvent(
+                                BaseValueChangedEvent(
+                                    baseCurrency.code,
+                                    baseValue
+                                )
                             )
-                        )
+                        }
                     }
                 )
         )

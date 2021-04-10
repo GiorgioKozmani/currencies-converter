@@ -47,7 +47,6 @@ abstract class TrackingListItemEpoxy : EpoxyModelWithHolder<TrackingListItemView
     override fun unbind(holder: TrackingListItemViewHolder) {
         // Release resources and don't leak listeners as this view goes back to the view pool
         holder.view.setOnClickListener(null)
-        Glide.with(holder.view.context).clear(holder.flagIV)
     }
 
     private fun animateSelectionChange(holder: TrackingListItemViewHolder, isSelected: Boolean) {

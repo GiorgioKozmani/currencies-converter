@@ -64,11 +64,6 @@ android {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
-    compileOptions {
-        targetCompatibility 1.8
-        sourceCompatibility 1.8
-    }
-
     kapt {
         correctErrorTypes = true
     }

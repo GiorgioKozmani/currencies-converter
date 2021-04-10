@@ -76,4 +76,15 @@
     <string name="select_currencies_title">Select currencies</string>
     <string name="home_info_dialog_title">Important info</string>
     <string name="more_title">More</string>
+    <string name="support_email">mieszko.support@gmail.com</string>
+    <string name="support_mail_prompt_text">Your feedback plays a crucial role in improving this app!\nIf you have any comments, problems, or suggestions for the app, write them down below.\nThank you, really!</string>
+    <string name="support_mail_title">Feedback</string>
+    <string name="leave_feedback_title">Leave feedback</string>
+    <string name="leave_feedback_desc">Every feedback is priceless. It helps a lot!</string>
+    <string name="rate_app_title">Rate this app</string>
+    <string name="rate_app_description">This app is made to make your life a little easier. Does it do the job?</string>
+    <string name="privacy_policy_title">Privacy policy</string>
+    <string name="privacy_policy_desc">This app only gathers data required for understanding users\' behavior.</string>
+    <string name="about_title">About</string>
+    <string name="about_desc">This app is developed by one guy. Here\'s the story behind it.</string>
 </resources>

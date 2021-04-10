@@ -17,19 +17,17 @@
             android:id="@+id/left_icon"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/option_title"
+            android:id="@+id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:fontFamily="sans-serif-medium"
-            android:text="Leave a feedback"
             android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintEnd_toStartOf="@+id/right_icon"
@@ -37,19 +35,18 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/option_subtitle"
+            android:id="@+id/description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="20dp"
-            android:text="Share your thoughts about the app and suggest your ideas"
             android:textColor="@color/darkerGrey"
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/right_icon"
             app:layout_constraintStart_toEndOf="@+id/left_icon"
-            app:layout_constraintTop_toBottomOf="@+id/option_title" />
+            app:layout_constraintTop_toBottomOf="@+id/title" />
 
         <ImageView
             android:id="@+id/right_icon"
