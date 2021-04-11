@@ -13,7 +13,7 @@ import com.mieszko.currencyconverter.domain.analytics.events.ScreenViewEvent
 import com.mieszko.currencyconverter.presentation.more.list.MoreItemsAdapter
 import com.mieszko.currencyconverter.presentation.more.list.MoreListItem
 import com.mieszko.currencyconverter.presentation.util.EmailHelper
-import com.mieszko.currencyconverter.presentation.util.RateAppWidget
+import com.mieszko.currencyconverter.presentation.util.rate.RateAppWidget
 import org.koin.android.ext.android.inject
 
 
@@ -47,12 +47,16 @@ class MoreFragment : Fragment(R.layout.more_fragment) {
                     .setDescription(
                         R.string.rate_app_description
                     ).setIcon(R.drawable.outline_thumbs_up_down_black_48).doOnClick {
+
+
                         RateAppWidget().show(childFragmentManager, "RateAppFragment")
+
+
                     }.build(),
                 MoreListItem.Builder(requireContext()).setTitle(R.string.about_title)
                     .setDescription(
                         R.string.about_desc
-                    ).setIcon(R.drawable.outline_emoji_people_black_48).doOnClick {}.build()
+                    ).setIcon(R.drawable.round_emoji_people_black_48).doOnClick {}.build()
             )
         )
 

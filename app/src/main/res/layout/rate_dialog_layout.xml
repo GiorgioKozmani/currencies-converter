@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="TEST TITLE"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:padding="16dp"
+        android:text="Test description description description description description description description description description"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/rate_slider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:value="0"
+        android:valueFrom="0"
+        android:valueTo="5"
+        app:haloColor="@android:color/transparent"
+        app:labelBehavior="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/description"
+        app:thumbColor="@android:color/transparent"
+        app:thumbElevation="0dp"
+        app:tickVisible="false"
+        app:trackColor="@android:color/transparent"
+        app:trackHeight="60dp" />
+
+    <ImageView
+        android:id="@+id/rate1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0"
+        android:src="@drawable/round_star_black_48"
+        app:layout_constraintBottom_toBottomOf="@+id/rate_slider"
+        app:layout_constraintEnd_toStartOf="@+id/rate2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/rate_slider"
+        app:tint="@color/gold" />
+
+    <ImageView
+        android:id="@+id/rate1_overlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/round_star_outline_black_48"
+        app:layout_constraintBottom_toBottomOf="@+id/rate1"
+        app:layout_constraintEnd_toEndOf="@+id/rate1"
+        app:layout_constraintStart_toStartOf="@+id/rate1"
+        app:layout_constraintTop_toTopOf="@+id/rate1"
+        app:tint="@color/gold" />
+
+    <ImageView
+        android:id="@+id/rate2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0"
+        android:src="@drawable/round_star_black_48"
+        app:layout_constraintBottom_toBottomOf="@+id/rate_slider"
+        app:layout_constraintEnd_toStartOf="@+id/rate3"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/rate1"
+        app:layout_constraintTop_toTopOf="@+id/rate_slider"
+        app:tint="@color/gold" />
+
+    <ImageView
+        android:id="@+id/rate2_overlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/round_star_outline_black_48"
+        app:layout_constraintBottom_toBottomOf="@+id/rate2"
+        app:layout_constraintEnd_toEndOf="@+id/rate2"
+        app:layout_constraintStart_toStartOf="@+id/rate2"
+        app:layout_constraintTop_toTopOf="@+id/rate2"
+        app:tint="@color/gold" />
+
+    <ImageView
+        android:id="@+id/rate3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0"
+        android:src="@drawable/round_star_black_48"
+        app:layout_constraintBottom_toBottomOf="@+id/rate_slider"
+        app:layout_constraintEnd_toStartOf="@+id/rate4"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/rate2"
+        app:layout_constraintTop_toTopOf="@+id/rate_slider"
+        app:tint="@color/gold" />
+
+    <ImageView
+        android:id="@+id/rate3_overlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/round_star_outline_black_48"
+        app:layout_constraintBottom_toBottomOf="@+id/rate3"
+        app:layout_constraintEnd_toEndOf="@+id/rate3"
+        app:layout_constraintStart_toStartOf="@+id/rate3"
+        app:layout_constraintTop_toTopOf="@+id/rate3"
+        app:tint="@color/gold" />
+
+    <ImageView
+        android:id="@+id/rate4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0"
+        android:src="@drawable/round_star_black_48"
+        app:layout_constraintBottom_toBottomOf="@+id/rate_slider"
+        app:layout_constraintEnd_toStartOf="@+id/rate5"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/rate3"
+        app:layout_constraintTop_toTopOf="@+id/rate_slider"
+        app:tint="@color/gold" />
+
+    <ImageView
+        android:id="@+id/rate4_overlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/round_star_outline_black_48"
+        app:layout_constraintBottom_toBottomOf="@+id/rate4"
+        app:layout_constraintEnd_toEndOf="@+id/rate4"
+        app:layout_constraintStart_toStartOf="@+id/rate4"
+        app:layout_constraintTop_toTopOf="@+id/rate4"
+        app:tint="@color/gold" />
+
+    <ImageView
+        android:id="@+id/rate5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0"
+        android:src="@drawable/round_star_black_48"
+        app:layout_constraintBottom_toBottomOf="@+id/rate_slider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/rate4"
+        app:layout_constraintTop_toTopOf="@+id/rate_slider"
+        app:tint="@color/gold" />
+
+    <ImageView
+        android:id="@+id/rate5_overlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/round_star_outline_black_48"
+        app:layout_constraintBottom_toBottomOf="@+id/rate5"
+        app:layout_constraintEnd_toEndOf="@+id/rate5"
+        app:layout_constraintStart_toStartOf="@+id/rate5"
+        app:layout_constraintTop_toTopOf="@+id/rate5"
+        app:tint="@color/gold" />
+</androidx.constraintlayout.widget.ConstraintLayout>
