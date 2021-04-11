@@ -1,11 +1,12 @@
 package com.mieszko.currencyconverter.presentation.util.rate
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
+import android.view.animation.OvershootInterpolator
 import androidx.fragment.app.DialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.slider.Slider
 import com.mieszko.currencyconverter.R
 import kotlin.math.ceil
@@ -14,15 +15,18 @@ class RateAppWidget : DialogFragment() {
 
     private companion object {
         const val SELECTION_ANIMATION_DURATION = 250L
-        const val SELECTED_SIZE_SCALE = 1.4f
+        const val SELECTED_SIZE_SCALE = 1.2f
         const val UNSELECTED_SIZE_SCALE = 1f
     }
+
+    private val interpolator = OvershootInterpolator()
 
     private var ratesItems = mutableListOf<RateView>()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
-            val builder = AlertDialog.Builder(it)
+            val builder = MaterialAlertDialogBuilder(it)
+
 
             val dialogView =
                 requireActivity().layoutInflater.inflate(R.layout.rate_dialog_layout, null)
@@ -31,14 +35,18 @@ class RateAppWidget : DialogFragment() {
 
             builder.setView(dialogView)
                 // Add action buttons
-                .setPositiveButton("positive",
+                .setPositiveButton(R.string.rate_app_dialog_positive_button_text,
                     DialogInterface.OnClickListener { dialog, id ->
                         // sign in the user ...
                     })
-                .setNegativeButton("negative",
+                .setNegativeButton(R.string.rate_app_dialog_negative_button_text,
                     DialogInterface.OnClickListener { dialog, id ->
                         dialog.cancel()
                     })
+
+
+            builder.setTitle(R.string.rate_app_dialog_title)
+            builder.setMessage(R.string.rate_app_dialog_description)
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
     }
@@ -98,32 +106,32 @@ class RateAppWidget : DialogFragment() {
         }
     }
 
-    fun animateSelected(rateItem: Pair<View, View>) {
+    private fun animateSelected(rateItem: Pair<View, View>) {
         rateItem.first.animate()
             .scaleX(SELECTED_SIZE_SCALE)
             .scaleY(SELECTED_SIZE_SCALE)
+            .alpha(1f)
             .setDuration(SELECTION_ANIMATION_DURATION)
+            .setInterpolator(interpolator)
             .withStartAction {
-                rateItem.first.animate()
-                    .alpha(1f).duration = SELECTION_ANIMATION_DURATION
-
                 rateItem.second.animate()
                     .scaleX(SELECTED_SIZE_SCALE)
                     .scaleY(SELECTED_SIZE_SCALE)
+                    .setInterpolator(interpolator)
                     .alpha(0f).duration = SELECTION_ANIMATION_DURATION
             }
     }
 
-    fun animateUnselected(rateItem: Pair<View, View>) {
+    private fun animateUnselected(rateItem: Pair<View, View>) {
         rateItem.first.animate()
             .scaleX(UNSELECTED_SIZE_SCALE)
             .scaleY(UNSELECTED_SIZE_SCALE)
+            .alpha(0f)
+            .setInterpolator(interpolator)
             .setDuration(SELECTION_ANIMATION_DURATION)
             .withStartAction {
-                rateItem.first.animate()
-                    .alpha(0f).duration = SELECTION_ANIMATION_DURATION
-
                 rateItem.second.animate()
+                    .setInterpolator(interpolator)
                     .scaleX(UNSELECTED_SIZE_SCALE)
                     .scaleY(UNSELECTED_SIZE_SCALE)
                     .alpha(1f).duration = SELECTION_ANIMATION_DURATION

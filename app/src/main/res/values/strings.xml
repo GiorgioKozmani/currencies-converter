@@ -59,9 +59,15 @@
     <string name="tjs_full">Tajikistani Somoni</string>
     <string name="gel_full">Georgian Lari</string>
 
-
+<!--TODO NOT USED-->
     <string name="gold_full">Gold Ounce</string>
     <string name="silver_full">Silver Ounce</string>
+
+    <!--  rate app widget strings  -->
+    <string name="rate_app_dialog_title">Rate this app</string>
+    <string name="rate_app_dialog_description">This app is made to make your life a little easier. How does it do the job?</string>
+    <string name="rate_app_dialog_positive_button_text">Rate!</string>
+    <string name="rate_app_dialog_negative_button_text">Not now</string>
 
     <!-- app strings -->
     <string name="app_name">CurrencyConverter</string>
@@ -83,9 +89,10 @@
     <string name="leave_feedback_title">Leave feedback</string>
     <string name="leave_feedback_desc">Every feedback is priceless. It helps a lot!</string>
     <string name="rate_app_title">Rate this app</string>
-    <string name="rate_app_description">This app is made to make your life a little easier. Does it do the job?</string>
+    <string name="rate_app_description">This app is made to make your life a little easier. How does it do the job?</string>
     <string name="privacy_policy_title">Privacy policy</string>
     <string name="privacy_policy_desc">This app only gathers data required for understanding users\' behavior.</string>
     <string name="about_title">About</string>
     <string name="about_desc">This app is developed by one guy. Here\'s the story behind it.</string>
+
 </resources>

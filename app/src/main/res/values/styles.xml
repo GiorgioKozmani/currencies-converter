@@ -17,6 +17,7 @@
         <item name="materialAlertDialogBodyTextStyle">@style/MaterialAlertDialog.App.Body.Text
         </item>
         <item name="buttonBarPositiveButtonStyle">@style/ThemeOverlay.App.Button.TextButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/ThemeOverlay.App.Button.TextButton</item>
     </style>
 
     <style name="MaterialAlertDialog.App.Body.Text" parent="MaterialAlertDialog.MaterialComponents.Body.Text">
