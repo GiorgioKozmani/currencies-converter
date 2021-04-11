@@ -59,7 +59,7 @@
     <string name="tjs_full">Tajikistani Somoni</string>
     <string name="gel_full">Georgian Lari</string>
 
-<!--TODO NOT USED-->
+    <!--TODO NOT USED-->
     <string name="gold_full">Gold Ounce</string>
     <string name="silver_full">Silver Ounce</string>
 
@@ -70,7 +70,8 @@
     <string name="rate_app_dialog_negative_button_text">Not now</string>
 
     <!-- app strings -->
-    <string name="app_name">CurrencyConverter</string>
+    <string name="app_name">Currency Converter</string>
+
     <string name="format_error">Format error</string>
     <string name="main_page_title">Your currencies</string>
     <string name="empty_amount_placeholder">0</string>
