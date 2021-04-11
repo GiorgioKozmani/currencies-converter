@@ -1,7 +1,7 @@
-package com.mieszko.currencyconverter.presentation.util.rate
+package com.mieszko.currencyconverter.presentation.more
 
+import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import android.view.animation.OvershootInterpolator
@@ -11,7 +11,7 @@ import com.google.android.material.slider.Slider
 import com.mieszko.currencyconverter.R
 import kotlin.math.ceil
 
-class RateAppWidget : DialogFragment() {
+class RateAppDialog : DialogFragment() {
 
     private companion object {
         const val SELECTION_ANIMATION_DURATION = 250L
@@ -23,36 +23,26 @@ class RateAppWidget : DialogFragment() {
 
     private var ratesItems = mutableListOf<RateView>()
 
+    @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return activity?.let {
-            val builder = MaterialAlertDialogBuilder(it)
-
-
+        return activity?.let { activity ->
             val dialogView =
                 requireActivity().layoutInflater.inflate(R.layout.rate_dialog_layout, null)
 
             setupSlider(dialogView)
 
-            builder.setView(dialogView)
-                // Add action buttons
-                .setPositiveButton(R.string.rate_app_dialog_positive_button_text,
-                    DialogInterface.OnClickListener { dialog, id ->
-                        // sign in the user ...
-                    })
-                .setNegativeButton(R.string.rate_app_dialog_negative_button_text,
-                    DialogInterface.OnClickListener { dialog, id ->
-                        dialog.cancel()
-                    })
-
-
-            builder.setTitle(R.string.rate_app_dialog_title)
-            builder.setMessage(R.string.rate_app_dialog_description)
-            builder.create()
+            MaterialAlertDialogBuilder(activity).apply {
+                setTitle(R.string.rate_app_dialog_title)
+                setMessage(R.string.rate_app_dialog_description)
+                setView(dialogView)
+                    // Add action buttons
+                    .setPositiveButton(R.string.rate_app_dialog_positive_button_text) { _, _ -> }
+                    .setNegativeButton(R.string.rate_app_dialog_negative_button_text) { dialog, _ -> dialog.cancel() }
+            }.create()
         } ?: throw IllegalStateException("Activity cannot be null")
     }
 
-    // TODO IF THIS WILL WORK, THINK OF CUSTOM VIEWS FOR FOR EXAMPLE OVERLAY + STAR
-
+    // TODO THINK OF CUSTOM VIEWS FOR FOR EXAMPLE OVERLAY + STAR
     private fun setupSlider(dialogView: View) {
         val slider = dialogView.findViewById<Slider>(R.id.rate_slider)
 
@@ -93,8 +83,7 @@ class RateAppWidget : DialogFragment() {
 
         slider.addOnChangeListener { _, value, _ ->
             val selectedIndex = ceil(value).toInt() - 1
-            ratesItems.forEachIndexed { index, view ->
-                val item = ratesItems[index]
+            ratesItems.forEachIndexed { index, item ->
                 if (index <= selectedIndex && !item.isSelected) {
                     ratesItems[ratesItems.indexOf(item)] = item.copy(isSelected = true)
                     animateSelected(item.view)

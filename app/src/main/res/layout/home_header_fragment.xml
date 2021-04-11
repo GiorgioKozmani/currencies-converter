@@ -63,6 +63,6 @@
         app:hideAnimationBehavior="inward"
         app:indicatorColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:minHideDelay="1000"
+        app:minHideDelay="750"
         app:showAnimationBehavior="outward" />
 </androidx.constraintlayout.widget.ConstraintLayout>

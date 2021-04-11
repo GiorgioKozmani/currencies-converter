@@ -2,8 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:paddingVertical="8dp"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingTop="6dp"
+    android:paddingBottom="8dp">
 
     <com.google.android.material.slider.Slider
         android:id="@+id/rate_slider"
