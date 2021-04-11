@@ -10,6 +10,7 @@ import com.mieszko.currencyconverter.common.util.IDisposablesBag
 import com.mieszko.currencyconverter.domain.analytics.IFirebaseEventsLogger
 import com.mieszko.currencyconverter.domain.analytics.events.BaseValueChangedEvent
 import com.mieszko.currencyconverter.domain.model.CodeWithData
+import com.mieszko.currencyconverter.domain.model.UpdateDate
 import com.mieszko.currencyconverter.domain.model.list.HomeListModel
 import com.mieszko.currencyconverter.domain.usecase.IMapDataToCodesUseCase
 import com.mieszko.currencyconverter.domain.usecase.ratios.IFetchRemoteRatiosUseCase
@@ -26,7 +27,6 @@ import io.reactivex.rxjava3.subjects.Subject
 import java.math.BigDecimal
 import java.math.MathContext
 import java.net.UnknownHostException
-import java.util.Date
 import java.util.NoSuchElementException
 import java.util.concurrent.TimeUnit
 import kotlin.math.pow
@@ -54,7 +54,7 @@ class HomeViewModel(
 
     private val currenciesListModelsLiveData: MutableLiveData<Resource<List<HomeListModel>>> =
         MutableLiveData()
-    private val lastUpdatedLiveData: MutableLiveData<Date> =
+    private val lastUpdatedLiveData: MutableLiveData<UpdateDate> =
         MutableLiveData()
     private val isLoadingLiveData: MutableLiveData<Boolean> =
         MutableLiveData()
@@ -63,7 +63,7 @@ class HomeViewModel(
     fun getCurrenciesLiveData(): LiveData<Resource<List<HomeListModel>>> =
         currenciesListModelsLiveData
 
-    fun getLastUpdatedLiveData(): LiveData<Date> =
+    fun getLastUpdatedLiveData(): LiveData<UpdateDate> =
         lastUpdatedLiveData
 
     fun getIsLoadingLiveData(): LiveData<Boolean> =
@@ -111,14 +111,13 @@ class HomeViewModel(
         observeTrackedCodesUseCase: IObserveTrackedCodesUseCase
     ) {
         disposablesBag.add(
-            // todo use RxRelay with default of loading?
             Observable.combineLatest(
                 // CODES RATIOS CHANGED
                 Observable.combineLatest(
                     observeRatiosUseCase()
                         .subscribeOn(Schedulers.io())
                         .observeOn(Schedulers.computation())
-                        .doOnNext { lastUpdatedLiveData.postValue(it.time) },
+                        .doOnNext { lastUpdatedLiveData.postValue(UpdateDate(it.time)) },
                     // TRACKING CODES CHANGED
                     observeTrackedCodesUseCase()
                         .subscribeOn(Schedulers.io())

@@ -1,15 +1,16 @@
 package com.mieszko.currencyconverter.domain.usecase.ratios
 
 import com.mieszko.currencyconverter.common.model.SupportedCode
+import com.mieszko.currencyconverter.domain.analytics.IFirebaseEventsLogger
 import com.mieszko.currencyconverter.domain.model.RatiosTime
 import com.mieszko.currencyconverter.domain.repository.IRatiosRepository
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import java.util.EnumMap
 
-// TODO REWORK! SO IT RETURNS IT TOGETHER WITH THE DATA!!!
 class ObserveRatiosUseCase(
-    private val ratiosRepository: IRatiosRepository
+    private val ratiosRepository: IRatiosRepository,
+    private val eventsLogger: IFirebaseEventsLogger
 ) : IObserveRatiosUseCase {
 
     override fun invoke(): Observable<RatiosTime> =
@@ -25,7 +26,7 @@ class ObserveRatiosUseCase(
                             try {
                                 supportedRatios[it.code] = it.ratioToUAH
                             } catch (e: Exception) {
-                                // TODO CRASHLITICS
+                                eventsLogger.logNonFatalError(e, "RATIOSTIME OBJECT CREATION ERROR")
                             }
                         }
 

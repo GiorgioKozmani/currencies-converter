@@ -11,11 +11,11 @@ import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.mieszko.currencyconverter.R
 import com.mieszko.currencyconverter.domain.analytics.IFirebaseEventsLogger
 import com.mieszko.currencyconverter.domain.analytics.events.ButtonClickedEvent
+import com.mieszko.currencyconverter.domain.model.UpdateDate
 import com.mieszko.currencyconverter.presentation.home.HomeViewModel
 import com.mieszko.currencyconverter.presentation.util.fadeInText
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
-import java.util.Date
 
 class HomeHeaderFragment : Fragment(R.layout.home_header_fragment) {
     private val eventsLogger: IFirebaseEventsLogger by inject()
@@ -47,8 +47,7 @@ class HomeHeaderFragment : Fragment(R.layout.home_header_fragment) {
 
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.home_info_dialog_title)
-                // TODO STRINGS
-                .setMessage("TODO CHANGE THIS TEXT The reference rates are usually updated around 16:00 CET on every working day, except on TARGET closing days. They are based on a regular daily concertation procedure between central banks across Europe, which normally takes place at 14:15 CET.")
+                .setMessage(R.string.refresh_info)
                 .setPositiveButton(resources.getString(R.string.okay)) { dialog, which ->
                     // Respond to positive button press
                 }
@@ -74,12 +73,20 @@ class HomeHeaderFragment : Fragment(R.layout.home_header_fragment) {
         }
     }
 
-    private fun handleNewDate(updateDate: Date) {
-        // todo use https://github.com/daimajia/AndroidViewAnimations to bounce in new date or anim myself
-        // todo colors after update? for a whole and back to gray
-        lastUpdatedTV.fadeInText(
-            DateFormat.format("yyyy-MM-dd hh:mm:ss a", updateDate).toString(),
-            resources.getInteger(android.R.integer.config_longAnimTime).toLong()
-        )
+    private fun handleNewDate(updateDate: UpdateDate) {
+        val dateState = updateDate.getDateState()
+        val dateText = DateFormat.format("yyyy-MM-dd hh:mm:ss a", dateState.date).toString()
+
+        when (dateState) {
+            is UpdateDate.StatefulDate.Fresh -> {
+                lastUpdatedTV.fadeInText(
+                    dateText,
+                    resources.getInteger(android.R.integer.config_longAnimTime).toLong()
+                )
+            }
+            is UpdateDate.StatefulDate.Stale -> {
+                lastUpdatedTV.text = dateText
+            }
+        }
     }
 }

@@ -82,7 +82,7 @@ val useCaseModule = module {
      */
 
     factory<IObserveRatiosUseCase> {
-        ObserveRatiosUseCase(ratiosRepository = get())
+        ObserveRatiosUseCase(ratiosRepository = get(), eventsLogger = get())
     }
 
     factory<IFetchRemoteRatiosUseCase> {
