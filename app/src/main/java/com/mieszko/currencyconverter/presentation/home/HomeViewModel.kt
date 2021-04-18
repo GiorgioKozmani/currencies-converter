@@ -1,5 +1,6 @@
 package com.mieszko.currencyconverter.presentation.home
 
+import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -23,7 +24,6 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import io.reactivex.rxjava3.subjects.Subject
 import java.math.BigDecimal
 import java.math.MathContext
 import java.net.UnknownHostException
@@ -69,8 +69,7 @@ class HomeViewModel(
     fun getIsLoadingLiveData(): LiveData<Boolean> =
         isLoadingLiveData
 
-    private val baseAmountChange: Subject<Double> =
-        BehaviorSubject.createDefault(DEFAULT_BASE_AMOUNT)
+    private val baseAmountChange = BehaviorSubject.createDefault(DEFAULT_BASE_AMOUNT)
 
     private var currenciesListModels = listOf<HomeListModel>()
 
@@ -111,61 +110,12 @@ class HomeViewModel(
         observeTrackedCodesUseCase: IObserveTrackedCodesUseCase
     ) {
         disposablesBag.add(
-            Observable.combineLatest(
-                // CODES RATIOS CHANGED
-                Observable.combineLatest(
-                    observeRatiosUseCase()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(Schedulers.computation())
-                        .doOnNext { lastUpdatedLiveData.postValue(UpdateDate(it.time)) },
-                    // TRACKING CODES CHANGED
-                    observeTrackedCodesUseCase()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(Schedulers.computation()),
-                    { allRatios, trackedCodes ->
-                        mapCodeToDataUseCase(codes = trackedCodes, allRatios = allRatios.ratios)
-                    }
-                )
-                    // TODO STEP AWAY FROM PAIR
-                    .map { newAmount -> Pair(System.nanoTime(), newAmount) },
-                // USER INPUT NEW BASE CURRENCY
-                baseAmountChange
-                    .subscribeOn(Schedulers.computation())
-                    .observeOn(Schedulers.computation())
-                    // TODO CURRENTLY THIS IS THE REASON IT'S STRIGGERED WHEN SWITCHING TABS. IT'S NOT GOOD!!!
-                    .map { newAmount -> Pair(System.nanoTime(), newAmount) },
-                { currenciesChange, newBaseAmount ->
-                    val trackedCodesWithData = currenciesChange.second
-
-                    if (trackedCodesWithData.isEmpty()) {
-                        listOf()
-                    } else {
-                        // ratios or tracking order changed
-                        if (currenciesChange.first > newBaseAmount.first) {
-                            makeListItemModels(
-                                baseAmount = currenciesListModels.find {
-                                    it.code == trackedCodesWithData.first().code
-                                }
-                                    ?.amount
-                                    ?: DEFAULT_BASE_AMOUNT,
-                                trackedCodesWithData = trackedCodesWithData
-                            )
-                            // base amount change by user
-                        } else {
-                            val baseAmount = newBaseAmount.second
-
-                            makeListItemModels(
-                                baseAmount = baseAmount,
-                                trackedCodesWithData = trackedCodesWithData
-                            )
-                        }
-                    }
-                }
-            )
+            makeListItems(observeRatiosUseCase, observeTrackedCodesUseCase)
                 .doOnNext { listItems -> currenciesListModels = listItems }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                     onNext = { listItems ->
+                        // todo every time we change base it emits twice...
                         emitModels(listItems)
                     },
                     onError = {
@@ -175,6 +125,59 @@ class HomeViewModel(
                 )
         )
     }
+
+    private fun makeListItems(
+        observeRatiosUseCase: IObserveRatiosUseCase,
+        observeTrackedCodesUseCase: IObserveTrackedCodesUseCase
+    ) = Observable.combineLatest(
+        // CODES RATIOS CHANGED
+        Observable.combineLatest(
+            observeRatiosUseCase()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.computation())
+                .doOnNext { lastUpdatedLiveData.postValue(UpdateDate(it.time)) },
+            // TRACKING CODES CHANGED
+            observeTrackedCodesUseCase()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.computation()),
+            { allRatios, trackedCodes ->
+                mapCodeToDataUseCase(codes = trackedCodes, allRatios = allRatios.ratios)
+            }
+        )
+            // TODO STEP AWAY FROM PAIR
+            .map { newAmount -> Pair(System.nanoTime(), newAmount) },
+        // USER INPUT NEW BASE CURRENCY
+        baseAmountChange
+            .subscribeOn(Schedulers.computation())
+            .observeOn(Schedulers.computation())
+            // TODO CURRENTLY THIS IS THE REASON IT'S STRIGGERED WHEN SWITCHING TABS. IT'S NOT GOOD!!!
+            .map { newAmount -> Pair(System.nanoTime(), newAmount) },
+        { currenciesChange, newBaseAmount ->
+            val trackedCodesWithData = currenciesChange.second
+
+            if (trackedCodesWithData.isEmpty()) {
+                listOf()
+            } else {
+                // ratios or tracking order changed
+                if (currenciesChange.first > newBaseAmount.first) {
+                    makeListItemModels(
+                        baseAmount = currenciesListModels.find { it.code == trackedCodesWithData.first().code }
+                            ?.amount
+                            ?: DEFAULT_BASE_AMOUNT,
+                        trackedCodesWithData = trackedCodesWithData
+                    )
+                    // base amount change by user
+                } else {
+                    val baseAmount = newBaseAmount.second
+
+                    makeListItemModels(
+                        baseAmount = baseAmount,
+                        trackedCodesWithData = trackedCodesWithData
+                    )
+                }
+            }
+        }
+    )
 
     fun refreshButtonClicked() {
         fetchRemoteRatios()
@@ -197,7 +200,9 @@ class HomeViewModel(
     }
 
     fun baseCurrencyAmountChanged(newAmount: Double) {
-        baseAmountChange.onNext(newAmount)
+        if (newAmount != baseAmountChange.value) {
+            baseAmountChange.onNext(newAmount)
+        }
     }
 
     fun listItemClicked(newBaseCurrency: SupportedCode) {

@@ -1,5 +1,6 @@
 package com.mieszko.currencyconverter.presentation.home.list.adapter
 
+import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -41,9 +42,13 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
             baseValueChangeAction = { newText -> viewModel.baseCurrencyAmountChanged(newText) },
             clickAction = { viewModel.listItemClicked(currencyModel.code) }
         )
+
         // TODO MERGE INTO ONE
         when (currencyModel) {
             is HomeListModel.Base -> {
+                Log.d("dupa", "1")
+
+
                 // TODO CLICK ACTION SHOULD BE ONLY LETTING VM KNOW WHAT ITEM GOT CLICKED! IT'LL DECIDE WHETHER TO MAKE IT
                 // BASE OR IGNORE
                 holder.setupBaseItem()
@@ -59,32 +64,37 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
         position: Int,
         payloads: MutableList<Any>
     ) {
-        val currency = currentListData[position]
-
         if (payloads.isNotEmpty()) {
-            // TODO STEP AWAY FROM HAVING "SETITEMTYPE" METHOD, AND CALL CONFIG METHODS DIRECTLY FROM HERE?
-            when (val lastPayload = payloads.last()) {
-                is NonBaseCurrencyChange -> {
-                    lastPayload.run {
-                        // don't update value of base currency
-                        if (position != 0) {
-                            amount?.let { holder.setAmount(it) }
-                            thisToBaseText?.let { holder.setThisToBaseText(it) }
-                            baseToThisText?.let { holder.setBaseToThisText(it) }
-                        }
-                    }
-                }
-                is ChangedToBase -> {
-                    // don't update value of base currency
-                    holder.setupBaseItem()
-                }
-                is ChangedToNonBase -> {
-                    // todo rethink if it's not better to set it once as lambda
-                    // don't update value of base currency
-                    holder.setupNonBaseItem(currency as HomeListModel.NonBase)
-                }
+            val modelChange = payloads.last() as ModelChange
+            val newObj = modelChange.new
+            val oldObj = modelChange.old
+
+            if (newObj is HomeListModel.Base && oldObj is HomeListModel.Base) {
+                // do nothing, this will be most probably base value change, which shouldn't trigger the update just so we don't mess with cursor
+                return
             }
-        } else super.onBindViewHolder(holder, position, payloads)
+
+            if (newObj is HomeListModel.NonBase && oldObj is HomeListModel.NonBase) {
+                if (oldObj.amount != newObj.amount) {
+                    holder.setAmount(newObj.amount)
+                }
+                if (oldObj.thisToBaseText != newObj.thisToBaseText) {
+                    holder.setThisToBaseText(newObj.thisToBaseText)
+                }
+                if (oldObj.baseToThisText != newObj.baseToThisText) {
+                    holder.setBaseToThisText(newObj.baseToThisText)
+                }
+
+                return
+            }
+
+            when (newObj) {
+                is HomeListModel.Base -> holder.setupBaseItem()
+                is HomeListModel.NonBase -> holder.setupNonBaseItem(newObj)
+            }
+        } else {
+            super.onBindViewHolder(holder, position, payloads)
+        }
     }
 
     override fun onViewDetachedFromWindow(holder: HomeCurrencyViewHolder) {
@@ -126,42 +136,9 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
             val oldObj = oldList[oldItemPosition]
             val newObj = newList[newItemPosition]
 
-            if (newObj is HomeListModel.Base && oldObj is HomeListModel.Base) {
-                // do nothing if body changed as it is most probably amount change
-            }
-
-            if (newObj is HomeListModel.NonBase && oldObj is HomeListModel.NonBase) {
-                return NonBaseCurrencyChange().apply {
-                    if (oldObj.amount != newObj.amount) {
-                        amount = newObj.amount
-                    }
-                    if (oldObj.thisToBaseText != newObj.thisToBaseText) {
-                        thisToBaseText = newObj.thisToBaseText
-                    }
-                    if (oldObj.baseToThisText != newObj.baseToThisText) {
-                        baseToThisText = newObj.baseToThisText
-                    }
-                }
-            }
-
-            return when (newObj) {
-                is HomeListModel.Base -> ChangedToBase
-                is HomeListModel.NonBase -> ChangedToNonBase(
-                    newObj.thisToBaseText,
-                    newObj.baseToThisText
-                )
-            }
+            return ModelChange(oldObj, newObj)
         }
     }
 
-    object ChangedToBase
-
-    data class ChangedToNonBase(var thisToBaseText: String, var baseToThisText: String)
-
-    // null represents NO CHANGE state
-    data class NonBaseCurrencyChange(
-        var amount: Double? = null,
-        var thisToBaseText: String? = null,
-        var baseToThisText: String? = null
-    )
+    data class ModelChange(val old: HomeListModel, val new: HomeListModel)
 }

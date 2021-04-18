@@ -61,10 +61,12 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
         }
     }
 
+
     @SuppressLint("ClickableViewAccessibility")
     fun setupBaseItem() {
         amountET.removeTextChangedListener(baseTextWatcher)
         baseTextWatcher = amountET.doAfterTextChanged {
+            //todo this is not right, the conversion should happen in the domain layer
             baseTextTextChangeAction?.let { changeAction ->
                 changeAction(it.toString().sanitizeCurrencyValue().toDouble())
             }
