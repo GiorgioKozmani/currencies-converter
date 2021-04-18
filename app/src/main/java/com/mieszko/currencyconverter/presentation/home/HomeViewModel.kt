@@ -132,6 +132,7 @@ class HomeViewModel(
                 baseAmountChange
                     .subscribeOn(Schedulers.computation())
                     .observeOn(Schedulers.computation())
+                    // TODO CURRENTLY THIS IS THE REASON IT'S STRIGGERED WHEN SWITCHING TABS. IT'S NOT GOOD!!!
                     .map { newAmount -> Pair(System.nanoTime(), newAmount) },
                 { currenciesChange, newBaseAmount ->
                     val trackedCodesWithData = currenciesChange.second

@@ -17,23 +17,18 @@ import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 class HomeListFragment : Fragment(R.layout.home_list_fragment) {
     private val viewModel by sharedViewModel<HomeViewModel>()
 
-    // TODO RECONSIDER LATEINITS
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var rvAdapter: HomeCurrenciesListAdapter
-    private lateinit var rvManager: LinearLayoutManager
-    private lateinit var rvDragHelper: CurrenciesListDragHelper
+    private val recyclerView: RecyclerView by lazy { requireView().findViewById(R.id.currencies_rv) }
+    private val rvAdapter: HomeCurrenciesListAdapter by lazy { HomeCurrenciesListAdapter(viewModel) }
+    private val rvManager: LinearLayoutManager by lazy { LinearLayoutManager(context) }
+    private val rvDragHelper: CurrenciesListDragHelper by lazy {
+        CurrenciesListDragHelper { from, to -> viewModel.itemDragged(from, to) }
+    }
 
-    // TODO ENTRY ANIMATION
     // TODO WHEN TIMES'S UPDATED ANIMATE BOUNCE SIZE CHANGE?
     // TODO PLAY WITH ELEVATION
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // TODO VIEWBINDING
-        recyclerView = view.findViewById(R.id.currencies_rv)
-        rvAdapter = HomeCurrenciesListAdapter(viewModel)
-        rvManager = LinearLayoutManager(context)
-        rvDragHelper = CurrenciesListDragHelper { from, to -> viewModel.itemDragged(from, to) }
+        // TODO VIEWBINDING?
         setupRecyclerView()
         observeViewModel()
     }
@@ -44,18 +39,21 @@ class HomeListFragment : Fragment(R.layout.home_list_fragment) {
     }
 
     private fun setupRecyclerView() {
-        recyclerView.setItemViewCacheSize(30)
-        recyclerView.adapter = rvAdapter
-        recyclerView.layoutManager = rvManager
-        rvDragHelper.attachToRecyclerView(recyclerView)
-        rvAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-            override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
-                super.onItemRangeMoved(fromPosition, toPosition, itemCount)
-                if (!rvDragHelper.isUserDraggingItem() || toPosition == 0) {
-                    recyclerView.postOnAnimation { recyclerView.scrollToPosition(0) }
+        recyclerView.apply {
+            // todo play with these settings
+            setItemViewCacheSize(50)
+            adapter = rvAdapter
+            layoutManager = rvManager
+            rvDragHelper.attachToRecyclerView(this)
+            rvAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+                override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
+                    super.onItemRangeMoved(fromPosition, toPosition, itemCount)
+                    if (!rvDragHelper.isUserDraggingItem() || toPosition == 0) {
+                        this@apply.postOnAnimation { this@apply.scrollToPosition(0) }
+                    }
                 }
-            }
-        })
+            })
+        }
     }
 
     private fun handleNewResults(response: Resource<List<HomeListModel>>) {
@@ -89,5 +87,17 @@ class HomeListFragment : Fragment(R.layout.home_list_fragment) {
         if (firstPos >= 0) {
             rvManager.scrollToPositionWithOffset(firstPos, offsetTop)
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
     }
 }

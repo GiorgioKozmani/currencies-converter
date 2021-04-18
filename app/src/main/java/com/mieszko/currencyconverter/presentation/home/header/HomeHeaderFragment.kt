@@ -26,7 +26,12 @@ class HomeHeaderFragment : Fragment(R.layout.home_header_fragment) {
     private lateinit var refreshButton: ImageButton
     private lateinit var refreshInfoButton: ImageButton
 
+    //TODO
+//   https://material.io/components/snackbars
+    // OKAY  OPTION + EXPLANATION THAT WE USE OLD DATA FOR NOW AND YOU CAN CLICK REFRESH BUTTON TO TRY AGAIN
+
     // todo think of the way to handle errors, maybe in parent fragment?
+    // TODO THINK OF INTRUDUCING X SECONDS AGO / TODAY AT / YESTERDAY AT / FULL DATE
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // TODO VIEWBINDING

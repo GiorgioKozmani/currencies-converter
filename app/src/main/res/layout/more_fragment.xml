@@ -9,6 +9,7 @@
         style="@style/TabTitleText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingVertical="20dp"
         android:background="@color/colorPrimary"
         android:elevation="@dimen/base_elevation"
         android:text="@string/more_title"

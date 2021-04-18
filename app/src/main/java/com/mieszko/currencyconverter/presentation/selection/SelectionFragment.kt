@@ -11,7 +11,7 @@ import com.mieszko.currencyconverter.domain.analytics.IFirebaseEventsLogger
 import com.mieszko.currencyconverter.domain.analytics.constants.AnalyticsConstants
 import com.mieszko.currencyconverter.domain.analytics.events.ScreenViewEvent
 import com.mieszko.currencyconverter.domain.model.list.TrackingCurrenciesModel
-import com.mieszko.currencyconverter.presentation.selection.adapter.TrackingListController
+import com.mieszko.currencyconverter.presentation.selection.adapter.SelectionListController
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -23,11 +23,9 @@ class SelectionFragment : Fragment(R.layout.selection_fragment) {
         eventsLogger.logEvent(ScreenViewEvent(AnalyticsConstants.Events.ScreenView.Screen.SELECTION))
     }
 
-    // TODO CONSIDER MATERIAL SEARCHVIEW
-    // todo first back click clears searchview
     private val viewModel by viewModel<SelectionViewModel>()
     private val epoxyController: TypedEpoxyController<List<TrackingCurrenciesModel>> by lazy {
-        TrackingListController(viewModel)
+        SelectionListController(viewModel)
     }
 
     private val searchView: SearchView by lazy { requireView().findViewById(R.id.currency_search_view) }
@@ -39,6 +37,7 @@ class SelectionFragment : Fragment(R.layout.selection_fragment) {
         observeViewModel()
         epoxyRV.setController(epoxyController)
 
+        // TODO THINK OF SEPARATING INTO 2 FRAGMENTS
         // TODO THINK OF INITIAL DATA
         epoxyController.run {
             setData(listOf())

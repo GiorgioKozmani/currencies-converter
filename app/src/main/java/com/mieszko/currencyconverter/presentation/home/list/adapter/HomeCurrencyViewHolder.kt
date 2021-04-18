@@ -39,7 +39,6 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
     private var baseTextWatcher: TextWatcher? = null
     private var baseTextTextChangeAction: ((Double) -> Unit)? = null
 
-    // TODO HAVE THIS TEXTWATCHER BEING INIT ONLY ONCE AND SHARED ACROSS VHs
     // TODO DECOUPLE FOCUS FROM BASE / REGULAR
     fun bind(
         currencyModel: HomeListModel,
@@ -74,11 +73,6 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
         amountET.isFocusableInTouchMode = true
         amountET.setTextIsSelectable(true)
 
-//        amountET.post {
-//            amountET.requestFocus()
-//            amountET.showKeyboard()
-//        }
-
         amountET.setOnTouchListener { _, _ -> false }
         setBaseUI()
     }
@@ -105,7 +99,6 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
     }
 
     private fun setBaseUI() {
-        // todo gradient?
         baseToThisTV.visibility = View.GONE
         thisToBaseTV.visibility = View.GONE
         nameTV.setTextSize(textSizeUnit, baseCurrencyTextSize)

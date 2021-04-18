@@ -6,7 +6,7 @@
         android:title="@string/nav_bar_calculator" />
 
     <item
-        android:id="@+id/trackingFragment"
+        android:id="@+id/selectionFragment"
         android:icon="@drawable/round_euro_black_24"
         android:title="@string/nav_bar_currencies" />
 

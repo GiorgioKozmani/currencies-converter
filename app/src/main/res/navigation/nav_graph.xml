@@ -12,7 +12,7 @@
         tools:layout="@layout/home_fragment" />
 
     <fragment
-        android:id="@+id/trackingFragment"
+        android:id="@+id/selectionFragment"
         android:name="com.mieszko.currencyconverter.presentation.selection.SelectionFragment"
         android:label="TrackingFragment"
         tools:layout="@layout/selection_fragment" />

@@ -40,7 +40,6 @@
     </style>
 
     <style name="TabTitleText">
-        <item name="android:padding">16dp</item>
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:textAlignment">center</item>
         <item name="android:textColor">@color/white</item>

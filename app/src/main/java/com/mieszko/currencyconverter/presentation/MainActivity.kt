@@ -12,6 +12,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mieszko.currencyconverter.R
 
+
 class MainActivity :
     AppCompatActivity(R.layout.activity_main),
     NavController.OnDestinationChangedListener {
@@ -36,7 +37,7 @@ class MainActivity :
                 R.id.homeFragment -> {
                     // TODO ON RESELECTION CALL FRAGMENT METHOD TO CLICK REFRESH
                 }
-                R.id.trackingFragment -> {
+                R.id.selectionFragment -> {
                     // TODO ON RESELECTION CLEAR SEARCH, HIDE KEYBOARD AND SCROLL TOP
                 }
 //                R.id.moreFragment -> {
@@ -62,4 +63,12 @@ class MainActivity :
         val imm = context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(windowToken, 0)
     }
+
+//    override fun onBackPressed() {
+//        if (bottomNavigation.selectedItemId == R.id.homeFragment) {
+//            super.onBackPressed()
+//        } else {
+//            bottomNavigation.selectedItemId = R.id.homeFragment
+//        }
+//    }
 }
