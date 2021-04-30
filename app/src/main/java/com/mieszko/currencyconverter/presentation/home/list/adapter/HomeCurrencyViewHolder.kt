@@ -15,8 +15,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.mieszko.currencyconverter.R
-import com.mieszko.currencyconverter.common.util.showKeyboard
 import com.mieszko.currencyconverter.domain.model.list.HomeListModel
+import com.mieszko.currencyconverter.presentation.util.showKeyboard
 import java.text.DecimalFormat
 
 // TODO THINGS NEED TO BE SIMPLIFIED HERE, IT TAKES WAY TOO LONG TIME TO BIND THIS VIEWH HOLDER, AND FIRST SCROLLING IS SLOW

@@ -75,7 +75,7 @@
             app:layout_constraintTop_toBottomOf="@+id/this_to_base"
             tools:text="1 eur = 5 pln" />
 
-        <com.mieszko.currencyconverter.common.util.ClearingFocusEditText
+        <com.mieszko.currencyconverter.presentation.util.views.ClearingFocusEditText
             android:id="@+id/currency_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

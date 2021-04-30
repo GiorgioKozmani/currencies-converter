@@ -12,7 +12,6 @@ class MoveTrackedCodeToTopUseCase(
     private val saveTrackedCodesUseCase: ISaveTrackedCodesUseCase
 ) : IMoveTrackedCodeToTopUseCase {
     override fun invoke(codeToMove: SupportedCode): Completable =
-        // todo get threading right
         getTrackedCodesOnceUseCase()
             .flatMapCompletable { currentTrackedCodes ->
                 // todo check thread

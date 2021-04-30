@@ -14,19 +14,16 @@ class MapDataToCodesUseCase(
     override fun invoke(
         codes: List<SupportedCode>,
         allRatios: EnumMap<SupportedCode, Double>
-    ): List<CodeWithData> =
-        codes.mapNotNull { code ->
-            // TODO CHECK THREADING!
-            val toUahRatio = allRatios[code]
-            // todo rename
-            val data = codesDataRepository.getCodeStaticData(code)
+    ): List<CodeWithData> = codes.mapNotNull { code ->
+        val toUahRatio = allRatios[code]
+        val data = codesDataRepository.getCodeStaticData(code)
 
-            if (toUahRatio != null && data != null) {
-                CodeWithData(code = code, toUahRatio = toUahRatio, staticData = data)
-            } else {
-                null
-            }
+        if (toUahRatio != null && data != null) {
+            CodeWithData(code = code, toUahRatio = toUahRatio, staticData = data)
+        } else {
+            null
         }
+    }
 }
 
 interface IMapDataToCodesUseCase {

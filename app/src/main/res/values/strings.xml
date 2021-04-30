@@ -59,10 +59,6 @@
     <string name="tjs_full">Tajikistani Somoni</string>
     <string name="gel_full">Georgian Lari</string>
 
-    <!--TODO NOT USED-->
-    <string name="gold_full">Gold Ounce</string>
-    <string name="silver_full">Silver Ounce</string>
-
     <!--  rate app widget strings  -->
     <string name="rate_app_dialog_title">Rate this app</string>
     <string name="rate_app_dialog_description">This app is made to make your life a little easier. How does it do the job?</string>

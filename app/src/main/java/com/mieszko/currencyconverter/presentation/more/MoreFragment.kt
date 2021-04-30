@@ -1,6 +1,8 @@
 package com.mieszko.currencyconverter.presentation.more
 
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -100,8 +102,10 @@ class MoreFragment : Fragment(R.layout.more_fragment) {
             .setDescription(R.string.privacy_policy_desc)
             .setIcon(R.drawable.outline_policy_black_48)
             .doOnClick {
-                PrivacyPolicyDialog()
-                    .show(childFragmentManager, PRIVACY_POLICY_DIALOG_TAG)
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://your-currency-conver.flycricket.io/privacy.html"))
+                startActivity(browserIntent)
+//                PrivacyPolicyDialog()
+//                    .show(childFragmentManager, PRIVACY_POLICY_DIALOG_TAG)
             }
             .build()
 

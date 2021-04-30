@@ -21,7 +21,6 @@ object EmailHelper {
 
         val intent = Intent(Intent.ACTION_SENDTO)
         intent.data = Uri.parse("mailto:")
-        //todo try just 1 email
         val addresses = arrayOfNulls<String>(1)
         addresses[0] = context.getString(R.string.support_email)
         intent.putExtra(Intent.EXTRA_EMAIL, addresses)

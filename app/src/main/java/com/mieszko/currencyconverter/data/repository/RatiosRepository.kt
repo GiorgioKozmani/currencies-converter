@@ -19,7 +19,6 @@ class RatiosRepository(
 //    The important thing you need to understand is,
 //    whether it comes from the network that goes into the disk,
 //    it NEVER goes back to the UI. This makes the disk your single source of truth, any time where this changes, your UI always shows the latest information.
-//    **If you do this RxJava operation “pull from network, pull from disk, whoever comes last return it to the user” you are doing it wrong.**
 
     // TODO ADD SOME STATIC DATA TO CACHE ON FIRST RUN SO SMTH'S AVAILABLE?
     // TODO HANDLE TOO FREQUENT REFRESH CLICKS (INTRODUCE MINUMUM LOADING TIME? )

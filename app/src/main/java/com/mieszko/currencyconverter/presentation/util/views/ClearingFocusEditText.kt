@@ -1,4 +1,4 @@
-package com.mieszko.currencyconverter.common.util
+package com.mieszko.currencyconverter.presentation.util.views
 
 import android.content.Context
 import android.util.AttributeSet

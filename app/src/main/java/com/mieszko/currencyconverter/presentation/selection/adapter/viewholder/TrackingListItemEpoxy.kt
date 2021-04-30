@@ -20,7 +20,6 @@ abstract class TrackingListItemEpoxy : EpoxyModelWithHolder<TrackingListItemView
     @EpoxyAttribute
     lateinit var model: TrackingCurrenciesModel
 
-    // todo look for emplate project if we could benefit from that too
     @EpoxyAttribute(EpoxyAttribute.Option.DoNotHash)
     lateinit var clickAction: () -> Unit
 
@@ -99,7 +98,6 @@ class TrackingListItemViewHolder : EpoxyHolder() {
     private val shortAnimTime = 150L
     private val mediumAnimTime = 200L
 
-    // TODO INTRODUCE INTERPOLATOR, factor out
     fun animateSelected() {
         selectedCheckbox.animate()
             .scaleX(1.3f)

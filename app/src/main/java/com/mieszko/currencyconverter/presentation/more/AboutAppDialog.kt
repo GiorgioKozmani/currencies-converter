@@ -12,16 +12,12 @@ class AboutAppDialog : DialogFragment() {
     @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let { activity ->
-            val dialogView =
-                requireActivity().layoutInflater.inflate(R.layout.rate_dialog_layout, null)
-
             MaterialAlertDialogBuilder(activity).apply {
                 setTitle(R.string.about_title)
-                setMessage("(Fajnie by bylo ladnie to wystylować) Tutaj napiszę kim jestem, dlaczego zrobilem ta apke, dla kogo ona jest, co mnie motywowalo. Podkreśl ze nie kradnę danych bo mnie wkurzlao ze inne kradna, credits dla ikonek, datasource?, podkresl plany na przyszlosc " +
-                        "tj wiecej currencies. Podziekuj za uzycie aplikacji, zachęć do sharowania")
-//                setView(dialogView)
-                    // Add action buttons
-                    .setPositiveButton(R.string.okay) { dialog, _ -> dialog.cancel() }
+                setMessage(
+                    "(Fajnie by bylo ladnie to wystylować) Tutaj napiszę kim jestem, dlaczego zrobilem ta apke, dla kogo ona jest, co mnie motywowalo. Podkreśl ze nie kradnę danych bo mnie wkurzlao ze inne kradna, credits dla ikonek, datasource?, podkresl plany na przyszlosc " +
+                            "tj wiecej currencies. Podziekuj za uzycie aplikacji, zachęć do sharowania"
+                ).setPositiveButton(R.string.okay) { dialog, _ -> dialog.cancel() }
             }.create()
 
         } ?: throw IllegalStateException("Activity cannot be null")

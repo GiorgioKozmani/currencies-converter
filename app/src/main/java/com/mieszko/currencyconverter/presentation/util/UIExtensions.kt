@@ -1,5 +1,8 @@
 package com.mieszko.currencyconverter.presentation.util
 
+import android.content.Context
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.TextView
 
 fun TextView.fadeInText(newText: String, animDuration: Long? = null) {
@@ -13,7 +16,6 @@ fun TextView.fadeInText(newText: String, animDuration: Long? = null) {
         .alpha(0f)
         .scaleX(1.2f)
         .scaleY(1.2f)
-// todo check out interpolators, Z index
         .withEndAction {
             text = newText
             animate().setDuration(fadeInDur)
@@ -21,4 +23,9 @@ fun TextView.fadeInText(newText: String, animDuration: Long? = null) {
                 .scaleX(1f)
                 .scaleY(1f)
         }
+}
+
+fun EditText.showKeyboard() {
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
 }
