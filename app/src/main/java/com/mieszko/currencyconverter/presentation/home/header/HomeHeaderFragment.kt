@@ -26,7 +26,7 @@ class HomeHeaderFragment : Fragment(R.layout.home_header_fragment) {
     private lateinit var refreshButton: ImageButton
     private lateinit var refreshInfoButton: ImageButton
 
-    //TODO
+    // TODO
 //   https://material.io/components/snackbars
     // OKAY  OPTION + EXPLANATION THAT WE USE OLD DATA FOR NOW AND YOU CAN CLICK REFRESH BUTTON TO TRY AGAIN
 

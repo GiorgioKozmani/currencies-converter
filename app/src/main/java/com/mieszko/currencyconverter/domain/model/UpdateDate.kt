@@ -20,4 +20,3 @@ data class UpdateDate(private val date: Date) {
         class Stale(override val date: Date) : StatefulDate()
     }
 }
-

@@ -35,13 +35,15 @@ internal class MoreItemsAdapter(private val items: List<MoreListItem>) :
         fun bind(item: MoreListItem) {
             title.text = item.itemTitle
             description.text = item.itemDescription
-            leftIcon.setImageDrawable(item.iconDrawable
-                .apply {
-                    DrawableCompat.setTint(
-                        this.mutate(),
-                        ContextCompat.getColor(itemView.context, item.iconTintColorRes)
-                    )
-                })
+            leftIcon.setImageDrawable(
+                item.iconDrawable
+                    .apply {
+                        DrawableCompat.setTint(
+                            this.mutate(),
+                            ContextCompat.getColor(itemView.context, item.iconTintColorRes)
+                        )
+                    }
+            )
             itemView.setOnClickListener(item.onClickListener)
         }
     }

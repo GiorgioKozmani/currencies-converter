@@ -11,7 +11,6 @@ import androidx.annotation.StringRes
 import androidx.core.content.res.ResourcesCompat
 import com.mieszko.currencyconverter.R
 
-
 class MoreListItem private constructor() {
     var itemTitle: String = ""
         private set

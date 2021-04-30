@@ -17,7 +17,6 @@ import com.mieszko.currencyconverter.presentation.more.list.MoreListItem
 import com.mieszko.currencyconverter.presentation.util.EmailHelper
 import org.koin.android.ext.android.inject
 
-
 class MoreFragment : Fragment(R.layout.more_fragment) {
 
     private companion object {
@@ -40,8 +39,9 @@ class MoreFragment : Fragment(R.layout.more_fragment) {
         super.onViewCreated(view, savedInstanceState)
         // todo events logging for this
         setupAdapter(
-            view, listOf(
-                //todo maybe is not needed, read google requirements
+            view,
+            listOf(
+                // todo maybe is not needed, read google requirements
                 getPrivacyPolicyItem(),
                 getFeedbackItem(),
                 // TODO Trigger 1 is activated after the customer opens the app for a certain number times in a day

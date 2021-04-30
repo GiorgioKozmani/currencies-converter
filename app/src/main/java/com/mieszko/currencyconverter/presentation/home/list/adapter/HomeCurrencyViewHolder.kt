@@ -46,10 +46,7 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
         clickAction: () -> Unit
     ) {
         itemView.setOnClickListener {
-            amountET.postDelayed({
-                amountET.requestFocus()
-                amountET.showKeyboard()
-            }, KEYBOARD_OPEN_DELAY_MS)
+            requestAmountFocus()
             clickAction()
         }
         baseTextTextChangeAction = baseValueChangeAction
@@ -61,38 +58,39 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
         }
     }
 
-
     @SuppressLint("ClickableViewAccessibility")
     fun setupBaseItem() {
-        amountET.removeTextChangedListener(baseTextWatcher)
+        amountET.apply {
+            removeTextChangedListener(baseTextWatcher)
+            isFocusableInTouchMode = true
+            setTextIsSelectable(true)
+            setOnTouchListener { _, _ -> false }
+        }
+
         baseTextWatcher = amountET.doAfterTextChanged {
-            //todo this is not right, the conversion should happen in the domain layer
+            // todo this is not right, the conversion should happen in the domain layer
             baseTextTextChangeAction?.let { changeAction ->
                 changeAction(it.toString().sanitizeCurrencyValue().toDouble())
             }
         }
 
-        amountET.isFocusableInTouchMode = true
-        amountET.setTextIsSelectable(true)
-
-        amountET.setOnTouchListener { _, _ -> false }
         setBaseUI()
     }
 
     @SuppressLint("ClickableViewAccessibility")
     fun setupNonBaseItem(currencyModel: HomeListModel.NonBase) {
-        amountET.removeTextChangedListener(baseTextWatcher)
-
-        amountET.setOnTouchListener { _, event ->
-            // make parent duplicate touch events so it can be dragged by ET
-            itemView.onTouchEvent(event)
-            // do not consume event
-            false
+        amountET.apply {
+            removeTextChangedListener(baseTextWatcher)
+            setOnTouchListener { _, event ->
+                // make parent duplicate touch events so it can be dragged by ET
+                itemView.onTouchEvent(event)
+                // do not consume event
+                false
+            }
+            isFocusableInTouchMode = false
+            setTextIsSelectable(false)
+            clearFocus()
         }
-
-        amountET.isFocusableInTouchMode = false
-        amountET.setTextIsSelectable(false)
-        amountET.clearFocus()
 
         setThisToBaseText(currencyModel.thisToBaseText)
         setBaseToThisText(currencyModel.baseToThisText)
@@ -206,6 +204,16 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
         }
 
         return strToReturn
+    }
+
+    fun requestAmountFocus() {
+        amountET.postDelayed(
+            {
+                amountET.requestFocus()
+                amountET.showKeyboard()
+            },
+            KEYBOARD_OPEN_DELAY_MS
+        )
     }
 
     fun clearFocusAndHideKeyboard() {

@@ -29,17 +29,18 @@ object EmailHelper {
         val body = context.getString(R.string.support_mail_prompt_text)
 
         intent.putExtra(
-            Intent.EXTRA_TEXT, """$body
+            Intent.EXTRA_TEXT,
+            """$body
 ________________
 
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
 ________________
- 
+
 Device: ${Build.MANUFACTURER} ${Build.MODEL}
 OS version: ${Build.VERSION.RELEASE}
 App version: $appVersion"""

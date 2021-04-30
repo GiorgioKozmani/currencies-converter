@@ -48,7 +48,6 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
             is HomeListModel.Base -> {
                 Log.d("dupa", "1")
 
-
                 // TODO CLICK ACTION SHOULD BE ONLY LETTING VM KNOW WHAT ITEM GOT CLICKED! IT'LL DECIDE WHETHER TO MAKE IT
                 // BASE OR IGNORE
                 holder.setupBaseItem()
@@ -89,7 +88,12 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
             }
 
             when (newObj) {
-                is HomeListModel.Base -> holder.setupBaseItem()
+                is HomeListModel.Base -> {
+                    holder.setupBaseItem()
+                    // This is only done in this overload of onBindViewHolder, because it won't be triggered on screen opening.
+                    // We don't want the keyboard to show up automatically after navigating to calculator.
+                    holder.requestAmountFocus()
+                }
                 is HomeListModel.NonBase -> holder.setupNonBaseItem(newObj)
             }
         } else {

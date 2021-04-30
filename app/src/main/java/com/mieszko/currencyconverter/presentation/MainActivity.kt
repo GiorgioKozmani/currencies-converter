@@ -12,7 +12,6 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mieszko.currencyconverter.R
 
-
 class MainActivity :
     AppCompatActivity(R.layout.activity_main),
     NavController.OnDestinationChangedListener {
