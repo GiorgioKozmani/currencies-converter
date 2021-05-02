@@ -92,5 +92,7 @@
     <string name="about_title">About</string>
     <string name="about_desc">This app is developed by one guy. Here\'s the story behind it.</string>
     <string name="got_it">Got it</string>
+    <string name="no_currencies_title">You track no currencies</string>
+    <string name="no_currencies_subtitle">Navigate to Currencies tab and select currencies that you want to track</string>
 
 </resources>

@@ -26,7 +26,6 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 import java.math.BigDecimal
 import java.math.MathContext
 import java.net.UnknownHostException
-import java.util.NoSuchElementException
 import java.util.concurrent.TimeUnit
 import kotlin.math.pow
 import kotlin.math.roundToLong
@@ -53,6 +52,8 @@ class HomeViewModel(
 
     private val currenciesListModelsLiveData: MutableLiveData<Resource<List<HomeListModel>>> =
         MutableLiveData()
+    private val showNoContentStateLiveData: MutableLiveData<Boolean> =
+        MutableLiveData()
     private val lastUpdatedLiveData: MutableLiveData<UpdateDate> =
         MutableLiveData()
     private val isLoadingLiveData: MutableLiveData<Boolean> =
@@ -61,6 +62,9 @@ class HomeViewModel(
     // Exposing only LiveData
     fun getCurrenciesLiveData(): LiveData<Resource<List<HomeListModel>>> =
         currenciesListModelsLiveData
+
+    fun getShowNoContentStateLiveData(): LiveData<Boolean> =
+        showNoContentStateLiveData
 
     fun getLastUpdatedLiveData(): LiveData<UpdateDate> =
         lastUpdatedLiveData
@@ -143,8 +147,15 @@ class HomeViewModel(
                 mapCodeToDataUseCase(codes = trackedCodes, allRatios = allRatios.ratios)
             }
         )
+            .doOnNext { codeWithData ->
+                if (codeWithData.isNullOrEmpty()) {
+                    showNoContentStateLiveData.postValue(true)
+                } else {
+                    showNoContentStateLiveData.postValue(false)
+                }
+            }
             // TODO STEP AWAY FROM PAIR
-            .map { newAmount -> Pair(System.nanoTime(), newAmount) },
+            .map { codeWithData -> Pair(System.nanoTime(), codeWithData) },
         // USER INPUT NEW BASE CURRENCY
         baseAmountChange
             .subscribeOn(Schedulers.computation())

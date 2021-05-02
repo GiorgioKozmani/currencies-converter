@@ -5,7 +5,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 
-fun TextView.fadeInText(newText: String, animDuration: Long? = null) {
+fun TextView.animateInText(newText: String, animDuration: Long? = null) {
     val dur = animDuration
         ?: resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
 

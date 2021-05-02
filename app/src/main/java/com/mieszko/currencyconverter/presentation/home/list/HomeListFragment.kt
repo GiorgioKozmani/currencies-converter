@@ -19,6 +19,7 @@ class HomeListFragment : Fragment(R.layout.home_list_fragment) {
 
     private lateinit var recyclerView: RecyclerView
     private val rvAdapter: HomeCurrenciesListAdapter by lazy { HomeCurrenciesListAdapter(viewModel) }
+    private val emptyState: View by lazy { requireView().findViewById(R.id.no_content_state_holder) }
     private val rvDragHelper: CurrenciesListDragHelper by lazy {
         CurrenciesListDragHelper { from, to -> viewModel.itemDragged(from, to) }
     }
@@ -32,6 +33,26 @@ class HomeListFragment : Fragment(R.layout.home_list_fragment) {
     private fun observeViewModel() {
         viewModel.getCurrenciesLiveData()
             .observe(viewLifecycleOwner, { handleNewResults(it) })
+
+        viewModel.getShowNoContentStateLiveData()
+            .observe(
+                viewLifecycleOwner,
+                { showEmptyState ->
+                    if (showEmptyState) {
+                        showEmptyState()
+                    } else {
+                        hideEmptyState()
+                    }
+                }
+            )
+    }
+
+    private fun showEmptyState() {
+        emptyState.visibility = View.VISIBLE
+    }
+
+    private fun hideEmptyState() {
+        emptyState.visibility = View.GONE
     }
 
     private fun setupRecyclerView(view: View) {

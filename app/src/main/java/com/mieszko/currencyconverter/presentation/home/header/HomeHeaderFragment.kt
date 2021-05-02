@@ -13,7 +13,7 @@ import com.mieszko.currencyconverter.domain.analytics.IFirebaseEventsLogger
 import com.mieszko.currencyconverter.domain.analytics.events.ButtonClickedEvent
 import com.mieszko.currencyconverter.domain.model.UpdateDate
 import com.mieszko.currencyconverter.presentation.home.HomeViewModel
-import com.mieszko.currencyconverter.presentation.util.fadeInText
+import com.mieszko.currencyconverter.presentation.util.animateInText
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
@@ -84,7 +84,7 @@ class HomeHeaderFragment : Fragment(R.layout.home_header_fragment) {
 
         when (dateState) {
             is UpdateDate.StatefulDate.Fresh -> {
-                lastUpdatedTV.fadeInText(
+                lastUpdatedTV.animateInText(
                     dateText,
                     resources.getInteger(android.R.integer.config_longAnimTime).toLong()
                 )
