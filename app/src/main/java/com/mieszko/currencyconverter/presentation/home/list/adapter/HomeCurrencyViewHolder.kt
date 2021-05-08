@@ -151,15 +151,18 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
     }
 
     private fun String.sanitizeCurrencyValue(): String {
-        if (this.trim() == "") {
+        var strToReturn = this
+
+        strToReturn = strToReturn.replace(",", ".")
+
+        if (strToReturn.trim() == "") {
             return "0"
         }
 
-        if (this.trim() == ".") {
+        if (strToReturn.trim() == ".") {
             return "0."
         }
 
-        var strToReturn = this
         if (strToReturn.startsWith(".")) {
             strToReturn = "0$strToReturn"
         }

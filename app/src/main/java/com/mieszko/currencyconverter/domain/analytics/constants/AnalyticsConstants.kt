@@ -70,16 +70,21 @@ object AnalyticsConstants {
             }
         }
 
-        object ItemDragged {
-            // todo
-        }
-
-        object SendClicked {
-            const val EVENT = "send_clicked"
+        object MoreTabItemClicked {
+            const val EVENT = "more_tab_item_clicked"
 
             object Params {
-                const val TIME_BETWEEN_CLICKS = "time_between_clicks"
+                // TODO INTRODUCE COMMON PARAMS
+                const val NAME = FirebaseAnalytics.Param.ITEM_NAME
             }
+
+            enum class MORE_ITEM {
+                ABOUT, PRIVACY, RATE, FEEDBACK
+            }
+        }
+
+        object ItemDragged {
+            // todo
         }
     }
 

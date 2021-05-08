@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mieszko.currencyconverter.R
 import com.mieszko.currencyconverter.domain.analytics.IFirebaseEventsLogger
 import com.mieszko.currencyconverter.domain.analytics.constants.AnalyticsConstants
+import com.mieszko.currencyconverter.domain.analytics.events.MoreTabItemClickedEvent
 import com.mieszko.currencyconverter.domain.analytics.events.ScreenViewEvent
 import com.mieszko.currencyconverter.presentation.more.list.MoreItemsAdapter
 import com.mieszko.currencyconverter.presentation.more.list.MoreListItem
@@ -21,17 +22,12 @@ class MoreFragment : Fragment(R.layout.more_fragment) {
 
     private companion object {
         const val RATE_APP_DIALOG_TAG = "RateAppDialogFragmentTag"
-        const val PRIVACY_POLICY_DIALOG_TAG = "PrivacyPolicyDialogFragmentTag"
         const val ABOUT_APP_DIALOG_TAG = "AboutAppDialogFragmentTag"
     }
 
     private val eventsLogger: IFirebaseEventsLogger by inject()
     private val appVersionTV: TextView by lazy { requireView().findViewById(R.id.app_version) }
 
-// SHARE APP
-// SEARCH ICON INSTEAD OF EURO ,EURO FOR HOME PAGE?
-// CONSIDER USING GRID WITH ITEMS + LITTLE DESCRIPTION INSTEAD OF SIMPLE LIST AS THERE WILL BE LITTLE ITEMS
-// todo look for some lottie animations, maybe something would fit
 // TODO PROGUARD! OR R8?
     // https://firebase.google.com/support/guides/launch-checklist?authuser=0
 
@@ -71,8 +67,9 @@ class MoreFragment : Fragment(R.layout.more_fragment) {
             .setDescription(R.string.about_desc)
             .setIcon(R.drawable.round_emoji_people_black_48)
             .doOnClick {
-                AboutAppDialog()
-                    .show(childFragmentManager, ABOUT_APP_DIALOG_TAG)
+                eventsLogger.logEvent(MoreTabItemClickedEvent(AnalyticsConstants.Events.MoreTabItemClicked.MORE_ITEM.ABOUT))
+
+                AboutAppDialog().show(childFragmentManager, ABOUT_APP_DIALOG_TAG)
             }
             .build()
 
@@ -82,8 +79,9 @@ class MoreFragment : Fragment(R.layout.more_fragment) {
             .setDescription(R.string.rate_app_description)
             .setIcon(R.drawable.outline_thumbs_up_down_black_48)
             .doOnClick {
-                RateAppDialog()
-                    .show(childFragmentManager, RATE_APP_DIALOG_TAG)
+                eventsLogger.logEvent(MoreTabItemClickedEvent(AnalyticsConstants.Events.MoreTabItemClicked.MORE_ITEM.RATE))
+
+                RateAppDialog().show(childFragmentManager, RATE_APP_DIALOG_TAG)
             }
             .build()
     }
@@ -93,7 +91,11 @@ class MoreFragment : Fragment(R.layout.more_fragment) {
             .setTitle(R.string.leave_feedback_title)
             .setDescription(R.string.leave_feedback_desc)
             .setIcon(R.drawable.outline_wb_incandescent_black_48)
-            .doOnClick { EmailHelper.openFeedbackEmail(requireContext()) }
+            .doOnClick {
+                eventsLogger.logEvent(MoreTabItemClickedEvent(AnalyticsConstants.Events.MoreTabItemClicked.MORE_ITEM.FEEDBACK))
+
+                EmailHelper.openFeedbackEmail(requireContext())
+            }
             .build()
 
     private fun getPrivacyPolicyItem() =
@@ -102,17 +104,24 @@ class MoreFragment : Fragment(R.layout.more_fragment) {
             .setDescription(R.string.privacy_policy_desc)
             .setIcon(R.drawable.outline_policy_black_48)
             .doOnClick {
-                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://your-currency-conver.flycricket.io/privacy.html"))
-                startActivity(browserIntent)
-//                PrivacyPolicyDialog()
-//                    .show(childFragmentManager, PRIVACY_POLICY_DIALOG_TAG)
+                eventsLogger.logEvent(MoreTabItemClickedEvent(AnalyticsConstants.Events.MoreTabItemClicked.MORE_ITEM.PRIVACY))
+
+                startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://your-currency-conver.flycricket.io/privacy.html")
+                    )
+                )
             }
             .build()
 
     private fun setupVersionName() {
         try {
             val packageInfo = requireContext().run { packageManager.getPackageInfo(packageName, 0) }
-            appVersionTV.text = "TODO APP NAME, v" + packageInfo.versionName
+            val versionText = packageInfo.versionName
+            val appName = getString(R.string.app_name)
+
+            appVersionTV.text = "$appName $versionText"
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
