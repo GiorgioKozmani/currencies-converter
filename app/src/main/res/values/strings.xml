@@ -78,7 +78,7 @@
     <string name="nav_bar_more">More</string>
     <!--    HOME TAB    -->
     <string name="main_page_title">Your currencies</string>
-    <string name="refresh_info">The application downloads the exchange rates from the server of the National Bank of Ukraine, which provides current exchange rates ONCE A DAY. This means that the calculations may differ from the actual rates by small amounts. At the top of the screen, you can see the time the app last successfully synchronized the rates with the bank. If the phone did not have internet access when launching the application, the app will use the last known rates downloaded before. The refresh option allows you to retry data synchronization with the National Bank of Ukraine without restarting the application. </string>
+    <string name="refresh_info">This application downloads exchange rates from the server of National Bank of Ukraine, which provides current exchange rates ONCE A DAY. This means that the calculations may differ from the actual rates by small amounts. At the top of the screen, you can see the time the app last successfully synchronized the rates with the bank. If the phone did not have internet access when launching the application, the app will use the latest downloaded rates. The refresh option allows you to retry data synchronization with the National Bank of Ukraine without restarting the application. </string>
     <string name="home_info_dialog_title">Important info</string>
     <string name="no_currencies_title">You track no currencies</string>
     <string name="no_currencies_subtitle">Navigate to Currencies tab and select currencies that you want to track</string>
