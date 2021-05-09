@@ -19,15 +19,21 @@ class HomeListFragment : Fragment(R.layout.home_list_fragment) {
 
     private lateinit var recyclerView: RecyclerView
     private val rvAdapter: HomeCurrenciesListAdapter by lazy { HomeCurrenciesListAdapter(viewModel) }
-    private val emptyState: View by lazy { requireView().findViewById(R.id.no_content_state_holder) }
+    private lateinit var emptyState: View
     private val rvDragHelper: CurrenciesListDragHelper by lazy {
         CurrenciesListDragHelper { from, to -> viewModel.itemDragged(from, to) }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupRecyclerView(view)
+        assignViews(view)
+        setupRecyclerView(recyclerView)
         observeViewModel()
+    }
+
+    private fun assignViews(view: View) {
+        emptyState = view.findViewById(R.id.no_content_state_holder)
+        recyclerView = view.findViewById(R.id.currencies_rv)
     }
 
     private fun observeViewModel() {
@@ -55,18 +61,15 @@ class HomeListFragment : Fragment(R.layout.home_list_fragment) {
         emptyState.visibility = View.GONE
     }
 
-    private fun setupRecyclerView(view: View) {
-        recyclerView = view.findViewById<RecyclerView>(R.id.currencies_rv).apply {
-            setItemViewCacheSize(30)
-            adapter = rvAdapter
-        }
-
-        rvDragHelper.attachToRecyclerView(recyclerView)
+    private fun setupRecyclerView(rv: RecyclerView) {
+        rv.setItemViewCacheSize(30)
+        rv.adapter = rvAdapter
+        rvDragHelper.attachToRecyclerView(rv)
         rvAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
                 super.onItemRangeMoved(fromPosition, toPosition, itemCount)
                 if (!rvDragHelper.isUserDraggingItem() || toPosition == 0) {
-                    recyclerView.postOnAnimation { recyclerView.scrollToPosition(0) }
+                    rv.postOnAnimation { rv.scrollToPosition(0) }
                 }
             }
         })

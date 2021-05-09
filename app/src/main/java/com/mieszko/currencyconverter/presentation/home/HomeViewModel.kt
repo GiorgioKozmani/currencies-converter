@@ -142,18 +142,18 @@ class HomeViewModel(
             // TRACKING CODES CHANGED
             observeTrackedCodesUseCase()
                 .subscribeOn(Schedulers.io())
+                .doOnNext { codeWithData ->
+                    if (codeWithData.isNullOrEmpty()) {
+                        showNoContentStateLiveData.postValue(true)
+                    } else {
+                        showNoContentStateLiveData.postValue(false)
+                    }
+                }
                 .observeOn(Schedulers.computation()),
             { allRatios, trackedCodes ->
                 mapCodeToDataUseCase(codes = trackedCodes, allRatios = allRatios.ratios)
             }
         )
-            .doOnNext { codeWithData ->
-                if (codeWithData.isNullOrEmpty()) {
-                    showNoContentStateLiveData.postValue(true)
-                } else {
-                    showNoContentStateLiveData.postValue(false)
-                }
-            }
             // TODO STEP AWAY FROM PAIR
             .map { codeWithData -> Pair(System.nanoTime(), codeWithData) },
         // USER INPUT NEW BASE CURRENCY

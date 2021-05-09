@@ -1,6 +1,5 @@
 package com.mieszko.currencyconverter.domain.analytics.constants
 
-import androidx.annotation.IntRange
 import com.google.firebase.analytics.FirebaseAnalytics
 
 object AnalyticsConstants {
