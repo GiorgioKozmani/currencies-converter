@@ -12,11 +12,11 @@ class BaseValueChangedEvent(
     AnalyticsConstants.Events.BaseValueChanged.EVENT,
     listOf(
         FirebaseParameter.StringParameter(
-            AnalyticsConstants.Events.BaseValueChanged.Params.CODE,
+            AnalyticsConstants.Events.CommonParams.CODE,
             baseCode.name
         ),
         FirebaseParameter.DoubleParameter(
-            AnalyticsConstants.Events.BaseValueChanged.Params.VALUE,
+            AnalyticsConstants.Events.CommonParams.VALUE,
             baseValue
         )
     )

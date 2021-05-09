@@ -10,7 +10,7 @@ class ButtonClickedEvent(
     AnalyticsConstants.Events.ButtonClicked.EVENT,
     listOf(
         FirebaseParameter.StringParameter(
-            AnalyticsConstants.Events.ButtonClicked.Params.NAME,
+            AnalyticsConstants.Events.CommonParams.NAME,
             buttonName
         )
     )

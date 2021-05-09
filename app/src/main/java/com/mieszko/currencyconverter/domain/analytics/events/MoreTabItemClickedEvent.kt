@@ -5,12 +5,12 @@ import com.mieszko.currencyconverter.domain.analytics.common.FirebaseParameter
 import com.mieszko.currencyconverter.domain.analytics.constants.AnalyticsConstants
 
 class MoreTabItemClickedEvent(
-    moreItem: AnalyticsConstants.Events.MoreTabItemClicked.MORE_ITEM
+    moreItem: AnalyticsConstants.Events.MoreTabItemClicked.MoreItem
 ) : FirebaseAnalyticsEvent(
     AnalyticsConstants.Events.MoreTabItemClicked.EVENT,
     listOf(
         FirebaseParameter.StringParameter(
-            AnalyticsConstants.Events.MoreTabItemClicked.Params.NAME,
+            AnalyticsConstants.Events.CommonParams.NAME,
             moreItem.name
         )
     )

@@ -67,7 +67,7 @@ class MoreFragment : Fragment(R.layout.more_fragment) {
             .setDescription(R.string.about_desc)
             .setIcon(R.drawable.round_emoji_people_black_48)
             .doOnClick {
-                eventsLogger.logEvent(MoreTabItemClickedEvent(AnalyticsConstants.Events.MoreTabItemClicked.MORE_ITEM.ABOUT))
+                eventsLogger.logEvent(MoreTabItemClickedEvent(AnalyticsConstants.Events.MoreTabItemClicked.MoreItem.ABOUT))
 
                 AboutAppDialog().show(childFragmentManager, ABOUT_APP_DIALOG_TAG)
             }
@@ -79,7 +79,7 @@ class MoreFragment : Fragment(R.layout.more_fragment) {
             .setDescription(R.string.rate_app_description)
             .setIcon(R.drawable.outline_thumbs_up_down_black_48)
             .doOnClick {
-                eventsLogger.logEvent(MoreTabItemClickedEvent(AnalyticsConstants.Events.MoreTabItemClicked.MORE_ITEM.RATE))
+                eventsLogger.logEvent(MoreTabItemClickedEvent(AnalyticsConstants.Events.MoreTabItemClicked.MoreItem.RATE))
 
                 RateAppDialog().show(childFragmentManager, RATE_APP_DIALOG_TAG)
             }
@@ -92,7 +92,7 @@ class MoreFragment : Fragment(R.layout.more_fragment) {
             .setDescription(R.string.leave_feedback_desc)
             .setIcon(R.drawable.outline_wb_incandescent_black_48)
             .doOnClick {
-                eventsLogger.logEvent(MoreTabItemClickedEvent(AnalyticsConstants.Events.MoreTabItemClicked.MORE_ITEM.FEEDBACK))
+                eventsLogger.logEvent(MoreTabItemClickedEvent(AnalyticsConstants.Events.MoreTabItemClicked.MoreItem.FEEDBACK))
 
                 EmailHelper.openFeedbackEmail(requireContext())
             }
@@ -104,7 +104,7 @@ class MoreFragment : Fragment(R.layout.more_fragment) {
             .setDescription(R.string.privacy_policy_desc)
             .setIcon(R.drawable.outline_policy_black_48)
             .doOnClick {
-                eventsLogger.logEvent(MoreTabItemClickedEvent(AnalyticsConstants.Events.MoreTabItemClicked.MORE_ITEM.PRIVACY))
+                eventsLogger.logEvent(MoreTabItemClickedEvent(AnalyticsConstants.Events.MoreTabItemClicked.MoreItem.PRIVACY))
 
                 startActivity(
                     Intent(

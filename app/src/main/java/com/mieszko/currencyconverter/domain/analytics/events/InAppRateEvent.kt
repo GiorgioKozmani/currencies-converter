@@ -4,14 +4,14 @@ import com.mieszko.currencyconverter.domain.analytics.base.FirebaseAnalyticsEven
 import com.mieszko.currencyconverter.domain.analytics.common.FirebaseParameter
 import com.mieszko.currencyconverter.domain.analytics.constants.AnalyticsConstants
 
-class SearchTermEvent(
-    searchTerm: String
+class InAppRateEvent(
+    starsNumber: Int
 ) : FirebaseAnalyticsEvent(
-    AnalyticsConstants.Events.SearchTerm.EVENT,
+    AnalyticsConstants.Events.InAppRate.EVENT,
     listOf(
-        FirebaseParameter.StringParameter(
-            AnalyticsConstants.Events.CommonParams.SEARCH_TERM,
-            searchTerm
+        FirebaseParameter.IntParameter(
+            AnalyticsConstants.Events.CommonParams.VALUE,
+            starsNumber
         )
     )
 )

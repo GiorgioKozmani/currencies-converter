@@ -12,11 +12,11 @@ class CodeTrackedEvent(
     AnalyticsConstants.Events.CodeTracked.EVENT,
     listOf(
         FirebaseParameter.StringParameter(
-            AnalyticsConstants.Events.CodeTracked.Params.CODE,
+            AnalyticsConstants.Events.CommonParams.CODE,
             trackedCode.name
         ),
         FirebaseParameter.StringParameter(
-            AnalyticsConstants.Events.CodeTracked.Params.SEARCH_TERM,
+            AnalyticsConstants.Events.CommonParams.SEARCH_TERM,
             currentSearchTerm
         )
     )
