@@ -14,8 +14,8 @@ fun TextView.animateInText(newText: String, animDuration: Long? = null) {
 
     animate().setDuration(fadeOutDur)
         .alpha(0f)
-        .scaleX(1.2f)
-        .scaleY(1.2f)
+        .scaleX(1.05f)
+        .scaleY(1.05f)
         .withEndAction {
             text = newText
             animate().setDuration(fadeInDur)

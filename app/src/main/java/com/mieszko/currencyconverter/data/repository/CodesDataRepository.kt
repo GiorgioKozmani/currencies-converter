@@ -22,10 +22,6 @@ class CodesDataRepository : ICodesDataRepository {
 //    ISK(_root_ide_package_.com.mieszko.resources.getString(R.string.isk_full), R.drawable.
 //    PHP(_root_ide_package_.com.mieszko.resources.getString(R.string.php_full), R.drawable.
 
-// TODO CONSIDER WHAT TO DO WITH THESE
-//    XAU(_root_ide_package_.com.mieszko.resources.getString(R.string.gold_full), "https://img.freeflagicons.com/thumb/round_icon/georgia/georgia_64.png"),
-//    XAG(_root_ide_package_.com.mieszko.resources.getString(R.string.silver_full), "https://img.freeflagicons.com/thumb/round_icon/georgia/georgia_64.png"),
-
     // TODO MENTION THE LICENCE!!!
     private companion object {
         private val resources = CurrenciesApp.resourses

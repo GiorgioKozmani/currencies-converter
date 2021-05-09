@@ -34,7 +34,6 @@ class HomeHeaderFragment : Fragment(R.layout.home_header_fragment) {
     // TODO THINK OF INTRUDUCING X SECONDS AGO / TODAY AT / YESTERDAY AT / FULL DATE
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // TODO VIEWBINDING
         lastUpdatedTV = view.findViewById(R.id.last_updated)
         loadingIndicator = view.findViewById(R.id.loading_indicator)
         refreshButton = view.findViewById(R.id.refresh_rates_button)
@@ -53,7 +52,7 @@ class HomeHeaderFragment : Fragment(R.layout.home_header_fragment) {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.home_info_dialog_title)
                 .setMessage(R.string.refresh_info)
-                .setPositiveButton(resources.getString(R.string.okay)) { dialog, which ->
+                .setPositiveButton(resources.getString(R.string.got_it)) { _, _ ->
                     // Respond to positive button press
                 }
                 .show()

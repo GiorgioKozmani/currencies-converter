@@ -59,40 +59,50 @@
     <string name="tjs_full">Tajikistani Somoni</string>
     <string name="gel_full">Georgian Lari</string>
 
-    <!--  rate app widget strings  -->
+
+    <!--    APP STRINGS   -->
+    <string name="app_name">Your Currency Converter</string>
+    <string name="support_mail_prompt_text">Your feedback plays a crucial role in improving this app!\nIf you have any comments, problems, or suggestions for the app, write them down below.\nThank you, really!</string>
+    <string name="support_mail_title">Feedback</string>
+    <!--    DIALOGS    -->
+    <string name="okay">Okay</string>
+    <string name="got_it">Got it</string>
     <string name="rate_app_dialog_title">Rate this app</string>
-    <string name="rate_app_dialog_description">This app is made to make your life a little easier. How does it do the job?</string>
+    <string name="rate_app_dialog_description">It\'s been made to make your life a little easier. How does it do the job?</string>
     <string name="rate_app_dialog_positive_button_text">Rate!</string>
     <string name="rate_app_dialog_negative_button_text">Not now</string>
 
-    <!-- app strings -->
-    <string name="app_name">Your Currency Converter</string>
-
-    <string name="format_error">Format error</string>
-    <string name="main_page_title">Your currencies</string>
-    <string name="empty_amount_placeholder">0</string>
+    <!--    NAVIGATION   -->
     <string name="nav_bar_calculator">Calculator</string>
     <string name="nav_bar_currencies">Currencies</string>
     <string name="nav_bar_more">More</string>
-    <string name="okay">Okay</string>
-    <string name="refresh_info">"The reference rates are usually updated around 16:00 CET on every working day. They are based on a regular daily concertation procedure between central banks across Europe, which normally takes place at 14:15 CET."</string>
-    <string name="select_currencies_search_hint">Search by name or code</string>
-    <string name="select_currencies_title">Select currencies</string>
+    <!--    HOME TAB    -->
+    <string name="main_page_title">Your currencies</string>
+    <string name="refresh_info">The application downloads the exchange rates from the server of the National Bank of Ukraine, which provides current exchange rates ONCE A DAY. This means that the calculations may differ from the actual rates by small amounts. At the top of the screen, you can see the time the app last successfully synchronized the rates with the bank. If the phone did not have internet access when launching the application, the app will use the last known rates downloaded before. The refresh option allows you to retry data synchronization with the National Bank of Ukraine without restarting the application. </string>
     <string name="home_info_dialog_title">Important info</string>
-    <string name="more_title">More</string>
-    <string name="support_email">mieszko.support@gmail.com</string>
-    <string name="support_mail_prompt_text">Your feedback plays a crucial role in improving this app!\nIf you have any comments, problems, or suggestions for the app, write them down below.\nThank you, really!</string>
-    <string name="support_mail_title">Feedback</string>
-    <string name="leave_feedback_title">Leave feedback</string>
-    <string name="leave_feedback_desc">Every feedback is priceless. It helps a lot!</string>
-    <string name="rate_app_title">Rate this app</string>
-    <string name="rate_app_description">This app is made to make your life a little easier. How does it do the job?</string>
-    <string name="privacy_policy_title">Privacy policy</string>
-    <string name="privacy_policy_desc">This app only gathers data required for understanding users\' behavior.</string>
-    <string name="about_title">About</string>
-    <string name="about_desc">This app is developed by one guy. Here\'s the story behind it.</string>
-    <string name="got_it">Got it</string>
     <string name="no_currencies_title">You track no currencies</string>
     <string name="no_currencies_subtitle">Navigate to Currencies tab and select currencies that you want to track</string>
+    <!--    SELECTION TAB   -->
+    <string name="select_currencies_search_hint">Search by name or code</string>
+    <string name="select_currencies_title">Select currencies</string>
+    <!--    MORE TAB    -->
+    <string name="more_title">More</string>
 
+    <string name="privacy_policy_title">Privacy policy</string>
+    <string name="privacy_policy_desc">This app only gathers data required for understanding users\' behavior.</string>
+
+    <string name="leave_feedback_title">Leave feedback</string>
+    <string name="leave_feedback_desc">Every feedback is priceless. It helps a lot!</string>
+
+    <string name="rate_app_title">Rate this app</string>
+    <string name="rate_app_description">It\'s been made to make your life a little easier. How does it do the job?</string>
+
+    <string name="about_title">About</string>
+    <string name="about_desc">This app is developed by one guy. Here\'s the story behind it.</string>
+
+    <!--    NON TRANSLATABLE    -->
+    <string name="empty_amount_placeholder" translatable="false">0</string>
+    <string name="support_email" translatable="false">mieszko.support@gmail.com</string>
+    <string name="about_dialog_title">Hey, thanks for coming!</string>
+    <string name="about_dialog_desc">My name is Mieszko and, just like you, I often need currency conversions.\n\nDuring my last holiday trip, I had a lot of different currencies in my wallet and it was hard to count how much I actually kept there.\n\nI tried a few other currency converters but was put off by the ads and the excessive amount of information these apps collected about me.\n\nSo I decided to create my own simple converter!\n\nAt the moment, the application offers only the basic functions that I needed. However, I am going to improve and develop it to meet the needs of more users!\n\nPictures of the flags of the countries come from https://www.flaticon.com</string>
 </resources>
