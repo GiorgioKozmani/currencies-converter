@@ -22,6 +22,14 @@ spotless {
 }
 
 android {
+    signingConfigs {
+        release {
+            storeFile file(CONVERTER_RELEASE_STORE_FILE)
+            storePassword CONVERTER_RELEASE_STORE_PASSWORD
+            keyAlias CONVERTER_RELEASE_KEY_ALIAS
+            keyPassword CONVERTER_RELEASE_KEY_PASSWORD
+        }
+    }
     compileSdkVersion 30
     buildToolsVersion "29.0.3"
 
