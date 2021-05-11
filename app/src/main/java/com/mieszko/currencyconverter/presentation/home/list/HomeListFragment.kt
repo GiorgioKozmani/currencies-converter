@@ -81,8 +81,7 @@ class HomeListFragment : Fragment(R.layout.home_list_fragment) {
                 // loading is not handled yet
             }
             is Resource.Success -> {
-                // TODO IT'S called 3 times!!! ON START AND 2 LATER ON!
-                // todo important note. Once we get bug with multiple bases data we send to adapter still has only 1 base!
+// TODO CHECK IF IT'S NOT CALLED 2 MANY TIMES
                 updateListData(response)
             }
             is Resource.Error -> {
