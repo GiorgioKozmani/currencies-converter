@@ -28,8 +28,7 @@ class TrackedCodesRepository(
         )
 
     override fun observeTrackedCodes(): Observable<List<SupportedCode>> {
-        return source.doOnNext {
-        }
+        return source
     }
 
     override fun saveTrackedCodes(trackedCodes: List<SupportedCode>): Completable =
