@@ -400,6 +400,41 @@ class CodesDataRepository : ICodesDataRepository {
                         R.drawable.georgia
                     )
                 )
+                put(
+                    SupportedCode.IRR,
+                    CodeStaticData(
+                        resources.getString(R.string.irr_full),
+                        R.drawable.iran
+                    )
+                )
+                put(
+                    SupportedCode.IQD,
+                    CodeStaticData(
+                        resources.getString(R.string.iqd_full),
+                        R.drawable.iraq
+                    )
+                )
+                put(
+                    SupportedCode.MAD,
+                    CodeStaticData(
+                        resources.getString(R.string.mad_full),
+                        R.drawable.morocco
+                    )
+                )
+                put(
+                    SupportedCode.PKR,
+                    CodeStaticData(
+                        resources.getString(R.string.pkr_full),
+                        R.drawable.pakistan
+                    )
+                )
+                put(
+                    SupportedCode.TMT,
+                    CodeStaticData(
+                        resources.getString(R.string.tmt_full),
+                        R.drawable.turkmenistan
+                    )
+                )
             }
     }
 }

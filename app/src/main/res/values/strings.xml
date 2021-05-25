@@ -58,6 +58,7 @@
     <string name="rsd_full">Serbian Dinar</string>
     <string name="tjs_full">Tajikistani Somoni</string>
     <string name="gel_full">Georgian Lari</string>
+    <string name="pkr_full">Pakistani rupee</string>
 
 
     <!--    APP STRINGS   -->
@@ -102,7 +103,7 @@
 
     <!--    NON TRANSLATABLE    -->
     <string name="empty_amount_placeholder" translatable="false">0</string>
-    <string name="support_email" translatable="false">mieszko.support@gmail.com</string>
+    <string name="support_email" translatable="false">apps.mieszko@gmail.com</string>
     <string name="about_dialog_title">Hey, thanks for coming!</string>
     <string name="about_dialog_desc">My name is Mieszko and, just like you, I often need currency conversions.\n\nDuring my last holiday trip, I had a lot of different currencies in my wallet and it was hard to count how much I actually kept there.\n\nI tried a few other currency converters but was put off by the ads and the excessive amount of information these apps collected about me.\n\nSo I decided to create my own simple converter!\n\nAt the moment, the application offers only the basic functions that I needed. However, I am going to improve and develop it to meet the needs of more users!\n\nCountry flags images come from https://www.flaticon.com</string>
 </resources>

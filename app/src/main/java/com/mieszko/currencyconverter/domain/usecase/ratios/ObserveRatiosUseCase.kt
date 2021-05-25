@@ -6,7 +6,7 @@ import com.mieszko.currencyconverter.domain.model.RatiosTime
 import com.mieszko.currencyconverter.domain.repository.IRatiosRepository
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import java.util.EnumMap
+import java.util.*
 
 class ObserveRatiosUseCase(
     private val ratiosRepository: IRatiosRepository,
@@ -26,7 +26,10 @@ class ObserveRatiosUseCase(
                             try {
                                 supportedRatios[it.code] = it.ratioToUAH
                             } catch (e: Exception) {
-                                eventsLogger.logNonFatalError(e, "RATIOSTIME OBJECT CREATION ERROR")
+                                eventsLogger.logNonFatalError(
+                                    e,
+                                    "RATIOSTIME OBJECT CREATION ERROR, CODE: " + it.code + "  RATIO: " + it.ratioToUAH
+                                )
                             }
                         }
 

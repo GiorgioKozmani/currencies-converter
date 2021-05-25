@@ -58,6 +58,7 @@
     <string name="rsd_full">Dinar Serbski</string>
     <string name="tjs_full">Somoni Tadżykistanu</string>
     <string name="gel_full">Lari Gruziński</string>
+    <string name="pkr_full">Rupia Pakistańska</string>
 
     <!--  rate app widget strings  -->
     <string name="rate_app_dialog_title">Oceń apkę</string>

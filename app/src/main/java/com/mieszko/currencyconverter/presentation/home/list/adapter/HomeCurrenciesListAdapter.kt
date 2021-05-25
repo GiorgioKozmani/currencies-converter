@@ -104,6 +104,7 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
     override fun onViewDetachedFromWindow(holder: HomeCurrencyViewHolder) {
         super.onViewDetachedFromWindow(holder)
         holder.run {
+            //todo experiment with no deprecated ones
             if (adapterPosition == 0) {
                 clearFocusAndHideKeyboard()
             }
