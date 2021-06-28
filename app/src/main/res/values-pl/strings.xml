@@ -74,7 +74,7 @@
     <string name="nav_bar_currencies">Waluty</string>
     <string name="nav_bar_more">Inne</string>
     <string name="okay">Okej</string>
-    <string name="refresh_info">Aplikacja pobiera kursy walut z serwera Narodowego Banku Ukrainy, który udostępnia aktualne kursy RAZ DZIENNIE. Oznacza to, że kalkulacje mogą odbiegać od faktycznych aktualnych kursów o niewielkie wartości. U góry ekranu możesz zobaczyć czas, w którym aplikacja po raz ostatni pomyślnie zsynchronizowała kursy ze wspomnianym bankiem. W przypadku, gdy podczas uruchomienia aplikacji telefon nie miał dostępu do internetu, aplikacja użyje ostatnich znanych kursów. Opcja odśwież pozwala na ponowienie próby synchronizacji danych z Narodowym Bankiem Ukrainy, bez konieczności restartowania aplikacji. </string>
+    <string name="refresh_info">Aplikacja pobiera kursy walut z serwera Narodowego Banku Ukrainy, który udostępnia aktualne kursy RAZ DZIENNIE. Oznacza to, że kalkulacje mogą odbiegać od faktycznych aktualnych kursów o niewielkie wartości. U góry ekranu możesz zobaczyć czas, w którym aplikacja po raz ostatni pomyślnie zsynchronizowała kursy ze wspomnianym bankiem. W przypadku, gdy podczas uruchomienia aplikacji telefon nie miał dostępu do internetu, aplikacja użyje ostatnich znanych kursów. Opcja odśwież pozwala na ponowienie próby synchronizacji danych z Narodowym Bankiem Ukrainy, bez konieczności restartowania aplikacji.\n\nW przypadku, gdy ostatni kurs waluty jest niedostępny, nie będzie ona widoczna w zakładce "Kalkulator"</string>
     <string name="select_currencies_search_hint">Szukaj według nazwy lub kodu</string>
     <string name="select_currencies_title">Wybierz waluty</string>
     <string name="home_info_dialog_title">Ważna informacja</string>
@@ -93,6 +93,8 @@
     <string name="no_currencies_title">Brak wybranych walut</string>
     <string name="no_currencies_subtitle">Przejdź do zakładki Waluty i wybierz te, które chcesz śledzić</string>
     <string name="about_dialog_title">Hej, dzięki że jesteś!</string>
-    <string name="about_dialog_desc">Nazywam się Mieszko i tak jak Ty często potrzebuję przeliczać waluty.\n\nPodczas ostatniego wakacyjnego wyjazdu, miałem w portfelu sporo róznych walut i ciężko byłomi się doliczyć ile faktycznie tam trzymam.\n\nPróbowałem kilka innych konwerterów walut, ale zniechęciły mnie reklamy i nadmierna ilość informacji, które te aplikacje gromadziły na mój temat.\n\nPostanowiłem więc stworzyć swój prosty konwerter!\n\nNa ten moment aplikacja oferuje tylko postawowe funkcje, które były mi potrzebne. Mam jednak zamiar ją ulepszać i rozwijać, tak aby spełniała potrzeby większej ilości użytkowników!\n\nZdjęcia flag państw pochodzą z https://www.flaticon.com</string>
-
+    <string name="about_dialog_desc">Nazywam się Mieszko i tak jak Ty często potrzebuję przeliczać waluty.\n\nPodczas ostatniego wakacyjnego wyjazdu, miałem w portfelu sporo róznych walut i ciężko byłomi się doliczyć ile faktycznie tam trzymam.\n\nPróbowałem kilka innych konwerterów walut, ale zniechęciły mnie reklamy i nadmierna ilość informacji, które te aplikacje gromadziły na mój temat.\n\nPostanowiłem więc stworzyć swój prosty konwerter!\n\nNa ten moment aplikacja oferuje tylko postawowe funkcje, które były mi potrzebne. Mam jednak zamiar ją ulepszać i rozwijać, tak aby spełniała potrzeby większej ilości użytkowników!\n\nZdjęcia flag państw pochodzą z https://www.flaticon.com\n\nZa indyka dziękuję https://lottiefiles.com/56305-cool-turkey</string>
+    <string name="refresh_ratios_error">Błąd odświeżania kursów</string>
+    <string name="ratios_updated_at">Kursy zaktualizowane</string>
+    <string name="thank_you_dialog_title">Indyk mówi dzięki!</string>
 </resources>

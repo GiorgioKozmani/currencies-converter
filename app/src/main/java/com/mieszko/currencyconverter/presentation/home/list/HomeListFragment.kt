@@ -85,7 +85,7 @@ class HomeListFragment : Fragment(R.layout.home_list_fragment) {
                 updateListData(response)
             }
             is Resource.Error -> {
-                Toast.makeText(context, "TODO NETWORK REFRESH ERROR", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.refresh_ratios_error, Toast.LENGTH_SHORT).show()
             }
         }
     }

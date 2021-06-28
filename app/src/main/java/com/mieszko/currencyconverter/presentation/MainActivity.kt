@@ -11,15 +11,21 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mieszko.currencyconverter.R
+import com.mieszko.currencyconverter.data.persistance.ISharedPrefsManager
+import org.koin.android.ext.android.inject
+import java.util.Date
 
 class MainActivity :
     AppCompatActivity(R.layout.activity_main),
     NavController.OnDestinationChangedListener {
     private val bottomNavigation: BottomNavigationView by lazy { findViewById(R.id.bottom_navigation) }
+    private val sharedPrefsManager: ISharedPrefsManager by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupNavigation()
+
+        markFirstAppOpening()
     }
 
     private fun setupNavigation() {
@@ -34,14 +40,11 @@ class MainActivity :
         bottomNavigation.setOnNavigationItemReselectedListener { item ->
             when (item.itemId) {
                 R.id.homeFragment -> {
-                    // TODO ON RESELECTION CALL FRAGMENT METHOD TO CLICK REFRESH
+                    // TODO ON RESELECTION CALL FRAGMENT METHOD TO CLICK REFRESH / scroll to top?
                 }
                 R.id.selectionFragment -> {
                     // TODO ON RESELECTION CLEAR SEARCH, HIDE KEYBOARD AND SCROLL TOP
                 }
-//                R.id.moreFragment -> {
-//                    // TODO THINK WHAT TO DO THERE
-//                }
             }
         }
     }
@@ -63,11 +66,10 @@ class MainActivity :
         imm.hideSoftInputFromWindow(windowToken, 0)
     }
 
-//    override fun onBackPressed() {
-//        if (bottomNavigation.selectedItemId == R.id.homeFragment) {
-//            super.onBackPressed()
-//        } else {
-//            bottomNavigation.selectedItemId = R.id.homeFragment
-//        }
-//    }
+    private fun markFirstAppOpening() {
+        val firstAppOpen = sharedPrefsManager.getDate(ISharedPrefsManager.Key.FirstAppOpenDate)
+        if (firstAppOpen == null) {
+            sharedPrefsManager.put(ISharedPrefsManager.Key.FirstAppOpenDate, Date())
+        }
+    }
 }

@@ -1,4 +1,4 @@
-package com.mieszko.currencyconverter.presentation.more
+package com.mieszko.currencyconverter.presentation.more.rate
 
 import android.annotation.SuppressLint
 import android.app.Dialog
@@ -11,6 +11,7 @@ import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.slider.Slider
 import com.mieszko.currencyconverter.R
+import com.mieszko.currencyconverter.data.persistance.ISharedPrefsManager
 import com.mieszko.currencyconverter.domain.analytics.IFirebaseEventsLogger
 import com.mieszko.currencyconverter.domain.analytics.events.InAppRateEvent
 import org.koin.android.ext.android.inject
@@ -25,11 +26,15 @@ class RateAppDialog : DialogFragment() {
         const val UNSELECTED_SIZE_SCALE = 1f
         const val ENABLED_BUTTON_ALPHA = 1f
         const val DISABLED_BUTTON_ALPHA = 0.5f
+        const val THANK_YOU_DIALOG_TAG = "thank_you_dialog"
     }
 
     private val eventsLogger: IFirebaseEventsLogger by inject()
+    private val sharedPrefsManager: ISharedPrefsManager by inject()
+
     private val interpolator = OvershootInterpolator()
     private var ratesItems = mutableListOf<RateView>()
+
     private lateinit var rateSlider: Slider
     private lateinit var rateButton: Button
 
@@ -68,7 +73,10 @@ class RateAppDialog : DialogFragment() {
                 setView(dialogView)
                     // Add action buttons
                     .setPositiveButton(R.string.rate_app_dialog_positive_button_text) { _, _ ->
-                        eventsLogger.logEvent(InAppRateEvent(roundUpToInt(rateSlider.value)))
+                        val rateValue = roundUpToInt(rateSlider.value)
+                        eventsLogger.logEvent(InAppRateEvent(rateValue))
+                        sharedPrefsManager.put(ISharedPrefsManager.Key.InAppRate, rateValue)
+                        ThankYouDialog().show(parentFragmentManager, THANK_YOU_DIALOG_TAG)
                     }
                     .setNegativeButton(R.string.rate_app_dialog_negative_button_text) { dialog, _ ->
                         // TODO LOG

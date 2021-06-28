@@ -202,6 +202,7 @@ class HomeViewModel(
                 .doOnTerminate { isLoadingLiveData.value = false }
                 .subscribeBy(
                     onError = {
+                        // TODO most probably just no internet, don't log if it's unknown host exception
                         eventsLogger.logNonFatalError(it, "REMOTE RATIOS REQUEST FAILED")
                         emitError(it)
                     }

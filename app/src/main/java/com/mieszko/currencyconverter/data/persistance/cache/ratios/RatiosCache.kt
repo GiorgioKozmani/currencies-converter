@@ -2,6 +2,7 @@ package com.mieszko.currencyconverter.data.persistance.cache.ratios
 
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import com.mieszko.currencyconverter.data.fallback.FallbackRatios
 import com.mieszko.currencyconverter.data.model.CurrencyRatioDTO
 import com.mieszko.currencyconverter.data.persistance.ISharedPrefsManager
 import io.reactivex.rxjava3.core.Completable
@@ -22,8 +23,8 @@ class RatiosCache(private val sharedPrefsManager: ISharedPrefsManager) : IRatios
                     type
                 )
             } catch (e: Exception) {
-                // TODO STATIC FILE WITH OLD STATIC DATE AS A FALLBACK! LOG NON FATAL TO FIREBASE
-                RatiosTimeDTO(listOf(), Date())
+                // todo LOG NON FATAL TO FIREBASE
+                FallbackRatios.getFallback()
             }
         )
 

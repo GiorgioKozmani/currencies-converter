@@ -68,6 +68,7 @@
     <!--    DIALOGS    -->
     <string name="okay">Okay</string>
     <string name="got_it">Got it</string>
+    <string name="thank_you_dialog_title">Turkey says thanks!</string>
     <string name="rate_app_dialog_title">Rate this app</string>
     <string name="rate_app_dialog_description">It\'s been made to make your life a little easier. How does it do the job?</string>
     <string name="rate_app_dialog_positive_button_text">Rate!</string>
@@ -79,7 +80,7 @@
     <string name="nav_bar_more">More</string>
     <!--    HOME TAB    -->
     <string name="main_page_title">Your currencies</string>
-    <string name="refresh_info">This application downloads exchange rates from the server of National Bank of Ukraine, which provides current exchange rates ONCE A DAY. This means that the calculations may differ from the actual rates by small amounts. At the top of the screen, you can see the time the app last successfully synchronized the rates with the bank. If the phone did not have internet access when launching the application, the app will use the latest downloaded rates. The refresh option allows you to retry data synchronization with the National Bank of Ukraine without restarting the application. </string>
+    <string name="refresh_info">This application downloads exchange rates from the server of National Bank of Ukraine, which provides current exchange rates ONCE A DAY. This means that the calculations may differ from the actual rates by small amounts. At the top of the screen, you can see the time the app last successfully synchronized the rates with the bank. If the phone did not have internet access when launching the application, the app will use the latest downloaded rates. The refresh option allows you to retry data synchronization with the National Bank of Ukraine without restarting the application.\n\nIf the last currency rate is unavailable, it will not be visible in the "Calculator" tab</string>
     <string name="home_info_dialog_title">Important info</string>
     <string name="no_currencies_title">You track no currencies</string>
     <string name="no_currencies_subtitle">Navigate to Currencies tab and select currencies that you want to track</string>
@@ -105,5 +106,7 @@
     <string name="empty_amount_placeholder" translatable="false">0</string>
     <string name="support_email" translatable="false">apps.mieszko@gmail.com</string>
     <string name="about_dialog_title">Hey, thanks for coming!</string>
-    <string name="about_dialog_desc">My name is Mieszko and, just like you, I often need currency conversions.\n\nDuring my last holiday trip, I had a lot of different currencies in my wallet and it was hard to count how much I actually kept there.\n\nI tried a few other currency converters but was put off by the ads and the excessive amount of information these apps collected about me.\n\nSo I decided to create my own simple converter!\n\nAt the moment, the application offers only the basic functions that I needed. However, I am going to improve and develop it to meet the needs of more users!\n\nCountry flags images come from https://www.flaticon.com</string>
+    <string name="about_dialog_desc">My name is Mieszko and, just like you, I often need currency conversions.\n\nDuring my last holiday trip, I had a lot of different currencies in my wallet and it was hard to count how much I actually kept there.\n\nI tried a few other currency converters but was put off by the ads and the excessive amount of information these apps collected about me.\n\nSo I decided to create my own simple converter!\n\nAt the moment, the application offers only the basic functions that I needed. However, I am going to improve and develop it to meet the needs of more users!\n\nCountry flags images come from https://www.flaticon.com\n\nThanks for the turkey https://lottiefiles.com/56305-cool-turkey</string>
+    <string name="refresh_ratios_error">Ratios refreshing error</string>
+    <string name="ratios_updated_at">Rates last updated</string>
 </resources>

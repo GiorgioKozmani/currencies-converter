@@ -6,7 +6,7 @@ import com.mieszko.currencyconverter.domain.model.RatiosTime
 import com.mieszko.currencyconverter.domain.repository.IRatiosRepository
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import java.util.*
+import java.util.EnumMap
 
 class ObserveRatiosUseCase(
     private val ratiosRepository: IRatiosRepository,

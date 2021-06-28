@@ -20,19 +20,30 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/last_updated_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/ratios_updated_at"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="8dp"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/currencies_list_title" />
+
+    <TextView
         android:id="@+id/last_updated"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
         android:fontFamily="sans-serif-medium"
         android:textColor="@android:color/white"
-        android:textSize="18sp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/refresh_info_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/currencies_list_title"
+        app:layout_constraintTop_toBottomOf="@+id/last_updated_label"
         tools:text="2021-04-13 07:35:38 pm" />
 
     <ImageButton

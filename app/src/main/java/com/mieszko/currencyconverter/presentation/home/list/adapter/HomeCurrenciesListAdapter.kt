@@ -1,6 +1,5 @@
 package com.mieszko.currencyconverter.presentation.home.list.adapter
 
-import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -46,8 +45,6 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
         // TODO MERGE INTO ONE
         when (currencyModel) {
             is HomeListModel.Base -> {
-                Log.d("dupa", "1")
-
                 // TODO CLICK ACTION SHOULD BE ONLY LETTING VM KNOW WHAT ITEM GOT CLICKED! IT'LL DECIDE WHETHER TO MAKE IT
                 // BASE OR IGNORE
                 holder.setupBaseItem()
@@ -104,7 +101,7 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
     override fun onViewDetachedFromWindow(holder: HomeCurrencyViewHolder) {
         super.onViewDetachedFromWindow(holder)
         holder.run {
-            //todo experiment with no deprecated ones
+            // todo experiment with no deprecated ones
             if (adapterPosition == 0) {
                 clearFocusAndHideKeyboard()
             }

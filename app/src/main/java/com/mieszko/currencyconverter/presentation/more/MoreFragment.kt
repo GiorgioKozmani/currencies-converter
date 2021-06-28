@@ -8,13 +8,16 @@ import android.view.View
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.play.core.review.ReviewManagerFactory
 import com.mieszko.currencyconverter.R
+import com.mieszko.currencyconverter.data.persistance.ISharedPrefsManager
 import com.mieszko.currencyconverter.domain.analytics.IFirebaseEventsLogger
 import com.mieszko.currencyconverter.domain.analytics.constants.AnalyticsConstants
 import com.mieszko.currencyconverter.domain.analytics.events.MoreTabItemClickedEvent
 import com.mieszko.currencyconverter.domain.analytics.events.ScreenViewEvent
 import com.mieszko.currencyconverter.presentation.more.list.MoreItemsAdapter
 import com.mieszko.currencyconverter.presentation.more.list.MoreListItem
+import com.mieszko.currencyconverter.presentation.more.rate.RateAppDialog
 import com.mieszko.currencyconverter.presentation.util.EmailHelper
 import org.koin.android.ext.android.inject
 
@@ -26,26 +29,24 @@ class MoreFragment : Fragment(R.layout.more_fragment) {
     }
 
     private val eventsLogger: IFirebaseEventsLogger by inject()
+    private val sharedPrefsManager: ISharedPrefsManager by inject()
+
     private val appVersionTV: TextView by lazy { requireView().findViewById(R.id.app_version) }
 
-// TODO PROGUARD! OR R8?
-    // https://firebase.google.com/support/guides/launch-checklist?authuser=0
+    private var startedReviewFlow = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // todo events logging for this
         setupAdapter(
             view,
-            listOf(
-                // todo maybe is not needed, read google requirements
-                getPrivacyPolicyItem(),
-                getFeedbackItem(),
-                // TODO Trigger 1 is activated after the customer opens the app for a certain number times in a day
-                // TODO Trigger 2 requires the customer use the app at least 3 times
-                // TODO INTRODUCE 2 STEP WITH FIRST THUMB UP / DOWN (or faces in a scale of satisfaction 1 - 5) + LOGGING. If thumbed up then ask for review online
-                getRateAppItem(),
-                getAboutItem()
-            )
+            mutableListOf<MoreListItem>().apply {
+                add(getPrivacyPolicyItem())
+                add(getFeedbackItem())
+                if (!inAppRateIsMinimum(4)) {
+                    add(getRateAppItem())
+                }
+                add(getAboutItem())
+            }
         )
 
         setupVersionName()
@@ -54,6 +55,34 @@ class MoreFragment : Fragment(R.layout.more_fragment) {
     private fun setupAdapter(view: View, moreItems: List<MoreListItem>) {
         val recyclerView = view.findViewById<RecyclerView>(R.id.more_items_rv)
         recyclerView.adapter = MoreItemsAdapter(moreItems)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        startInAppReviewFlow()
+    }
+
+    private fun startInAppReviewFlow() {
+        // todo factor out, comment
+        if (startedReviewFlow || !inAppRateIsMinimum(4)) {
+            return
+        }
+
+        startedReviewFlow = true
+
+        val reviewManager = ReviewManagerFactory.create(requireContext())
+        val reviewFlowRequest = reviewManager.requestReviewFlow()
+
+        reviewFlowRequest.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val reviewInfo = task.result
+                reviewManager.launchReviewFlow(requireActivity(), reviewInfo)
+            } else {
+                task.exception?.let {
+                    eventsLogger.logNonFatalError(it, "START IN-APP-REVIEW FLOW ERROR")
+                }
+            }
+        }
     }
 
     override fun onResume() {
@@ -114,6 +143,9 @@ class MoreFragment : Fragment(R.layout.more_fragment) {
                 )
             }
             .build()
+
+    private fun inAppRateIsMinimum(minimumValue: Int) =
+        sharedPrefsManager.getInt(ISharedPrefsManager.Key.InAppRate) >= minimumValue
 
     private fun setupVersionName() {
         try {
