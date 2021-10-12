@@ -46,8 +46,6 @@ OS version: ${Build.VERSION.RELEASE}
 App version: $appVersion"""
         )
 
-        if (intent.resolveActivity(context.packageManager) != null) {
-            context.startActivity(intent)
-        }
+        context.startActivity(intent)
     }
 }
