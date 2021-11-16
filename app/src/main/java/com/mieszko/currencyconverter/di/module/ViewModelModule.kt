@@ -1,7 +1,7 @@
 package com.mieszko.currencyconverter.di.module
 
-import com.mieszko.currencyconverter.common.util.DisposablesBag
-import com.mieszko.currencyconverter.common.util.IDisposablesBag
+import com.mieszko.currencyconverter.common.model.DisposablesBag
+import com.mieszko.currencyconverter.common.model.IDisposablesBag
 import com.mieszko.currencyconverter.presentation.home.HomeViewModel
 import com.mieszko.currencyconverter.presentation.selection.SelectionViewModel
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -25,7 +25,7 @@ val viewModelModule = module {
         SelectionViewModel(
             disposablesBag = get(),
             observeTrackedCodesUseCase = get(),
-            codesDataRepository = get(),
+            codesStaticDataRepository = get(),
             addTrackedCodesUseCase = get(),
             removeTrackedCodesUseCase = get(),
             eventsLogger = get()

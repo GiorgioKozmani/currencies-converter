@@ -5,6 +5,9 @@ import android.util.AttributeSet
 import android.view.KeyEvent
 import com.google.android.material.textfield.TextInputEditText
 
+/**
+ * This wrapper class is implemented to simplify the process of hiding the k
+ */
 class ClearingFocusEditText : TextInputEditText {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
@@ -16,7 +19,7 @@ class ClearingFocusEditText : TextInputEditText {
 
     override fun onKeyPreIme(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            clearFocus()
+//            clearFocus()
         }
 
         return super.onKeyPreIme(keyCode, event)

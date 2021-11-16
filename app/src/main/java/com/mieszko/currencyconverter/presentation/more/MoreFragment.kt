@@ -18,7 +18,7 @@ import com.mieszko.currencyconverter.domain.analytics.events.ScreenViewEvent
 import com.mieszko.currencyconverter.presentation.more.list.MoreItemsAdapter
 import com.mieszko.currencyconverter.presentation.more.list.MoreListItem
 import com.mieszko.currencyconverter.presentation.more.rate.RateAppDialog
-import com.mieszko.currencyconverter.presentation.util.EmailHelper
+import com.mieszko.currencyconverter.presentation.util.FeedbackEmailHelper
 import org.koin.android.ext.android.inject
 
 class MoreFragment : Fragment(R.layout.more_fragment) {
@@ -123,7 +123,7 @@ class MoreFragment : Fragment(R.layout.more_fragment) {
             .doOnClick {
                 eventsLogger.logEvent(MoreTabItemClickedEvent(AnalyticsConstants.Events.MoreTabItemClicked.MoreItem.FEEDBACK))
 
-                EmailHelper.openFeedbackEmail(requireContext())
+                FeedbackEmailHelper.openFeedbackEmail(requireContext())
             }
             .build()
 

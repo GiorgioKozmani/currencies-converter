@@ -3,21 +3,21 @@ package com.mieszko.currencyconverter.presentation.home.list.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.mieszko.currencyconverter.domain.model.list.HomeListModel
+import com.mieszko.currencyconverter.domain.model.list.HomeListItemModel
 import com.mieszko.currencyconverter.presentation.home.HomeViewModel
 
 class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
     RecyclerView.Adapter<HomeCurrencyViewHolder>() {
 
-    private val currentListData = mutableListOf<HomeListModel>()
+    private val currentListData = mutableListOf<HomeListItemModel>()
 
-    fun updateCurrencies(currencies: List<HomeListModel>) {
+    fun updateCurrencies(currencies: List<HomeListItemModel>) {
         DiffUtil.calculateDiff(CurrenciesDiffCallback(currentListData, currencies))
             .dispatchUpdatesTo(this)
         refreshList(currencies)
     }
 
-    private fun refreshList(newResultsModels: List<HomeListModel>) {
+    private fun refreshList(newResultsModels: List<HomeListItemModel>) {
         currentListData.clear()
         currentListData.addAll(newResultsModels)
     }
@@ -44,12 +44,12 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
 
         // TODO MERGE INTO ONE
         when (currencyModel) {
-            is HomeListModel.Base -> {
+            is HomeListItemModel.Base -> {
                 // TODO CLICK ACTION SHOULD BE ONLY LETTING VM KNOW WHAT ITEM GOT CLICKED! IT'LL DECIDE WHETHER TO MAKE IT
                 // BASE OR IGNORE
                 holder.setupBaseItem()
             }
-            is HomeListModel.NonBase -> {
+            is HomeListItemModel.NonBase -> {
                 holder.setupNonBaseItem(currencyModel)
             }
         }
@@ -65,12 +65,12 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
             val newObj = modelChange.new
             val oldObj = modelChange.old
 
-            if (newObj is HomeListModel.Base && oldObj is HomeListModel.Base) {
+            if (newObj is HomeListItemModel.Base && oldObj is HomeListItemModel.Base) {
                 // do nothing, this will be most probably base value change, which shouldn't trigger the update just so we don't mess with cursor
                 return
             }
 
-            if (newObj is HomeListModel.NonBase && oldObj is HomeListModel.NonBase) {
+            if (newObj is HomeListItemModel.NonBase && oldObj is HomeListItemModel.NonBase) {
                 if (oldObj.amount != newObj.amount) {
                     holder.setAmount(newObj.amount)
                 }
@@ -85,13 +85,13 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
             }
 
             when (newObj) {
-                is HomeListModel.Base -> {
+                is HomeListItemModel.Base -> {
                     holder.setupBaseItem()
                     // This is only done in this overload of onBindViewHolder, because it won't be triggered on screen opening.
                     // We don't want the keyboard to show up automatically after navigating to calculator.
                     holder.requestAmountFocus()
                 }
-                is HomeListModel.NonBase -> holder.setupNonBaseItem(newObj)
+                is HomeListItemModel.NonBase -> holder.setupNonBaseItem(newObj)
             }
         } else {
             super.onBindViewHolder(holder, position, payloads)
@@ -117,8 +117,8 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
     }
 
     class CurrenciesDiffCallback(
-        private val oldList: List<HomeListModel>,
-        private val newList: List<HomeListModel>
+        private val oldList: List<HomeListItemModel>,
+        private val newList: List<HomeListItemModel>
     ) : DiffUtil.Callback() {
         override fun getOldListSize(): Int = oldList.size
         override fun getNewListSize(): Int = newList.size
@@ -142,5 +142,5 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
         }
     }
 
-    data class ModelChange(val old: HomeListModel, val new: HomeListModel)
+    data class ModelChange(val old: HomeListItemModel, val new: HomeListItemModel)
 }

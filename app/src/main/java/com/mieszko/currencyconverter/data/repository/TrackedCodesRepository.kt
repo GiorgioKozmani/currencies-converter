@@ -1,7 +1,6 @@
 package com.mieszko.currencyconverter.data.repository
 
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.mieszko.currencyconverter.common.model.SupportedCode
 import com.mieszko.currencyconverter.data.persistance.ISharedPrefsManager
@@ -13,16 +12,20 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 import java.lang.reflect.Type
 
 class TrackedCodesRepository(
-    private val sharedPrefsManager: ISharedPrefsManager
+    private val sharedPrefsManager: ISharedPrefsManager,
+    private val gson: Gson,
 ) : ITrackedCodesRepository {
 
     private val supportedCurrencyType: Type = object : TypeToken<List<SupportedCode>>() {}.type
-    private val gson: Gson = GsonBuilder().create()
 
     private val source: BehaviorSubject<List<SupportedCode>> =
         BehaviorSubject.createDefault(
             gson.fromJson(
-                sharedPrefsManager.getString(ISharedPrefsManager.Key.TrackedCurrencies, "[]"),
+                sharedPrefsManager.getString(
+                    key = ISharedPrefsManager.Key.TrackedCurrencies,
+                    // default to an empty array (no codes tracked)
+                    defValue = "[]"
+                ),
                 supportedCurrencyType
             )
         )
@@ -41,5 +44,5 @@ class TrackedCodesRepository(
         }
 
     override fun getTrackedCodesOnce(): Single<List<SupportedCode>> =
-        Single.just(source.value)
+        source.firstOrError()
 }

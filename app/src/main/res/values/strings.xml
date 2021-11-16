@@ -63,7 +63,7 @@
 
     <!--    APP STRINGS   -->
     <string name="app_name">Your Currency Converter</string>
-    <string name="support_mail_prompt_text">Your feedback plays a crucial role in improving this app!\nIf you have any comments, problems, or suggestions for the app, write them down below.\nThank you, really!</string>
+    <string name="support_mail_prompt_text">Your feedback plays a crucial role in improving this app!\nIf you have any comments, problems or suggestions for the app, write them down below.\n\nThank you, really!</string>
     <string name="support_mail_title">Feedback</string>
     <!--    DIALOGS    -->
     <string name="okay">Okay</string>

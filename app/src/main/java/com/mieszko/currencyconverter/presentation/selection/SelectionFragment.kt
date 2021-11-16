@@ -17,36 +17,34 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SelectionFragment : Fragment(R.layout.selection_fragment) {
     private val eventsLogger: IFirebaseEventsLogger by inject()
+    private val viewModel by viewModel<SelectionViewModel>()
+
+    private val searchView: SearchView by lazy { requireView().findViewById(R.id.currency_search_view) }
+    private val epoxyRV: EpoxyRecyclerView by lazy { requireView().findViewById(R.id.selection_epoxy_rv) }
 
     override fun onResume() {
         super.onResume()
         eventsLogger.logEvent(ScreenViewEvent(AnalyticsConstants.Events.ScreenView.Screen.SELECTION))
     }
 
-    private val viewModel by viewModel<SelectionViewModel>()
     private val epoxyController: TypedEpoxyController<List<TrackingCurrenciesModel>> by lazy {
-        SelectionListController(viewModel)
+        SelectionListController { item -> viewModel.itemClicked(item) }
     }
-
-    private val searchView: SearchView by lazy { requireView().findViewById(R.id.currency_search_view) }
-    private val epoxyRV: EpoxyRecyclerView by lazy { requireView().findViewById(R.id.selection_epoxy_rv) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         observeViewModel()
-        epoxyRV.setController(epoxyController)
-
-        // TODO THINK OF SEPARATING INTO 2 FRAGMENTS
-        // TODO THINK OF INITIAL DATA
-        epoxyController.run {
-            setData(listOf())
-            addModelBuildListener {
-                epoxyRV.scrollToPosition(0)
-            }
-        }
-
+        setupEpoxyController()
         setupSearchView()
+    }
+
+    private fun setupEpoxyController() {
+        epoxyController.run {
+            epoxyRV.setController(this)
+            setData(listOf())
+            // scroll to the top once we've changed selection
+            addModelBuildListener { epoxyRV.scrollToPosition(0) }
+        }
     }
 
     private fun setupSearchView() {
@@ -61,12 +59,11 @@ class SelectionFragment : Fragment(R.layout.selection_fragment) {
                     if (newText != null) {
                         viewModel.searchQueryChanged(newText)
                     }
-
                     return true
                 }
             })
 
-            setOnQueryTextFocusChangeListener { v, hasFocus ->
+            setOnQueryTextFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
                     setQuery("", true)
                 }

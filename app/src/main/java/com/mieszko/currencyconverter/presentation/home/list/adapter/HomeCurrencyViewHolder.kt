@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.mieszko.currencyconverter.R
-import com.mieszko.currencyconverter.domain.model.list.HomeListModel
+import com.mieszko.currencyconverter.domain.model.list.HomeListItemModel
 import com.mieszko.currencyconverter.presentation.util.showKeyboard
 import java.text.DecimalFormat
 
@@ -41,7 +41,7 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
 
     // TODO DECOUPLE FOCUS FROM BASE / REGULAR
     fun bind(
-        currencyModel: HomeListModel,
+        currencyModel: HomeListItemModel,
         baseValueChangeAction: ((Double) -> Unit),
         clickAction: () -> Unit
     ) {
@@ -78,7 +78,7 @@ class HomeCurrencyViewHolder private constructor(itemView: View) :
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    fun setupNonBaseItem(currencyModel: HomeListModel.NonBase) {
+    fun setupNonBaseItem(currencyModel: HomeListItemModel.NonBase) {
         amountET.apply {
             removeTextChangedListener(baseTextWatcher)
             setOnTouchListener { _, event ->

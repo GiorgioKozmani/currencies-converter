@@ -3,10 +3,13 @@ package com.mieszko.currencyconverter.data.fallback
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.mieszko.currencyconverter.data.model.CurrencyRatioDTO
-import com.mieszko.currencyconverter.data.persistance.cache.ratios.RatiosTimeDTO
+import com.mieszko.currencyconverter.data.model.RatiosTimeDTO
 import java.lang.reflect.Type
 import java.util.Calendar
 
+/**
+ * These are the ratios that are meant to be loaded when there's no any data available.
+ */
 class FallbackRatios {
 
     companion object {

@@ -1,13 +1,13 @@
-package com.mieszko.currencyconverter.domain.usecase
+package com.mieszko.currencyconverter.domain.usecase.mappers
 
 import androidx.annotation.WorkerThread
 import com.mieszko.currencyconverter.common.model.SupportedCode
 import com.mieszko.currencyconverter.domain.model.CodeWithData
-import com.mieszko.currencyconverter.domain.repository.ICodesDataRepository
+import com.mieszko.currencyconverter.domain.repository.ICodesStaticDataRepository
 import java.util.EnumMap
 
 class MapDataToCodesUseCase(
-    private val codesDataRepository: ICodesDataRepository
+    private val codesStaticDataRepository: ICodesStaticDataRepository
 ) : IMapDataToCodesUseCase {
 
     @WorkerThread
@@ -16,7 +16,7 @@ class MapDataToCodesUseCase(
         allRatios: EnumMap<SupportedCode, Double>
     ): List<CodeWithData> = codes.mapNotNull { code ->
         val toUahRatio = allRatios[code]
-        val data = codesDataRepository.getCodeStaticData(code)
+        val data = codesStaticDataRepository.getCodeStaticData(code)
 
         if (toUahRatio != null && data != null) {
             CodeWithData(code = code, toUahRatio = toUahRatio, staticData = data)

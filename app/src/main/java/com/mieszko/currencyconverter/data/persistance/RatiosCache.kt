@@ -1,19 +1,21 @@
-package com.mieszko.currencyconverter.data.persistance.cache.ratios
+package com.mieszko.currencyconverter.data.persistance
 
-import com.google.gson.GsonBuilder
+import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.mieszko.currencyconverter.data.fallback.FallbackRatios
 import com.mieszko.currencyconverter.data.model.CurrencyRatioDTO
-import com.mieszko.currencyconverter.data.persistance.ISharedPrefsManager
+import com.mieszko.currencyconverter.data.model.RatiosTimeDTO
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import java.lang.reflect.Type
 import java.util.Date
 
-class RatiosCache(private val sharedPrefsManager: ISharedPrefsManager) : IRatiosCache {
+class RatiosCache(
+    private val sharedPrefsManager: ISharedPrefsManager,
+    private val gson: Gson
+) : IRatiosCache {
     private val type: Type = object : TypeToken<RatiosTimeDTO>() {}.type
-    private val gson = GsonBuilder().create()
 
     private val source: BehaviorSubject<RatiosTimeDTO> =
         BehaviorSubject.createDefault(
@@ -23,7 +25,7 @@ class RatiosCache(private val sharedPrefsManager: ISharedPrefsManager) : IRatios
                     type
                 )
             } catch (e: Exception) {
-                // todo LOG NON FATAL TO FIREBASE
+                // Load a fallback if there's no fresh ratios data to show.
                 FallbackRatios.getFallback()
             }
         )
@@ -32,8 +34,7 @@ class RatiosCache(private val sharedPrefsManager: ISharedPrefsManager) : IRatios
         return source
     }
 
-    // TODO ONCE THIS WILL BE WORKING REWORK IT WOULD USE ROOM DB
-    override fun saveTrackedCodes(ratios: List<CurrencyRatioDTO>): Completable =
+    override fun saveCodeRatios(ratios: List<CurrencyRatioDTO>): Completable =
         Completable.fromAction {
             val ratiosTime = RatiosTimeDTO(ratios, Date())
 
@@ -46,6 +47,15 @@ class RatiosCache(private val sharedPrefsManager: ISharedPrefsManager) : IRatios
 }
 
 interface IRatiosCache {
+    /**
+     * Emits latest known ratios on
+     * - every subscription
+     * - ratios update
+     */
     fun observeCodeRatios(): Observable<RatiosTimeDTO>
-    fun saveTrackedCodes(ratios: List<CurrencyRatioDTO>): Completable
+
+    /**
+     * Caches ratios, causes [observeCodeRatios] to emit an update.
+     */
+    fun saveCodeRatios(ratios: List<CurrencyRatioDTO>): Completable
 }

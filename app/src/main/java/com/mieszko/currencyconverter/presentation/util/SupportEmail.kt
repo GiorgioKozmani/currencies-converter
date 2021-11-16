@@ -7,9 +7,21 @@ import android.net.Uri
 import android.os.Build
 import com.mieszko.currencyconverter.R
 
-object EmailHelper {
+object FeedbackEmailHelper {
 
     fun openFeedbackEmail(context: Context) {
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(context.getString(R.string.support_email)))
+            putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.support_mail_title))
+            putExtra(Intent.EXTRA_TEXT, makeInitialEmailBody(context))
+        }
+
+        context.startActivity(intent)
+    }
+
+    private fun makeInitialEmailBody(context: Context): String {
+        val promptText = context.getString(R.string.support_mail_prompt_text)
         var appVersion = "-----"
 
         try {
@@ -19,18 +31,8 @@ object EmailHelper {
             e.printStackTrace()
         }
 
-        val intent = Intent(Intent.ACTION_SENDTO)
-        intent.data = Uri.parse("mailto:")
-        val addresses = arrayOfNulls<String>(1)
-        addresses[0] = context.getString(R.string.support_email)
-        intent.putExtra(Intent.EXTRA_EMAIL, addresses)
-        intent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.support_mail_title))
+        return """$promptText
 
-        val body = context.getString(R.string.support_mail_prompt_text)
-
-        intent.putExtra(
-            Intent.EXTRA_TEXT,
-            """$body
 ________________
 
 
@@ -44,8 +46,5 @@ ________________
 Device: ${Build.MANUFACTURER} ${Build.MODEL}
 OS version: ${Build.VERSION.RELEASE}
 App version: $appVersion"""
-        )
-
-        context.startActivity(intent)
     }
 }

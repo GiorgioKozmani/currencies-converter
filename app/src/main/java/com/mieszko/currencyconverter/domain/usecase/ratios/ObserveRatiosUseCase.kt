@@ -8,6 +8,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import java.util.EnumMap
 
+// TODO [IDEA] Rework so it returns ratios together with static data?
 class ObserveRatiosUseCase(
     private val ratiosRepository: IRatiosRepository,
     private val eventsLogger: IFirebaseEventsLogger
@@ -27,8 +28,8 @@ class ObserveRatiosUseCase(
                                 supportedRatios[it.code] = it.ratioToUAH
                             } catch (e: Exception) {
                                 eventsLogger.logNonFatalError(
-                                    e,
-                                    "RATIOSTIME OBJECT CREATION ERROR, CODE: " + it.code + "  RATIO: " + it.ratioToUAH
+                                    throwable = e,
+                                    customMessage = "RATIOSTIME OBJECT CREATION ERROR, CODE: " + it.code + "  RATIO: " + it.ratioToUAH
                                 )
                             }
                         }

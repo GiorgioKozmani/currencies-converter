@@ -5,6 +5,7 @@ import android.content.res.Resources
 import com.mieszko.currencyconverter.di.module.analyticsModule
 import com.mieszko.currencyconverter.di.module.apiModule
 import com.mieszko.currencyconverter.di.module.cacheModule
+import com.mieszko.currencyconverter.di.module.gsonModule
 import com.mieszko.currencyconverter.di.module.repoModule
 import com.mieszko.currencyconverter.di.module.sharedPrefsModule
 import com.mieszko.currencyconverter.di.module.useCaseModule
@@ -15,12 +16,6 @@ import org.koin.core.context.startKoin
 
 class CurrenciesApp : Application() {
 
-    // TODO ADD
-    // - IF IT'S FIRST RUN < EFFECTIVELY ALSO AFTER DATA CLEAR >
-    // TODO HANDLE THIS INSIDE OF THE REPOS, NOT HERE!
-    // a) set selected currencies to something (for example euro, dollar, gbp, chinese)
-    // b) if ratios is empty load ratios from static file (remember to include date)
-
     override fun onCreate() {
         super.onCreate()
         resourses = resources
@@ -30,6 +25,7 @@ class CurrenciesApp : Application() {
             androidContext(this@CurrenciesApp)
             modules(
                 listOf(
+                    gsonModule,
                     repoModule,
                     apiModule,
                     cacheModule,

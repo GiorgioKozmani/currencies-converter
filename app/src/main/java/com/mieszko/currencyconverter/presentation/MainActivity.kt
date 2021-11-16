@@ -37,7 +37,7 @@ class MainActivity :
         bottomNavigation.setupWithNavController(navController)
 
         // this is implemented so we're not recreating fragment if it's already selected
-        bottomNavigation.setOnNavigationItemReselectedListener { item ->
+        bottomNavigation.setOnItemReselectedListener { item ->
             when (item.itemId) {
                 R.id.homeFragment -> {
                     // TODO ON RESELECTION CALL FRAGMENT METHOD TO CLICK REFRESH / scroll to top?

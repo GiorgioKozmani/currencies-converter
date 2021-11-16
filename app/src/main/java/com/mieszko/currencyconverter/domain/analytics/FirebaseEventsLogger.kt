@@ -5,6 +5,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mieszko.currencyconverter.common.model.SupportedCode
 import com.mieszko.currencyconverter.domain.analytics.base.FirebaseAnalyticsEvent
+import com.mieszko.currencyconverter.domain.analytics.constants.AnalyticsConstants.UserProperties.BASE_CURRENCY
 
 interface IFirebaseEventsLogger {
     fun logEvent(event: FirebaseAnalyticsEvent)
@@ -34,6 +35,6 @@ class FirebaseEventsLogger(
     }
 
     override fun setBaseCurrencyUserProperty(baseCurrency: SupportedCode?) {
-        firebaseAnalytics.setUserProperty("base_currency", baseCurrency?.name)
+        firebaseAnalytics.setUserProperty(BASE_CURRENCY, baseCurrency?.name)
     }
 }

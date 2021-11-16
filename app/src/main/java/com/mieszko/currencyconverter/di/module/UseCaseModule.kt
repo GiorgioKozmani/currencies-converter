@@ -1,7 +1,7 @@
 package com.mieszko.currencyconverter.di.module
 
-import com.mieszko.currencyconverter.domain.usecase.IMapDataToCodesUseCase
-import com.mieszko.currencyconverter.domain.usecase.MapDataToCodesUseCase
+import com.mieszko.currencyconverter.domain.usecase.mappers.IMapDataToCodesUseCase
+import com.mieszko.currencyconverter.domain.usecase.mappers.MapDataToCodesUseCase
 import com.mieszko.currencyconverter.domain.usecase.ratios.FetchRemoteRatiosUseCase
 import com.mieszko.currencyconverter.domain.usecase.ratios.IFetchRemoteRatiosUseCase
 import com.mieszko.currencyconverter.domain.usecase.ratios.IObserveRatiosUseCase
@@ -96,6 +96,6 @@ val useCaseModule = module {
      */
 
     factory<IMapDataToCodesUseCase> {
-        MapDataToCodesUseCase(codesDataRepository = get())
+        MapDataToCodesUseCase(codesStaticDataRepository = get())
     }
 }

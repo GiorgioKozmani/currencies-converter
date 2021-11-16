@@ -3,8 +3,9 @@ package com.mieszko.currencyconverter.domain.model.list
 import com.mieszko.currencyconverter.common.model.SupportedCode
 import com.mieszko.currencyconverter.data.model.CodeStaticData
 
-sealed class HomeListModel {
-    // todo idea, if code and code data always go together in model, it might be worth to revert supported currency class combiding these!
+sealed class HomeListItemModel {
+    // todo [IDEA], if code and code data always go together in model,
+    // it might be worth to combine these into one model.
     abstract val code: SupportedCode
     abstract val codeStaticData: CodeStaticData
     abstract val amount: Double
@@ -13,7 +14,7 @@ sealed class HomeListModel {
         override val code: SupportedCode,
         override val codeStaticData: CodeStaticData,
         override val amount: Double,
-    ) : HomeListModel()
+    ) : HomeListItemModel()
 
     data class NonBase(
         override val code: SupportedCode,
@@ -21,5 +22,5 @@ sealed class HomeListModel {
         override val amount: Double,
         val baseToThisText: String,
         val thisToBaseText: String
-    ) : HomeListModel()
+    ) : HomeListItemModel()
 }

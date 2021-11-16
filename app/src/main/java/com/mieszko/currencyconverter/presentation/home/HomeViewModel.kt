@@ -4,15 +4,15 @@ import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.mieszko.currencyconverter.common.base.BaseViewModel
+import com.mieszko.currencyconverter.common.model.IDisposablesBag
 import com.mieszko.currencyconverter.common.model.Resource
 import com.mieszko.currencyconverter.common.model.SupportedCode
-import com.mieszko.currencyconverter.common.util.IDisposablesBag
 import com.mieszko.currencyconverter.domain.analytics.IFirebaseEventsLogger
 import com.mieszko.currencyconverter.domain.analytics.events.BaseValueChangedEvent
 import com.mieszko.currencyconverter.domain.model.CodeWithData
-import com.mieszko.currencyconverter.domain.model.UpdateDate
-import com.mieszko.currencyconverter.domain.model.list.HomeListModel
-import com.mieszko.currencyconverter.domain.usecase.IMapDataToCodesUseCase
+import com.mieszko.currencyconverter.domain.model.DataUpdatedTime
+import com.mieszko.currencyconverter.domain.model.list.HomeListItemModel
+import com.mieszko.currencyconverter.domain.usecase.mappers.IMapDataToCodesUseCase
 import com.mieszko.currencyconverter.domain.usecase.ratios.IFetchRemoteRatiosUseCase
 import com.mieszko.currencyconverter.domain.usecase.ratios.IObserveRatiosUseCase
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.IMoveTrackedCodeToTopUseCase
@@ -50,23 +50,23 @@ class HomeViewModel(
     private val eventsLogger: IFirebaseEventsLogger
 ) : BaseViewModel(disposablesBag) {
 
-    private val currenciesListModelsLiveData: MutableLiveData<Resource<List<HomeListModel>>> =
+    private val currenciesListModelsLiveData: MutableLiveData<Resource<List<HomeListItemModel>>> =
         MutableLiveData()
     private val showNoContentStateLiveData: MutableLiveData<Boolean> =
         MutableLiveData()
-    private val lastUpdatedLiveData: MutableLiveData<UpdateDate> =
+    private val lastUpdatedLiveData: MutableLiveData<DataUpdatedTime> =
         MutableLiveData()
     private val isLoadingLiveData: MutableLiveData<Boolean> =
         MutableLiveData()
 
     // Exposing only LiveData
-    fun getCurrenciesLiveData(): LiveData<Resource<List<HomeListModel>>> =
+    fun getCurrenciesLiveData(): LiveData<Resource<List<HomeListItemModel>>> =
         currenciesListModelsLiveData
 
     fun getShowNoContentStateLiveData(): LiveData<Boolean> =
         showNoContentStateLiveData
 
-    fun getLastUpdatedLiveData(): LiveData<UpdateDate> =
+    fun getLastUpdatedLiveData(): LiveData<DataUpdatedTime> =
         lastUpdatedLiveData
 
     fun getIsLoadingLiveData(): LiveData<Boolean> =
@@ -74,7 +74,7 @@ class HomeViewModel(
 
     private val baseAmountChange = BehaviorSubject.createDefault(DEFAULT_BASE_AMOUNT)
 
-    private var currenciesListModels = listOf<HomeListModel>()
+    private var currenciesListModels = listOf<HomeListItemModel>()
 
     init {
         // emit list items when ratios or tracking order or base amount changes
@@ -138,7 +138,7 @@ class HomeViewModel(
             observeRatiosUseCase()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.computation())
-                .doOnNext { lastUpdatedLiveData.postValue(UpdateDate(it.time)) },
+                .doOnNext { lastUpdatedLiveData.postValue(DataUpdatedTime(it.time)) },
             // TRACKING CODES CHANGED
             observeTrackedCodesUseCase()
                 .subscribeOn(Schedulers.io())
@@ -267,7 +267,7 @@ class HomeViewModel(
         currenciesListModelsLiveData.postValue(Resource.Error(errorMessage))
     }
 
-    private fun emitModels(listItemsModels: List<HomeListModel>) {
+    private fun emitModels(listItemsModels: List<HomeListItemModel>) {
         // todo step away from emitting resource from here
         currenciesListModelsLiveData.value = Resource.Success(listItemsModels)
     }
@@ -276,7 +276,7 @@ class HomeViewModel(
     private fun makeListItemModels(
         baseAmount: Double,
         trackedCodesWithData: List<CodeWithData>
-    ): List<HomeListModel> {
+    ): List<HomeListItemModel> {
         val baseCode = trackedCodesWithData.first().code
         val baseToUahRatio = trackedCodesWithData.first().toUahRatio
 
@@ -286,13 +286,13 @@ class HomeViewModel(
             val newCurrencyData = trackedCodeWithData.staticData
 
             if (index == 0) {
-                HomeListModel.Base(
+                HomeListItemModel.Base(
                     code = baseCode,
                     codeStaticData = newCurrencyData,
                     amount = baseAmount
                 )
             } else {
-                HomeListModel.NonBase(
+                HomeListItemModel.NonBase(
                     code = newCurrencyCode,
                     codeStaticData = newCurrencyData,
                     amount = calculateCurrencyAmount(

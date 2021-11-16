@@ -6,7 +6,8 @@ import retrofit2.http.GET
 
 interface CurrenciesApi {
     companion object {
-        //  change into service that i controll todo this is a big issue that i do not control datasource now.
+        // It'd be optimal to change it to the service that I control. It's likely that this endpoint
+        // will get changed / restricted / removed.
         const val BASE_URL = "https://bank.gov.ua/NBUStatService/v1/statdirectory/"
     }
 

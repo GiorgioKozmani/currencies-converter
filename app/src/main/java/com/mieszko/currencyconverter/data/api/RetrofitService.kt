@@ -1,6 +1,5 @@
-package com.mieszko.currencyconverter.data.util
+package com.mieszko.currencyconverter.data.api
 
-import com.mieszko.currencyconverter.data.api.CurrenciesApi
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory

@@ -11,7 +11,7 @@ import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.mieszko.currencyconverter.R
 import com.mieszko.currencyconverter.domain.analytics.IFirebaseEventsLogger
 import com.mieszko.currencyconverter.domain.analytics.events.ButtonClickedEvent
-import com.mieszko.currencyconverter.domain.model.UpdateDate
+import com.mieszko.currencyconverter.domain.model.DataUpdatedTime
 import com.mieszko.currencyconverter.presentation.home.HomeViewModel
 import com.mieszko.currencyconverter.presentation.util.animateInText
 import org.koin.android.ext.android.inject
@@ -77,18 +77,18 @@ class HomeHeaderFragment : Fragment(R.layout.home_header_fragment) {
         }
     }
 
-    private fun handleNewDate(updateDate: UpdateDate) {
-        val dateState = updateDate.getDateState()
+    private fun handleNewDate(dataUpdatedTime: DataUpdatedTime) {
+        val dateState = dataUpdatedTime.getDataState()
         val dateText = DateFormat.format("yyyy-MM-dd hh:mm:ss a", dateState.date).toString()
 
         when (dateState) {
-            is UpdateDate.StatefulDate.Fresh -> {
+            is DataUpdatedTime.DataState.Fresh -> {
                 lastUpdatedTV.animateInText(
                     dateText,
                     resources.getInteger(android.R.integer.config_longAnimTime).toLong()
                 )
             }
-            is UpdateDate.StatefulDate.Stale -> {
+            is DataUpdatedTime.DataState.Stale -> {
                 lastUpdatedTV.text = dateText
             }
         }

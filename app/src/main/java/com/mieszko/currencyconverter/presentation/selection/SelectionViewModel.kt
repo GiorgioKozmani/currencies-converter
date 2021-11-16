@@ -3,14 +3,14 @@ package com.mieszko.currencyconverter.presentation.selection
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.mieszko.currencyconverter.common.base.BaseViewModel
+import com.mieszko.currencyconverter.common.model.IDisposablesBag
 import com.mieszko.currencyconverter.common.model.SupportedCode
-import com.mieszko.currencyconverter.common.util.IDisposablesBag
 import com.mieszko.currencyconverter.domain.analytics.IFirebaseEventsLogger
 import com.mieszko.currencyconverter.domain.analytics.events.CodeTrackedEvent
 import com.mieszko.currencyconverter.domain.analytics.events.CodeUntrackedEvent
 import com.mieszko.currencyconverter.domain.analytics.events.SearchTermEvent
 import com.mieszko.currencyconverter.domain.model.list.TrackingCurrenciesModel
-import com.mieszko.currencyconverter.domain.repository.ICodesDataRepository
+import com.mieszko.currencyconverter.domain.repository.ICodesStaticDataRepository
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.IAddTrackedCodesUseCase
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.IObserveTrackedCodesUseCase
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.IRemoveTrackedCodesUseCase
@@ -27,7 +27,7 @@ class SelectionViewModel(
     private val removeTrackedCodesUseCase: IRemoveTrackedCodesUseCase,
     private val addTrackedCodesUseCase: IAddTrackedCodesUseCase,
     // TODO USE USECASES INSTEAD
-    private val codesDataRepository: ICodesDataRepository,
+    private val codesStaticDataRepository: ICodesStaticDataRepository,
     private val eventsLogger: IFirebaseEventsLogger
 ) : BaseViewModel(disposablesBag) {
 
@@ -121,7 +121,7 @@ class SelectionViewModel(
                 addAll(notTrackedCodes)
             }
                 .mapNotNull { code ->
-                    codesDataRepository.getCodeStaticData(code)?.let { staticData ->
+                    codesStaticDataRepository.getCodeStaticData(code)?.let { staticData ->
                         TrackingCurrenciesModel(
                             code,
                             staticData,

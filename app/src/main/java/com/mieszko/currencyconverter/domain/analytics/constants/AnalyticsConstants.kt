@@ -58,10 +58,6 @@ object AnalyticsConstants {
         object InAppRate {
             const val EVENT = "in_app_rate"
         }
-
-        object ItemDragged {
-            // todo
-        }
     }
 
     /**

@@ -4,7 +4,7 @@ import com.mieszko.currencyconverter.R
 import com.mieszko.currencyconverter.common.CurrenciesApp
 import com.mieszko.currencyconverter.common.model.SupportedCode
 import com.mieszko.currencyconverter.data.model.CodeStaticData
-import com.mieszko.currencyconverter.domain.repository.ICodesDataRepository
+import com.mieszko.currencyconverter.domain.repository.ICodesStaticDataRepository
 import java.util.EnumMap
 
 /**
@@ -12,17 +12,10 @@ import java.util.EnumMap
  *
  * This repository provides data associated with all supported currencies
  */
-class CodesDataRepository : ICodesDataRepository {
+class CodesStaticDataRepository : ICodesStaticDataRepository {
 
-    // todo If your app also uses “UseCase” classes like GetUserUseCase or GetUserFetchTask, then you definitely don’t need a Repository, as those “UseCase” classes are already doing what a Repository would.
-    // TODO If an app does not have a remote API, it does not need a Repository. !!!!!!!!
     override fun getCodeStaticData(code: SupportedCode): CodeStaticData? = SUPPORTED_CODE_STATIC_DATA_MAP[code]
 
-    // TODO NOT SUPPORTED BY UKRAINIAN SERVICE
-//    ISK(_root_ide_package_.com.mieszko.resources.getString(R.string.isk_full), R.drawable.
-//    PHP(_root_ide_package_.com.mieszko.resources.getString(R.string.php_full), R.drawable.
-
-    // TODO MENTION THE LICENCE!!!
     private companion object {
         private val resources = CurrenciesApp.resourses
 

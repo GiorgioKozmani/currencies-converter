@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mieszko.currencyconverter.R
 import com.mieszko.currencyconverter.common.model.Resource
-import com.mieszko.currencyconverter.domain.model.list.HomeListModel
+import com.mieszko.currencyconverter.domain.model.list.HomeListItemModel
 import com.mieszko.currencyconverter.presentation.home.HomeViewModel
 import com.mieszko.currencyconverter.presentation.home.list.adapter.HomeCurrenciesListAdapter
 import com.mieszko.currencyconverter.presentation.util.CurrenciesListDragHelper
@@ -75,7 +75,7 @@ class HomeListFragment : Fragment(R.layout.home_list_fragment) {
         })
     }
 
-    private fun handleNewResults(response: Resource<List<HomeListModel>>) {
+    private fun handleNewResults(response: Resource<List<HomeListItemModel>>) {
         when (response) {
             is Resource.Loading -> {
                 // loading is not handled yet
@@ -90,7 +90,7 @@ class HomeListFragment : Fragment(R.layout.home_list_fragment) {
         }
     }
 
-    private fun updateListData(response: Resource<List<HomeListModel>>) {
+    private fun updateListData(response: Resource<List<HomeListItemModel>>) {
         val rvManager = recyclerView.layoutManager as LinearLayoutManager
         // this is a workaround for issue with dragging 1st item of the list
         // https://issuetracker.google.com/issues/37018279

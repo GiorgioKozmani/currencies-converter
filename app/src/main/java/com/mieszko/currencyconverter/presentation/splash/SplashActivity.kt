@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.mieszko.currencyconverter.R
 import com.mieszko.currencyconverter.presentation.MainActivity
 
+// todo migrate to SplashScreen API
+// https://developer.android.com/guide/topics/ui/splash-screen
 class SplashActivity : AppCompatActivity() {
 
     @SuppressLint("ClickableViewAccessibility")
