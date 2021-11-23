@@ -33,7 +33,7 @@ class RateAppDialog : DialogFragment() {
     private val sharedPrefsManager: ISharedPrefsManager by inject()
 
     private val interpolator = OvershootInterpolator()
-    private var ratesItems = mutableListOf<RateView>()
+    private var ratesItems = mutableListOf<RateStarModel>()
 
     private lateinit var rateSlider: Slider
     private lateinit var rateButton: Button
@@ -79,7 +79,6 @@ class RateAppDialog : DialogFragment() {
                         ThankYouDialog().show(parentFragmentManager, THANK_YOU_DIALOG_TAG)
                     }
                     .setNegativeButton(R.string.rate_app_dialog_negative_button_text) { dialog, _ ->
-                        // TODO LOG
                         dialog.cancel()
                     }
             }.create()
@@ -94,38 +93,37 @@ class RateAppDialog : DialogFragment() {
         } ?: throw IllegalStateException("Activity cannot be null")
     }
 
-    // TODO THINK OF CUSTOM VIEWS FOR FOR EXAMPLE OVERLAY + STAR
     private fun setupSlider(dialogView: View) {
         rateSlider = dialogView.findViewById(R.id.rate_slider)
 
         ratesItems.clear()
         ratesItems.addAll(
             listOf(
-                RateView(
+                RateStarModel(
                     Pair(
                         dialogView.findViewById(R.id.rate1),
                         dialogView.findViewById(R.id.rate1_overlay)
                     )
                 ),
-                RateView(
+                RateStarModel(
                     Pair(
                         dialogView.findViewById(R.id.rate2),
                         dialogView.findViewById(R.id.rate2_overlay)
                     )
                 ),
-                RateView(
+                RateStarModel(
                     Pair(
                         dialogView.findViewById(R.id.rate3),
                         dialogView.findViewById(R.id.rate3_overlay)
                     )
                 ),
-                RateView(
+                RateStarModel(
                     Pair(
                         dialogView.findViewById(R.id.rate4),
                         dialogView.findViewById(R.id.rate4_overlay)
                     )
                 ),
-                RateView(
+                RateStarModel(
                     Pair(
                         dialogView.findViewById(R.id.rate5),
                         dialogView.findViewById(R.id.rate5_overlay)
@@ -185,5 +183,5 @@ class RateAppDialog : DialogFragment() {
 
     private fun roundUpToInt(value: Float) = ceil(value).toInt()
 
-    data class RateView(val view: Pair<View, View>, val isSelected: Boolean = false)
+    data class RateStarModel(val view: Pair<View, View>, val isSelected: Boolean = false)
 }

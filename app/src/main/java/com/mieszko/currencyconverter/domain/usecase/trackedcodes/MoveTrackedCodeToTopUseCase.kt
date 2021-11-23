@@ -14,7 +14,6 @@ class MoveTrackedCodeToTopUseCase(
     override fun invoke(codeToMove: SupportedCode): Completable =
         getTrackedCodesOnceUseCase()
             .flatMapCompletable { currentTrackedCodes ->
-                // todo check thread
                 Single.fromCallable {
                     if (currentTrackedCodes.contains(codeToMove)) {
                         currentTrackedCodes.toMutableList()
@@ -27,7 +26,6 @@ class MoveTrackedCodeToTopUseCase(
                     }
                 }
                     .subscribeOn(Schedulers.computation())
-                    // todo check thread
                     .flatMapCompletable { codes ->
                         saveTrackedCodesUseCase(codes)
                             .subscribeOn(Schedulers.io())

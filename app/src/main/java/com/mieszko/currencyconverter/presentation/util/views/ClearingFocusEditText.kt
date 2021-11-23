@@ -6,7 +6,7 @@ import android.view.KeyEvent
 import com.google.android.material.textfield.TextInputEditText
 
 /**
- * This wrapper class is implemented to simplify the process of hiding the k
+ * This wrapper class is implemented to simplify the process of clearing ET selection on back click.
  */
 class ClearingFocusEditText : TextInputEditText {
     constructor(context: Context) : super(context)
@@ -19,7 +19,7 @@ class ClearingFocusEditText : TextInputEditText {
 
     override fun onKeyPreIme(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-//            clearFocus()
+            clearFocus()
         }
 
         return super.onKeyPreIme(keyCode, event)

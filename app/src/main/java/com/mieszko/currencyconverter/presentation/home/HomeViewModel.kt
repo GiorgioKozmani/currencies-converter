@@ -9,99 +9,70 @@ import com.mieszko.currencyconverter.common.model.Resource
 import com.mieszko.currencyconverter.common.model.SupportedCode
 import com.mieszko.currencyconverter.domain.analytics.IFirebaseEventsLogger
 import com.mieszko.currencyconverter.domain.analytics.events.BaseValueChangedEvent
+import com.mieszko.currencyconverter.domain.analytics.events.ButtonClickedEvent
 import com.mieszko.currencyconverter.domain.model.CodeWithData
 import com.mieszko.currencyconverter.domain.model.DataUpdatedTime
 import com.mieszko.currencyconverter.domain.model.list.HomeListItemModel
 import com.mieszko.currencyconverter.domain.usecase.mappers.IMapDataToCodesUseCase
 import com.mieszko.currencyconverter.domain.usecase.ratios.IFetchRemoteRatiosUseCase
+import com.mieszko.currencyconverter.domain.usecase.ratios.IMakeRatioStringUseCase
 import com.mieszko.currencyconverter.domain.usecase.ratios.IObserveRatiosUseCase
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.IMoveTrackedCodeToTopUseCase
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.ISwapTrackedCodesUseCase
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.IObserveTrackedCodesUseCase
+import com.mieszko.currencyconverter.domain.util.roundToDecimals
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import java.math.BigDecimal
-import java.math.MathContext
 import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
-import kotlin.math.pow
-import kotlin.math.roundToLong
-
-// TODO
-// https://proandroiddev.com/anemic-repositories-mvi-and-rxjava-induced-design-damage-and-how-aac-viewmodel-is-silently-1762caa70e13
-// The take-away here is that if:
-// you don’t have a saveState/restoreState function on your ViewModel
-// you don’t have an initialState: Bundle? constructor argument on your ViewModel (passed in from the ViewModelProvider.Factory in your Activity/Fragment as a dynamic argument)
-// you don’t use SavedStateHandle.getLiveData("key") nor SavedStateHandle.get("key")/set("key")
-// https://developer.android.com/jetpack/androidx/releases/lifecycle#version_230_3
-// there are some changes to saving state made recently
 
 class HomeViewModel(
     disposablesBag: IDisposablesBag,
-    observeRatiosUseCase: IObserveRatiosUseCase,
-    observeTrackedCodesUseCase: IObserveTrackedCodesUseCase,
-    private val fetchRemoteRatiosUseCase: IFetchRemoteRatiosUseCase,
-    private val moveTrackedCodeToTopUseCase: IMoveTrackedCodeToTopUseCase,
-    private val swapTrackedCodesUseCase: ISwapTrackedCodesUseCase,
-    private val mapCodeToDataUseCase: IMapDataToCodesUseCase,
+    observeRatios: IObserveRatiosUseCase,
+    observeTrackedCodes: IObserveTrackedCodesUseCase,
+    private val fetchRemoteRatios: IFetchRemoteRatiosUseCase,
+    private val moveTrackedCodeToTop: IMoveTrackedCodeToTopUseCase,
+    private val swapTrackedCodes: ISwapTrackedCodesUseCase,
+    private val mapCodesToData: IMapDataToCodesUseCase,
+    private val makeRatioString: IMakeRatioStringUseCase,
     private val eventsLogger: IFirebaseEventsLogger
 ) : BaseViewModel(disposablesBag) {
 
     private val currenciesListModelsLiveData: MutableLiveData<Resource<List<HomeListItemModel>>> =
         MutableLiveData()
-    private val showNoContentStateLiveData: MutableLiveData<Boolean> =
+    private val showEmptyStateLiveData: MutableLiveData<Boolean> =
         MutableLiveData()
     private val lastUpdatedLiveData: MutableLiveData<DataUpdatedTime> =
         MutableLiveData()
     private val isLoadingLiveData: MutableLiveData<Boolean> =
         MutableLiveData()
 
-    // Exposing only LiveData
-    fun getCurrenciesLiveData(): LiveData<Resource<List<HomeListItemModel>>> =
-        currenciesListModelsLiveData
-
-    fun getShowNoContentStateLiveData(): LiveData<Boolean> =
-        showNoContentStateLiveData
-
-    fun getLastUpdatedLiveData(): LiveData<DataUpdatedTime> =
-        lastUpdatedLiveData
-
-    fun getIsLoadingLiveData(): LiveData<Boolean> =
-        isLoadingLiveData
-
     private val baseAmountChange = BehaviorSubject.createDefault(DEFAULT_BASE_AMOUNT)
-
     private var currenciesListModels = listOf<HomeListItemModel>()
 
     init {
-        // emit list items when ratios or tracking order or base amount changes
-        setupListDataSource(observeRatiosUseCase, observeTrackedCodesUseCase)
+        // Emit list items when ratios or tracking order or base amount changes
+        setupListDataSource(observeRatios, observeTrackedCodes)
 
-        // ATTEMPT FETCHING FRESH DATA FROM NETWORK
-        fetchRemoteRatios()
+        // Attempt fetching fresh data from network (this doesn't trigger any UI updates directly)
+        fetchRatiosFromNetwork()
 
         setupBaseValueChangeLogging()
     }
 
     private fun setupBaseValueChangeLogging() {
-        disposablesBag.add(
+        addSubscription(
             baseAmountChange
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .subscribeBy(
                     onNext = { baseValue ->
-                        val baseCurrency = currenciesListModels.firstOrNull()
-                        if (baseCurrency != null) {
-                            eventsLogger.logEvent(
-                                BaseValueChangedEvent(
-                                    baseCurrency.code,
-                                    baseValue
-                                )
-                            )
+                        currenciesListModels.firstOrNull()?.run {
+                            eventsLogger.logEvent(BaseValueChangedEvent(code, baseValue))
                         }
                     }
                 )
@@ -112,15 +83,12 @@ class HomeViewModel(
         observeRatiosUseCase: IObserveRatiosUseCase,
         observeTrackedCodesUseCase: IObserveTrackedCodesUseCase
     ) {
-        disposablesBag.add(
+        addSubscription(
             makeListItems(observeRatiosUseCase, observeTrackedCodesUseCase)
-                .doOnNext { listItems -> currenciesListModels = listItems }
+                .subscribeOn(Schedulers.io())
+                .doOnNext { listItems -> assignAndEmitModels(listItems) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onNext = { listItems ->
-                        // todo every time we change base it emits twice...
-                        emitModels(listItems)
-                    },
                     onError = {
                         eventsLogger.logNonFatalError(it, "HOME LIST DATA SOURCE ERROR")
                         emitError(it)
@@ -142,25 +110,17 @@ class HomeViewModel(
             // TRACKING CODES CHANGED
             observeTrackedCodesUseCase()
                 .subscribeOn(Schedulers.io())
-                .doOnNext { codeWithData ->
-                    if (codeWithData.isNullOrEmpty()) {
-                        showNoContentStateLiveData.postValue(true)
-                    } else {
-                        showNoContentStateLiveData.postValue(false)
-                    }
-                }
+                .doOnNext { codeWithData -> handleEmptyState(codeWithData) }
                 .observeOn(Schedulers.computation()),
             { allRatios, trackedCodes ->
-                mapCodeToDataUseCase(codes = trackedCodes, allRatios = allRatios.ratios)
+                mapCodesToData(codes = trackedCodes, allRatios = allRatios.ratios)
             }
         )
-            // TODO STEP AWAY FROM PAIR
             .map { codeWithData -> Pair(System.nanoTime(), codeWithData) },
         // USER INPUT NEW BASE CURRENCY
         baseAmountChange
             .subscribeOn(Schedulers.computation())
             .observeOn(Schedulers.computation())
-            // TODO CURRENTLY THIS IS THE REASON IT'S STRIGGERED WHEN SWITCHING TABS. IT'S NOT GOOD!!!
             .map { newAmount -> Pair(System.nanoTime(), newAmount) },
         { currenciesChange, newBaseAmount ->
             val trackedCodesWithData = currenciesChange.second
@@ -168,8 +128,10 @@ class HomeViewModel(
             if (trackedCodesWithData.isEmpty()) {
                 listOf()
             } else {
+                val orderChangeTime = currenciesChange.first
+                val baseAmountChangeTime = newBaseAmount.first
                 // ratios or tracking order changed
-                if (currenciesChange.first > newBaseAmount.first) {
+                if (orderChangeTime > baseAmountChangeTime) {
                     makeListItemModels(
                         baseAmount = currenciesListModels.find { it.code == trackedCodesWithData.first().code }
                             ?.amount
@@ -189,25 +151,30 @@ class HomeViewModel(
         }
     )
 
-    fun refreshButtonClicked() {
-        fetchRemoteRatios()
+    private fun handleEmptyState(codeWithData: List<SupportedCode>?) {
+        if (codeWithData.isNullOrEmpty()) {
+            showEmptyStateLiveData.postValue(true)
+        } else {
+            showEmptyStateLiveData.postValue(false)
+        }
     }
 
-    private fun fetchRemoteRatios() {
-        disposablesBag.add(
-            fetchRemoteRatiosUseCase()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { isLoadingLiveData.value = true }
-                .doOnTerminate { isLoadingLiveData.value = false }
-                .subscribeBy(
-                    onError = {
-                        // TODO most probably just no internet, don't log if it's unknown host exception
-                        eventsLogger.logNonFatalError(it, "REMOTE RATIOS REQUEST FAILED")
-                        emitError(it)
-                    }
-                )
-        )
+    private fun fetchRatiosFromNetwork() {
+        if (isLoadingLiveData.value != true) {
+            addSubscription(
+                fetchRemoteRatios()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe { isLoadingLiveData.value = true }
+                    .doOnTerminate { isLoadingLiveData.value = false }
+                    .subscribeBy(
+                        onError = {
+                            eventsLogger.logNonFatalError(it, "REMOTE RATIOS REQUEST FAILED")
+                            emitError(it)
+                        }
+                    )
+            )
+        }
     }
 
     fun baseCurrencyAmountChanged(newAmount: Double) {
@@ -219,19 +186,28 @@ class HomeViewModel(
     fun listItemClicked(newBaseCurrency: SupportedCode) {
         // ignore base item clicks
         if (currenciesListModels.isNotEmpty() && currenciesListModels.first().code != newBaseCurrency) {
-            moveTrackedCodeToTopUseCase(newBaseCurrency)
+            moveTrackedCodeToTop(newBaseCurrency)
                 .subscribeOn(Schedulers.io())
                 .subscribe()
         }
     }
 
     fun itemDragged(from: Int, to: Int) {
-        swapTrackedCodesUseCase(
+        swapTrackedCodes(
             currenciesListModels[from].code,
             currenciesListModels[to].code
         )
             .subscribeOn(Schedulers.io())
             .subscribe()
+    }
+
+    fun refreshButtonClicked() {
+        eventsLogger.logEvent(ButtonClickedEvent("refresh_button"))
+        fetchRatiosFromNetwork()
+    }
+
+    fun infoButtonClicked() {
+        eventsLogger.logEvent(ButtonClickedEvent("info_button"))
     }
 
     @WorkerThread
@@ -248,10 +224,8 @@ class HomeViewModel(
             0.0
         }
 
-    // TODO REWORK
+    // TODO STRINGS!
     private fun emitError(t: Throwable?) {
-        // todo strings, revise
-
         // REVISE
         val errorMessage = when (t) {
             is UnknownHostException -> {
@@ -267,9 +241,9 @@ class HomeViewModel(
         currenciesListModelsLiveData.postValue(Resource.Error(errorMessage))
     }
 
-    private fun emitModels(listItemsModels: List<HomeListItemModel>) {
-        // todo step away from emitting resource from here
-        currenciesListModelsLiveData.value = Resource.Success(listItemsModels)
+    private fun assignAndEmitModels(listItemsModels: List<HomeListItemModel>) {
+        currenciesListModels = listItemsModels
+        currenciesListModelsLiveData.postValue(Resource.Success(listItemsModels))
     }
 
     @WorkerThread
@@ -317,52 +291,18 @@ class HomeViewModel(
         }
     }
 
-    // todo extract to usecase
-    @WorkerThread
-    private fun makeRatioString(
-        firstCurrencyCode: SupportedCode,
-        firstCurrencyToUahRatio: Double,
-        secondCurrencyCode: SupportedCode,
-        secondCurrencyToUahRatio: Double
-    ) = if (secondCurrencyToUahRatio != 0.0) {
-        getReadableRatio(firstCurrencyToUahRatio, secondCurrencyToUahRatio).let {
-            "${it.first} $firstCurrencyCode ≈ ${it.second.roundToDecimals(3)} $secondCurrencyCode"
-        }
-    } else {
-        // todo TO CRASHLYTICS
-        ""
-    }
+    // Exposing only LiveData
+    fun getCurrenciesLiveData(): LiveData<Resource<List<HomeListItemModel>>> =
+        currenciesListModelsLiveData
 
-    private fun getReadableRatio(
-        firstCurrencyToUahRatio: Double,
-        secondCurrencyToUahRatio: Double
-    ): Pair<Int, Double> {
-        var roundedRatio = BigDecimal(firstCurrencyToUahRatio / secondCurrencyToUahRatio)
-        // round to 3 significant figures
-        roundedRatio = roundedRatio.round(MathContext(3))
+    fun getShowEmptyStateLiveData(): LiveData<Boolean> =
+        showEmptyStateLiveData
 
-        return prettifyRatio(Pair(1, roundedRatio.toDouble()))
-    }
+    fun getLastUpdatedLiveData(): LiveData<DataUpdatedTime> =
+        lastUpdatedLiveData
 
-    // TODO MOVE TO USECASE!
-    /**
-     * Recursive method that multiplies both Pair(A: Int, B: Double) values by 10
-     * until B >= 0.01
-     * for example Pair(1, 0.00001) into Pair(100, 0.001)
-     */
-    private fun prettifyRatio(pair: Pair<Int, Double>): Pair<Int, Double> {
-        return if (pair.second < 0.01) {
-            prettifyRatio(Pair(pair.first * 10, pair.second * 10))
-        } else {
-            pair
-        }
-    }
-
-    @WorkerThread
-    private fun Double.roundToDecimals(decimals: Int): Double {
-        val factor = 10.0.pow(decimals)
-        return (this * factor).roundToLong() / factor
-    }
+    fun getIsLoadingLiveData(): LiveData<Boolean> =
+        isLoadingLiveData
 
     private companion object {
         const val DEFAULT_BASE_AMOUNT = 100.0

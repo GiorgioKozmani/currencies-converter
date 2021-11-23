@@ -63,8 +63,8 @@ class CurrenciesListDragHelper(itemMovedAction: (from: Int, to: Int) -> Unit) {
                 viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder
             ): Boolean {
-                val from = viewHolder.adapterPosition
-                val to = target.adapterPosition
+                val from = viewHolder.absoluteAdapterPosition
+                val to = target.absoluteAdapterPosition
 
                 // when fast scrolled towards top and released press it was emitting same move event twice that's a workaround
                 if (lastFrom != from && lastTo != to) {

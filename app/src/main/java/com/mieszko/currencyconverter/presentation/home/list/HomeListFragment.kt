@@ -40,7 +40,7 @@ class HomeListFragment : Fragment(R.layout.home_list_fragment) {
         viewModel.getCurrenciesLiveData()
             .observe(viewLifecycleOwner, { handleNewResults(it) })
 
-        viewModel.getShowNoContentStateLiveData()
+        viewModel.getShowEmptyStateLiveData()
             .observe(
                 viewLifecycleOwner,
                 { showEmptyState ->
@@ -81,7 +81,6 @@ class HomeListFragment : Fragment(R.layout.home_list_fragment) {
                 // loading is not handled yet
             }
             is Resource.Success -> {
-// TODO CHECK IF IT'S NOT CALLED 2 MANY TIMES
                 updateListData(response)
             }
             is Resource.Error -> {

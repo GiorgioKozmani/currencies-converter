@@ -4,7 +4,7 @@ import com.mieszko.currencyconverter.common.model.SupportedCode
 import com.mieszko.currencyconverter.domain.repository.ITrackedCodesRepository
 import io.reactivex.rxjava3.core.Single
 
-// TODO RETHINK WHOLE CONCENT
+// TODO [RETHINK]
 // https://proandroiddev.com/anemic-repositories-mvi-and-rxjava-induced-design-damage-and-how-aac-viewmodel-is-silently-1762caa70e13
 // // still an anti-pattern (technically code smell)
 // class DeleteUserByIdUseCase(
@@ -19,7 +19,6 @@ class GetTrackedCodesOnceUseCase(
     private val trackedCodesRepository: ITrackedCodesRepository
 ) : IGetTrackedCodesOnceUseCase {
 
-    // todo consider threading
     override fun invoke(): Single<List<SupportedCode>> =
         trackedCodesRepository
             .getTrackedCodesOnce()

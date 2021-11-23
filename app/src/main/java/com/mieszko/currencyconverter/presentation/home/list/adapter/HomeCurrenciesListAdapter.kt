@@ -6,6 +6,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mieszko.currencyconverter.domain.model.list.HomeListItemModel
 import com.mieszko.currencyconverter.presentation.home.HomeViewModel
 
+// TODO WHEN 52. (WITH NO DECIMALS AND DOT IN THE END) GETS MOVED DOWN
+//  , RESET TO 52.00
 class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
     RecyclerView.Adapter<HomeCurrencyViewHolder>() {
 
@@ -101,8 +103,7 @@ class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
     override fun onViewDetachedFromWindow(holder: HomeCurrencyViewHolder) {
         super.onViewDetachedFromWindow(holder)
         holder.run {
-            // todo experiment with no deprecated ones
-            if (adapterPosition == 0) {
+            if (absoluteAdapterPosition == 0) {
                 clearFocusAndHideKeyboard()
             }
         }

@@ -12,22 +12,23 @@ val viewModelModule = module {
     viewModel {
         HomeViewModel(
             disposablesBag = get(),
-            fetchRemoteRatiosUseCase = get(),
-            mapCodeToDataUseCase = get(),
-            moveTrackedCodeToTopUseCase = get(),
-            observeTrackedCodesUseCase = get(),
-            swapTrackedCodesUseCase = get(),
-            observeRatiosUseCase = get(),
+            fetchRemoteRatios = get(),
+            mapCodesToData = get(),
+            moveTrackedCodeToTop = get(),
+            observeTrackedCodes = get(),
+            swapTrackedCodes = get(),
+            makeRatioString = get(),
+            observeRatios = get(),
             eventsLogger = get()
         )
     }
     viewModel {
         SelectionViewModel(
             disposablesBag = get(),
-            observeTrackedCodesUseCase = get(),
-            codesStaticDataRepository = get(),
-            addTrackedCodesUseCase = get(),
-            removeTrackedCodesUseCase = get(),
+            observeTrackedCodes = get(),
+            createTrackedCodesModels = get(),
+            addTrackedCodes = get(),
+            removeTrackedCodes = get(),
             eventsLogger = get()
         )
     }

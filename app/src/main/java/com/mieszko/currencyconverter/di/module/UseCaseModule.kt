@@ -4,8 +4,12 @@ import com.mieszko.currencyconverter.domain.usecase.mappers.IMapDataToCodesUseCa
 import com.mieszko.currencyconverter.domain.usecase.mappers.MapDataToCodesUseCase
 import com.mieszko.currencyconverter.domain.usecase.ratios.FetchRemoteRatiosUseCase
 import com.mieszko.currencyconverter.domain.usecase.ratios.IFetchRemoteRatiosUseCase
+import com.mieszko.currencyconverter.domain.usecase.ratios.IMakeRatioStringUseCase
 import com.mieszko.currencyconverter.domain.usecase.ratios.IObserveRatiosUseCase
+import com.mieszko.currencyconverter.domain.usecase.ratios.MakeRatioStringUseCase
 import com.mieszko.currencyconverter.domain.usecase.ratios.ObserveRatiosUseCase
+import com.mieszko.currencyconverter.domain.usecase.trackedcodes.CreateTrackedCodesModelsUseCase
+import com.mieszko.currencyconverter.domain.usecase.trackedcodes.ICreateTrackedCodesModelsUseCase
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.IMoveTrackedCodeToTopUseCase
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.ISwapTrackedCodesUseCase
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.MoveTrackedCodeToTopUseCase
@@ -75,6 +79,12 @@ val useCaseModule = module {
         )
     }
 
+    factory<ICreateTrackedCodesModelsUseCase> {
+        CreateTrackedCodesModelsUseCase(
+            codesStaticDataRepository = get()
+        )
+    }
+
     /**
      * -----------------------
      * RATIOS USECASES
@@ -97,5 +107,9 @@ val useCaseModule = module {
 
     factory<IMapDataToCodesUseCase> {
         MapDataToCodesUseCase(codesStaticDataRepository = get())
+    }
+
+    single<IMakeRatioStringUseCase> {
+        MakeRatioStringUseCase()
     }
 }
