@@ -56,7 +56,7 @@ class HomeHeaderFragment : Fragment(R.layout.home_header_fragment) {
 
     private fun handleNewDate(dataUpdatedTime: DataUpdatedTime) {
         val dateState = dataUpdatedTime.getDataState()
-        val dateText = DateFormat.format("yyyy-MM-dd hh:mm:ss a", dateState.date).toString()
+        val dateText = DateFormat.format("yyyy-MM-dd", dateState.date).toString()
 
         when (dateState) {
             is DataUpdatedTime.DataState.Fresh -> {
@@ -73,10 +73,10 @@ class HomeHeaderFragment : Fragment(R.layout.home_header_fragment) {
 
     private fun observeViewModel() {
         viewModel.getLastUpdatedLiveData()
-            .observe(viewLifecycleOwner, { handleNewDate(it) })
+            .observe(viewLifecycleOwner) { handleNewDate(it) }
 
         viewModel.getIsLoadingLiveData()
-            .observe(viewLifecycleOwner, { setLoadingIndicatorVisibility(it) })
+            .observe(viewLifecycleOwner) { setLoadingIndicatorVisibility(it) }
     }
 
     private fun assignViews(view: View) {

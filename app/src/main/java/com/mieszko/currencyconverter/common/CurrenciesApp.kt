@@ -13,6 +13,7 @@ import com.mieszko.currencyconverter.di.module.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
+import org.koin.core.logger.Level
 
 class CurrenciesApp : Application() {
 
@@ -21,7 +22,7 @@ class CurrenciesApp : Application() {
         resourses = resources
 
         startKoin {
-            androidLogger()
+            androidLogger(Level.ERROR)
             androidContext(this@CurrenciesApp)
             modules(
                 listOf(

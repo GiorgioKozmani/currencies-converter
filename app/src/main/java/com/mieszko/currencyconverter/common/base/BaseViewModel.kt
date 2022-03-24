@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.mieszko.currencyconverter.common.model.IDisposablesBag
 import io.reactivex.rxjava3.disposables.Disposable
 
-abstract class BaseViewModel(val disposablesBag: IDisposablesBag) : ViewModel() {
+abstract class BaseViewModel(private val disposablesBag: IDisposablesBag) : ViewModel() {
 
     override fun onCleared() {
         disposablesBag.dispose()

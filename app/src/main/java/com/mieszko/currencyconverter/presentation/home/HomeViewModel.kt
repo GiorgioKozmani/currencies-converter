@@ -105,51 +105,48 @@ class HomeViewModel(
         Observable.combineLatest(
             observeRatiosUseCase()
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.computation())
                 .doOnNext { lastUpdatedLiveData.postValue(DataUpdatedTime(it.time)) },
             // TRACKING CODES CHANGED
             observeTrackedCodesUseCase()
                 .subscribeOn(Schedulers.io())
                 .doOnNext { codeWithData -> handleEmptyState(codeWithData) }
-                .observeOn(Schedulers.computation()),
-            { allRatios, trackedCodes ->
-                mapCodesToData(codes = trackedCodes, allRatios = allRatios.ratios)
-            }
-        )
+                .observeOn(Schedulers.computation())
+        ) { allRatios, trackedCodes ->
+            mapCodesToData(codes = trackedCodes, allRatios = allRatios.ratios)
+        }
             .map { codeWithData -> Pair(System.nanoTime(), codeWithData) },
         // USER INPUT NEW BASE CURRENCY
         baseAmountChange
             .subscribeOn(Schedulers.computation())
             .observeOn(Schedulers.computation())
-            .map { newAmount -> Pair(System.nanoTime(), newAmount) },
-        { currenciesChange, newBaseAmount ->
-            val trackedCodesWithData = currenciesChange.second
+            .map { newAmount -> Pair(System.nanoTime(), newAmount) }
+    ) { currenciesChange, newBaseAmount ->
+        val trackedCodesWithData = currenciesChange.second
 
-            if (trackedCodesWithData.isEmpty()) {
-                listOf()
+        if (trackedCodesWithData.isEmpty()) {
+            listOf()
+        } else {
+            val orderChangeTime = currenciesChange.first
+            val baseAmountChangeTime = newBaseAmount.first
+            // ratios or tracking order changed
+            if (orderChangeTime > baseAmountChangeTime) {
+                makeListItemModels(
+                    baseAmount = currenciesListModels.find { it.code == trackedCodesWithData.first().code }
+                        ?.amount
+                        ?: DEFAULT_BASE_AMOUNT,
+                    trackedCodesWithData = trackedCodesWithData
+                )
+                // base amount change by user
             } else {
-                val orderChangeTime = currenciesChange.first
-                val baseAmountChangeTime = newBaseAmount.first
-                // ratios or tracking order changed
-                if (orderChangeTime > baseAmountChangeTime) {
-                    makeListItemModels(
-                        baseAmount = currenciesListModels.find { it.code == trackedCodesWithData.first().code }
-                            ?.amount
-                            ?: DEFAULT_BASE_AMOUNT,
-                        trackedCodesWithData = trackedCodesWithData
-                    )
-                    // base amount change by user
-                } else {
-                    val baseAmount = newBaseAmount.second
+                val baseAmount = newBaseAmount.second
 
-                    makeListItemModels(
-                        baseAmount = baseAmount,
-                        trackedCodesWithData = trackedCodesWithData
-                    )
-                }
+                makeListItemModels(
+                    baseAmount = baseAmount,
+                    trackedCodesWithData = trackedCodesWithData
+                )
             }
         }
-    )
+    }
 
     private fun handleEmptyState(codeWithData: List<SupportedCode>?) {
         if (codeWithData.isNullOrEmpty()) {

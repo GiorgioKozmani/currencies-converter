@@ -8,6 +8,7 @@ import com.mieszko.currencyconverter.presentation.home.HomeViewModel
 
 // TODO WHEN 52. (WITH NO DECIMALS AND DOT IN THE END) GETS MOVED DOWN
 //  , RESET TO 52.00
+// todo adding a dependency to viewmodel is a bad practise, replace it with fragments callback
 class HomeCurrenciesListAdapter(private val viewModel: HomeViewModel) :
     RecyclerView.Adapter<HomeCurrencyViewHolder>() {
 
