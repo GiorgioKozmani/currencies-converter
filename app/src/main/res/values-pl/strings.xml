@@ -62,6 +62,7 @@
 
     <!--  rate app widget strings  -->
     <string name="rate_app_dialog_title">Oceń apkę</string>
+    <string name="today">Dzisiaj</string>
     <string name="rate_app_dialog_description">Powstała, aby troszkę ułatwić Ci życie. Jak spełnia swoją rolę?</string>
     <string name="rate_app_dialog_positive_button_text">Oceń!</string>
     <string name="rate_app_dialog_negative_button_text">Może później</string>

@@ -2,6 +2,7 @@ package com.mieszko.currencyconverter.presentation.home.header
 
 import android.os.Bundle
 import android.text.format.DateFormat
+import android.text.format.DateUtils
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
@@ -56,7 +57,14 @@ class HomeHeaderFragment : Fragment(R.layout.home_header_fragment) {
 
     private fun handleNewDate(dataUpdatedTime: DataUpdatedTime) {
         val dateState = dataUpdatedTime.getDataState()
-        val dateText = DateFormat.format("yyyy-MM-dd", dateState.date).toString()
+
+        val isRefreshedToday = DateUtils.isToday(dateState.date.time)
+
+        val dateText = if (isRefreshedToday) {
+            getString(R.string.today)
+        } else {
+            DateFormat.format("yyyy-MM-dd", dateState.date).toString()
+        } + "!"
 
         when (dateState) {
             is DataUpdatedTime.DataState.Fresh -> {
