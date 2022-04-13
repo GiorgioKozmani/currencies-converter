@@ -7,7 +7,7 @@ import io.reactivex.rxjava3.disposables.Disposable
 abstract class BaseViewModel(private val disposablesBag: IDisposablesBag) : ViewModel() {
 
     override fun onCleared() {
-        disposablesBag.dispose()
+        disposablesBag.clear()
         super.onCleared()
     }
 
