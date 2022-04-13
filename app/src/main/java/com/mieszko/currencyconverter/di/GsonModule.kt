@@ -1,4 +1,4 @@
-package com.mieszko.currencyconverter.di.module
+package com.mieszko.currencyconverter.di
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder

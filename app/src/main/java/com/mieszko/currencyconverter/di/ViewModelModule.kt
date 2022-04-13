@@ -1,4 +1,4 @@
-package com.mieszko.currencyconverter.di.module
+package com.mieszko.currencyconverter.di
 
 import com.mieszko.currencyconverter.common.model.DisposablesBag
 import com.mieszko.currencyconverter.common.model.IDisposablesBag
@@ -11,21 +11,20 @@ import org.koin.dsl.module
 val viewModelModule = module {
     viewModel {
         HomeViewModel(
+            trackedCodesRepository = get(),
+            ratiosRepository = get(),
             disposablesBag = get(),
-            fetchRemoteRatios = get(),
             mapCodesToData = get(),
             moveTrackedCodeToTop = get(),
-            observeTrackedCodes = get(),
             swapTrackedCodes = get(),
             makeRatioString = get(),
-            observeRatios = get(),
             eventsLogger = get()
         )
     }
     viewModel {
         SelectionViewModel(
             disposablesBag = get(),
-            observeTrackedCodes = get(),
+            trackedCodesRepository = get(),
             createTrackedCodesModels = get(),
             addTrackedCodes = get(),
             removeTrackedCodes = get(),

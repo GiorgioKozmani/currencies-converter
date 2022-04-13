@@ -1,17 +1,21 @@
 package com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud
 
 import com.mieszko.currencyconverter.common.model.SupportedCode
+import com.mieszko.currencyconverter.domain.repository.ITrackedCodesRepository
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class AddTrackedCodesUseCase(
-    private val getTrackedCodesOnceUseCase: IGetTrackedCodesOnceUseCase,
+    private val trackedCodesRepository: ITrackedCodesRepository,
     private val saveTrackedCodesUseCase: ISaveTrackedCodesUseCase,
 ) : IAddTrackedCodesUseCase {
 
     override fun invoke(codeToAdd: SupportedCode): Completable =
-        getTrackedCodesOnceUseCase()
+        trackedCodesRepository
+            .observeTrackedCodes()
+            .firstOrError()
+            .observeOn(Schedulers.io())
             .flatMapCompletable { currentTrackedCodes ->
                 Single.fromCallable {
                     currentTrackedCodes.let { currentList ->
@@ -22,10 +26,8 @@ class AddTrackedCodesUseCase(
                         }
                     }
                 }
-                    .subscribeOn(Schedulers.computation())
                     .flatMapCompletable { codes ->
                         saveTrackedCodesUseCase(codes)
-                            .subscribeOn(Schedulers.io())
                     }
             }
 }

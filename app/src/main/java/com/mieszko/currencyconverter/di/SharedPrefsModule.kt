@@ -1,4 +1,4 @@
-package com.mieszko.currencyconverter.di.module
+package com.mieszko.currencyconverter.di
 
 import com.mieszko.currencyconverter.data.persistance.ISharedPrefsManager
 import com.mieszko.currencyconverter.data.persistance.SharedPrefsManager

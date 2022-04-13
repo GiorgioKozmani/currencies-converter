@@ -12,14 +12,14 @@ import com.mieszko.currencyconverter.domain.analytics.events.BaseValueChangedEve
 import com.mieszko.currencyconverter.domain.analytics.events.ButtonClickedEvent
 import com.mieszko.currencyconverter.domain.model.CodeWithData
 import com.mieszko.currencyconverter.domain.model.DataUpdatedTime
+import com.mieszko.currencyconverter.domain.model.RatiosTime
 import com.mieszko.currencyconverter.domain.model.list.HomeListItemModel
+import com.mieszko.currencyconverter.domain.repository.IRatiosRepository
+import com.mieszko.currencyconverter.domain.repository.ITrackedCodesRepository
 import com.mieszko.currencyconverter.domain.usecase.mappers.IMapDataToCodesUseCase
-import com.mieszko.currencyconverter.domain.usecase.ratios.IFetchRemoteRatiosUseCase
 import com.mieszko.currencyconverter.domain.usecase.ratios.IMakeRatioStringUseCase
-import com.mieszko.currencyconverter.domain.usecase.ratios.IObserveRatiosUseCase
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.IMoveTrackedCodeToTopUseCase
 import com.mieszko.currencyconverter.domain.usecase.trackedcodes.ISwapTrackedCodesUseCase
-import com.mieszko.currencyconverter.domain.usecase.trackedcodes.crud.IObserveTrackedCodesUseCase
 import com.mieszko.currencyconverter.domain.util.roundToDecimals
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -31,9 +31,8 @@ import java.util.concurrent.TimeUnit
 
 class HomeViewModel(
     disposablesBag: IDisposablesBag,
-    observeRatios: IObserveRatiosUseCase,
-    observeTrackedCodes: IObserveTrackedCodesUseCase,
-    private val fetchRemoteRatios: IFetchRemoteRatiosUseCase,
+    trackedCodesRepository: ITrackedCodesRepository,
+    private val ratiosRepository: IRatiosRepository,
     private val moveTrackedCodeToTop: IMoveTrackedCodeToTopUseCase,
     private val swapTrackedCodes: ISwapTrackedCodesUseCase,
     private val mapCodesToData: IMapDataToCodesUseCase,
@@ -55,7 +54,10 @@ class HomeViewModel(
 
     init {
         // Emit list items when ratios or tracking order or base amount changes
-        setupListDataSource(observeRatios, observeTrackedCodes)
+        setupListDataSource(
+            ratiosRepository.observeRatios(),
+            trackedCodesRepository.observeTrackedCodes()
+        )
 
         // Attempt fetching fresh data from network (this doesn't trigger any UI updates directly)
         fetchRatiosFromNetwork()
@@ -80,11 +82,11 @@ class HomeViewModel(
     }
 
     private fun setupListDataSource(
-        observeRatiosUseCase: IObserveRatiosUseCase,
-        observeTrackedCodesUseCase: IObserveTrackedCodesUseCase
+        observeRatios: Observable<RatiosTime>,
+        observeTrackedCodes: Observable<List<SupportedCode>>
     ) {
         addSubscription(
-            makeListItems(observeRatiosUseCase, observeTrackedCodesUseCase)
+            makeListItems(observeRatios, observeTrackedCodes)
                 .subscribeOn(Schedulers.io())
                 .doOnNext { listItems -> assignAndEmitModels(listItems) }
                 .observeOn(AndroidSchedulers.mainThread())
@@ -98,16 +100,16 @@ class HomeViewModel(
     }
 
     private fun makeListItems(
-        observeRatiosUseCase: IObserveRatiosUseCase,
-        observeTrackedCodesUseCase: IObserveTrackedCodesUseCase
+        observeRatios: Observable<RatiosTime>,
+        observeTrackedCodes: Observable<List<SupportedCode>>
     ) = Observable.combineLatest(
         // CODES RATIOS CHANGED
         Observable.combineLatest(
-            observeRatiosUseCase()
+            observeRatios
                 .subscribeOn(Schedulers.io())
                 .doOnNext { lastUpdatedLiveData.postValue(DataUpdatedTime(it.time)) },
             // TRACKING CODES CHANGED
-            observeTrackedCodesUseCase()
+            observeTrackedCodes
                 .subscribeOn(Schedulers.io())
                 .doOnNext { codeWithData -> handleEmptyState(codeWithData) }
                 .observeOn(Schedulers.computation())
@@ -159,8 +161,9 @@ class HomeViewModel(
     private fun fetchRatiosFromNetwork() {
         if (isLoadingLiveData.value != true) {
             addSubscription(
-                fetchRemoteRatios()
+                ratiosRepository.fetchRemoteRatios()
                     .subscribeOn(Schedulers.io())
+                    // TODO CHECK IF IT'S OKAY TO POST ON BACKGROUND THREAD INSTEAD
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe { isLoadingLiveData.value = true }
                     .doOnTerminate { isLoadingLiveData.value = false }

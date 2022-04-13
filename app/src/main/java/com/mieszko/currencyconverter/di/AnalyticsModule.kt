@@ -1,4 +1,4 @@
-package com.mieszko.currencyconverter.di.module
+package com.mieszko.currencyconverter.di
 
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.ktx.crashlytics

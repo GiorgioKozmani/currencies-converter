@@ -1,4 +1,4 @@
-package com.mieszko.currencyconverter.di.module
+package com.mieszko.currencyconverter.di
 
 import com.mieszko.currencyconverter.data.repository.CodesStaticDataRepository
 import com.mieszko.currencyconverter.data.repository.RatiosRepository
@@ -15,7 +15,7 @@ import org.koin.dsl.module
  */
 val repoModule = module {
     single<IRatiosRepository> {
-        RatiosRepository(currenciesApi = get(), cache = get())
+        RatiosRepository(currenciesApi = get(), cache = get(), eventsLogger = get())
     }
     single<ITrackedCodesRepository> {
         TrackedCodesRepository(sharedPrefsManager = get(), gson = get())

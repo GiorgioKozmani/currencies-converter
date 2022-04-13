@@ -1,15 +1,15 @@
-package com.mieszko.currencyconverter.common
+package com.mieszko.currencyconverter
 
 import android.app.Application
 import android.content.res.Resources
-import com.mieszko.currencyconverter.di.module.analyticsModule
-import com.mieszko.currencyconverter.di.module.apiModule
-import com.mieszko.currencyconverter.di.module.cacheModule
-import com.mieszko.currencyconverter.di.module.gsonModule
-import com.mieszko.currencyconverter.di.module.repoModule
-import com.mieszko.currencyconverter.di.module.sharedPrefsModule
-import com.mieszko.currencyconverter.di.module.useCaseModule
-import com.mieszko.currencyconverter.di.module.viewModelModule
+import com.mieszko.currencyconverter.di.analyticsModule
+import com.mieszko.currencyconverter.di.apiModule
+import com.mieszko.currencyconverter.di.cacheModule
+import com.mieszko.currencyconverter.di.gsonModule
+import com.mieszko.currencyconverter.di.repoModule
+import com.mieszko.currencyconverter.di.sharedPrefsModule
+import com.mieszko.currencyconverter.di.useCaseModule
+import com.mieszko.currencyconverter.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin

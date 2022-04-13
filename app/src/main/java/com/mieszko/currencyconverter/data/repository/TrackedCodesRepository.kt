@@ -7,7 +7,6 @@ import com.mieszko.currencyconverter.data.persistance.ISharedPrefsManager
 import com.mieszko.currencyconverter.domain.repository.ITrackedCodesRepository
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import java.lang.reflect.Type
 
@@ -15,7 +14,6 @@ class TrackedCodesRepository(
     private val sharedPrefsManager: ISharedPrefsManager,
     private val gson: Gson,
 ) : ITrackedCodesRepository {
-
     private val supportedCurrencyType: Type = object : TypeToken<List<SupportedCode>>() {}.type
 
     private val source: BehaviorSubject<List<SupportedCode>> =
@@ -24,7 +22,7 @@ class TrackedCodesRepository(
                 sharedPrefsManager.getString(
                     key = ISharedPrefsManager.Key.TrackedCurrencies,
                     // default to an empty array (no codes tracked)
-                    defValue = "[]"
+                    defValue = EMPTY_LIST_JSON
                 ),
                 supportedCurrencyType
             )
@@ -43,6 +41,7 @@ class TrackedCodesRepository(
             source.onNext(trackedCodes)
         }
 
-    override fun getTrackedCodesOnce(): Single<List<SupportedCode>> =
-        source.firstOrError()
+    companion object {
+        private const val EMPTY_LIST_JSON = "[]"
+    }
 }
